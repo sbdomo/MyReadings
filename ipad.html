@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html manifest="" lang="fr-FR">
+<head>
+	<meta charset="UTF-8">
+	<title>MyReadings - iPad</title>
+<style type="text/css">	
+#ipad {
+}
+
+#ipad.landscape {
+  background: url('skin/ipad_landscape.png');
+  width: 1108px;
+  height: 852px;
+}
+
+#ipad.portrait {
+  background: url('skin/ipad_portrait.png');
+  width: 852px;
+  height: 1108px;
+}
+
+#ipad #frame {
+  border: none;
+  background: #fff;
+  position: relative;
+  left: -14px;
+  top: 62px;
+}
+
+#ipad.landscape #frame {
+  width: 1024px;
+  height: 748px;
+}
+
+#ipad.portrait #frame {
+  width: 768px;
+  height: 1004px;
+}
+
+#frame::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
+#frame::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.75); -webkit-border-radius: 4px; border-radius: 4px; width: 4px; height: 4px; }
+
+.button {
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+  display: block;
+  float: left;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button#rotate {
+  background: url('skin/rotate.png');
+}
+
+
+</style>
+</head>
+<body>
+<script type="text/javascript">
+function change_orient() {
+	var ipadformat = document.getElementById("ipad");
+	if(ipadformat.className=="landscape") ipadformat.className= "portrait";
+	else ipadformat.className= "landscape";
+}
+</script>
+<div id="ipad" class="landscape">
+<div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
+<iframe id="frame" src="./index.html"></iframe>
+</div>
+</body>
+</html>

@@ -140,6 +140,13 @@ body,
                 margin-left: 25px;
             }
         }
+        .divcover {
+		float:left;
+		margin-right:10px;
+	}
+	.cover {
+		max-width: 250px;
+	}
         .titre {
 		font-size : 12pt;
 		color : #431313;
@@ -172,11 +179,6 @@ body,
         	color: #fff;
         	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
         	text-decoration: none;
-        }
-        .x-img {
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center center;
         }
     }
 }
