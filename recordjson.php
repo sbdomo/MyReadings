@@ -2,6 +2,13 @@
 header('Content-Type: application/javascript; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
+else      $mylogin="";
+if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
+else      $mypass="";
+require_once('config.php');
+
+if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) erreur("login error");
 
 $request="";
 if(isset($_GET['id'])) $id=$_GET['id'];
@@ -10,9 +17,6 @@ else      $id="";
 //Chemin de calibre
 if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
 else erreur("No pathbase");
-
-require_once('config.php');
-//$path=$path_base1;
 
 $sql="SELECT books.id as id, books.title as title, books.path as relativePath, books.series_index as seriesIndex,
 	has_cover as hasCover, substr(books.pubdate,1,4) as pubDate,

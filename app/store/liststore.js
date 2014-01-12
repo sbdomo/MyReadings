@@ -24,7 +24,12 @@ Ext.define("myreadings.store.liststore", {
                 rootProperty: 'list',
 		totalProperty: 'total',
 		successProperty: 'success'
-            }
+            },
+	    listeners: {
+		    exception: function(proxy, response, operation) {
+			    Ext.Msg.alert("Error",response.message);
+		    }
+	    }
         },
 	pageSize: 50,
 	autoLoad: false

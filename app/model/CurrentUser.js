@@ -4,6 +4,7 @@ Ext.define('myreadings.model.CurrentUser', {
 		fields: [
 			{name: 'name', type: 'string'},
 			{name: 'pass', type: 'string'},
+			{name: 'profil', type: 'profil'}
 		],
 
 		proxy: {

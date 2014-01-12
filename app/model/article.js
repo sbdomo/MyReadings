@@ -37,7 +37,12 @@ Ext.define('myreadings.model.article', {
             reader: {
                 type: 'json',
                 rootProperty: 'books'
-            }
+            },
+	    listeners: {
+		    exception: function(proxy, response, operation) {
+			    Ext.Msg.alert("Error",response.message);
+		    }
+	    }
         }
     }
 });

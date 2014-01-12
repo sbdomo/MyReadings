@@ -3,6 +3,13 @@ header('Content-Type: application/javascript; charset=utf-8');
 //header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
+else      $mylogin="";
+if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
+else      $mypass="";
+require_once('config.php');
+
+if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) erreur("login error");
 
 //Utilisé pour la pagination de la requête sql avec la commande LIMIT
 if(isset($_GET['min'])) $min=$_GET['min'];
@@ -22,10 +29,6 @@ if(isset($_GET['search'])) $search=$_GET['search'];
 else      $search="";
 //if(isset($_GET['start'])) $start=$_GET['start'];
 //else      $start=0;
-
-require_once('config.php');
-//$path=$path_base1;
-
 
 //$SQL_AUTHOR = "SELECT * FROM [tag_browser_authors] LIMIT ";
 $SQL_AUTHOR="SELECT id, name, (SELECT COUNT(id) FROM books_authors_link WHERE author=authors.id) count FROM authors";

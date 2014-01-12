@@ -21,7 +21,7 @@ Ext.define('myreadings.view.article', {
             type: 'vbox'
         },
         showAnimation: {
-		type: 'pop',
+		type: 'pop'//,
 		//type: 'fadeIn'//,
             //duration: 250,
             //easing: 'ease-out'
@@ -76,7 +76,7 @@ Ext.define('myreadings.view.article', {
 				'</div>',
 			'</tpl>',
 			'<tpl for="files">',
-				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}</a></div>',
+				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>',
 			'</tpl>',
 
 		    {
@@ -91,6 +91,9 @@ Ext.define('myreadings.view.article', {
 				    if(localelang!=null) {
 					    return localelang;
 				    } else { return language; }
+			    },
+			    octToMo: function(oct) {
+			    	    return Math.round(oct/1048576*100)/100;
 			    },
 			    nl2br: function(str) {
 				    return myreadings.app.getController('articlesControl').nl2br(str);
@@ -109,12 +112,15 @@ Ext.define('myreadings.view.article', {
 	Ext.getCmp('articletitle').setTitle(newData.title);
 	me.relativePath = newData.relativePath;
 	Ext.getCmp('contenu').setData({});
+	var mycontrol=myreadings.app.getController('articlesControl');
 	Ext.data.JsonP.request({
             url: './recordjson.php',
             callbackKey: 'callback',
             params: {
 		    id: newData.id,
-		    pathbase: myreadings.app.getController('articlesControl').pathbase
+		    pathbase: mycontrol.pathbase,
+		    mylogin: mycontrol.username,
+		    mypass: mycontrol.password
             },
             success: function(result, request) {
                 // Unmask the viewport
@@ -126,8 +132,11 @@ Ext.define('myreadings.view.article', {
 				//console.log("fiche OK " + result.resultat.films[0].datesortie);
 				Ext.getCmp('contenu').setData(result.resultat);
 			} else alert(me.msgError);
-		} else alert(me.msgError);
-            }
+		} else Ext.Msg.alert("Error",result.message);
+            },
+	    failure: function(result, request) {
+		    alert(me.msgError);
+	    }
         });
     }
 });

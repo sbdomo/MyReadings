@@ -3,6 +3,13 @@ header('Content-Type: application/javascript; charset=utf-8');
 //header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
+else      $mylogin="";
+if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
+else      $mypass="";
+require_once('config.php');
+
+if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) erreur("login error");
 
 if(isset($_GET['min'])) $min=$_GET['min'];
 else      $min=0;
@@ -30,9 +37,6 @@ if($start==0) {
 } else {
 	$find=$find.'%';
 }
-
-require_once('config.php');
-//$path=$path_base1;
 
 switch ($order)
 {

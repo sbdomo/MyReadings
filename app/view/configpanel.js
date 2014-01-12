@@ -3,11 +3,12 @@ Ext.define('myreadings.view.configpanel', {
 	xtype: 'configpanel',
 	id: 'configpanel',
 	requires: ['Ext.field.Password','Ext.form.FieldSet', 'Ext.field.Select'],
-	txtSelectbase: "Base Calibre",
-	txtTitleLogin: "Connexion",
-	txtLogin: "Nom",
-	txtPass: "Mot de passe",
-	txtLoginButton: "S'identifier",
+	txtSelectbase: "",
+	txtTitleLogin: "",
+	txtLogin: "",
+	txtPass: "",
+	txtLoginButton: "",
+	txtProfil: "",
 	config: {
 		hidden: true
 	},
@@ -22,6 +23,7 @@ Ext.define('myreadings.view.configpanel', {
 			items: [
 			{
 				ui: 'decline',
+				name: 'bthide',
 				align: 'left',
 				iconCls: 'delete',
 				iconMask: true,
@@ -62,12 +64,33 @@ Ext.define('myreadings.view.configpanel', {
 						}
 					}
 				}
+			},
+			{
+				xtype: 'selectfield',
+				label: this.txtProfil,
+				name:'profil',
+				id:'profil',
+				itemId:'profil',
+				disabled: true,
+				options: [
+					{text:"Ipad / Ipad Mini", value:"ipad"}
+					],
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+
+						}
+					}
+				}
 			}
 			]
 		},
 		{
 			xtype: 'fieldset',
 			title: this.txtTitleLogin,
+			name: 'loginfieldset',
 			items:[
 			{
 				xtype: 'textfield',

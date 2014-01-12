@@ -39,14 +39,6 @@
 	"txtLoadMore":"Chargement...",
 	"txtnoMoreRecords":"Fin de la liste",
 	"txtEmpty":"Liste vide"
-},
-"configpanel":{
-	"txtSelectbase": "Base Calibre",
-	"txtTitleLogin": "Connexion",
-	"txtLogin": "Nom",
-	"txtPass": "Mot de passe",
-	"txtLoginButton": "S'identifier",
-	txtProfil: "Profil"
 }
 },
 "controller":{

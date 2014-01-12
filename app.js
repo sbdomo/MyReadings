@@ -19,7 +19,7 @@ Ext.application({
     models:['article','listmodel','CurrentUser'],
     stores:['liststore'],
     controllers: ['articlesControl'],
-    views: ['Main', 'ArticlesList', 'searchview', 'searchpanel', 'listview', 'configpanel'],
+    views: ['ArticlesList', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel'],
 
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -40,7 +40,7 @@ Ext.application({
     },
 
     launch: function() {
-    	console.log('launch app.js');   	
+    	//console.log('launch app.js');   	
     	
         // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();

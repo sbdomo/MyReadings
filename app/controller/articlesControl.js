@@ -1,24 +1,23 @@
 Ext.define('myreadings.controller.articlesControl', {
     extend: 'Ext.app.Controller',
     requires:['Ext.data.Store'],
-    //views: ['ArticlesList'],
     config: {
     	models:['myreadings.model.article'],
         refs: {
-            main: 'main',
-//****
 	    articleslist: 'articleslist',
 	    searchview: 'searchview',
             searchpanel: 'searchpanel',
 	    configpanel: 'configpanel',
-	    searchBt: 'main [name=searchbutton]',
-	    configBt: 'main [name=configbutton]',
-	    titlebar: 'main [name=maintitlebar]',
+	    searchBt: 'articleslist [name=searchbutton]',
+	    configBt: 'articleslist [name=configbutton]',
+	    titlebar: 'articleslist [name=maintitlebar]',
 	    
 	    loginBt: 'configpanel [name=loginbutton]',
 	    usernameCt: 'configpanel [name=login]',
 	    passwordCt: 'configpanel [name=pass]',
-	    //articleslist: 'articleslist',
+	    loginfieldset: 'configpanel [name=loginfieldset]',
+	    btconfigpanelhide: 'configpanel [name=bthide]',
+	    
             articleView: {
                 autoCreate: true,
                 xtype: 'article',
@@ -26,9 +25,6 @@ Ext.define('myreadings.controller.articlesControl', {
             }
         },
         control: {
-            //main: {
-            //    beforepop: 'onMainBeforePop'
-            //},
             articleslist: {
                 itemtap: 'onArticleTap'
             },
@@ -48,8 +44,6 @@ Ext.define('myreadings.controller.articlesControl', {
         //    ':id': 'showArticles'
         //}//,
 
-        //currentRecord: null,
-
         //stack: []
     },
 
@@ -60,6 +54,8 @@ Ext.define('myreadings.controller.articlesControl', {
     	    clearOnPageLoad: false
         });
         store.getProxy().setExtraParam('pathbase',this.pathbase);
+        store.getProxy().setExtraParam('mylogin',this.username);
+        store.getProxy().setExtraParam('mypass',this.password);
         //lors du premier lancement, pas de data car requête par défaut, sans paramétrage
         if(data) {
         	if(data.debut==4) {//changement d'ordre de tri demandé
@@ -75,68 +71,27 @@ Ext.define('myreadings.controller.articlesControl', {
 			store.getProxy().setExtraParam('start', data.debut);
 		}
         }
-        console.log("store load");
+        //console.log("store load");
 	store.load();
-
-//******	
 	var articlesView= this.getArticleslist();
 
 	//empty the store before adding the new one
-
-//******        var articlesStore = this.articlesView.getStore();
 	var  articlesStore = articlesView.getStore();
-        //var articlesStore = this.getMain().getStore();
 	if (articlesStore) {
             articlesStore.removeAll();
         }
 
-//*****        this.articlesView.setStore(store);
 	articlesView.setStore(store);
-
-	//this.getMain().setStore(store);
-
-        //this.getMain().setActiveItem(this.articlesView);
-	/*
-        var maintitle="";
-	if(!data) {
-		maintitle="Mes ebooks - tous";
-	} else if(data.find=="") {
-		maintitle="Mes ebooks - tous";
-	} else {
-	switch (data.type) {
-		case 'title':
-			maintitle="Mes ebooks - Titre contient: " + data.find;
-		break;
-		
-		case 'authorname':
-			maintitle="Mes ebooks - Auteur contient: " + data.find;
-		break;
-		
-		case 'seriename':
-			maintitle="Mes ebooks - Série contient: " + data.find;
-		break;
-		
-		case 'tagname':
-			maintitle="Mes ebooks - Etiquette contient: " + data.find;
-		break;
-		
-		default:
-			maintitle="Mes ebooks";
-		break;
-	}
-	}
-	this.getTitlebar().setTitle(maintitle);
-	*/
-	//this.getMain().add(this.articlesView);
     },
     init: function() {
-	console.log('init controller');
-	var me =this;
+	//console.log('init controller');
+	var me=this;
         me.callParent();
 	me.isList = false;
-	me.username="";
-	me.password=""
-	Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
+	//me.username="";
+	//me.password="";
+	if(!me.isInit) {
+		Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
 			scope: this,
 			success: function(cachedLoggedInUser) {
 				delete cachedLoggedInUser.phantom;
@@ -144,53 +99,99 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.password=cachedLoggedInUser.get('pass');
 				
 				console.info('Auto-Login succeeded.');
-				
-				me.logged = true;
-				//me.LogIn();
 			},
 			failure : function() {
+				me.username="";
+				me.password="";
 				console.warn('Auto-Login failed (user was not logged in).');
 			}
-	});
-	
+		});
+	}
 	Ext.data.JsonP.request({
             url: './php/getConfig.php',
             callbackKey: 'callback',
+            params: {
+            	   mylogin: me.username,
+            	   mypass: me.password
+            },
             success: function(result, request) {
 		if(result.success==true) {
-			//var me=myreadings.app.getController('articlesControl');	
-			var translations = result.locale.views;
-			for (var view in translations) {
-				Ext.apply(myreadings.view[view].prototype,translations[view]);
+			//var me=myreadings.app.getController('articlesControl');
+			if(me.isInit!=true) {
+				var translations = result.locale.views;
+				for (var view in translations) {
+					Ext.apply(myreadings.view[view].prototype,translations[view]);
+				}
+				me.lang = result.locale.lang;
+				me.localtxt=result.locale.controller;
+				
+				var MB = Ext.MessageBox;
+				Ext.apply(MB, {
+					YES: { text: me.localtxt.yes, itemId: 'yes', ui: 'action' },
+					NO: { text: me.localtxt.no, itemId: 'no' }
+				});
+				Ext.apply(MB, {
+						YESNO: [MB.NO, MB.YES]
+				});
+				//A faire pour une version iphone
+				//Ext.override(Ext.Picker, {
+				//		doneButton: 'OK',
+				//		cancelButton: 'Annuler'
+				//});
+				
+				me.articleView = Ext.create('myreadings.view.article');
+				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
+				Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
+				Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
 			}
 			
-//****			me.articlesView = Ext.create('myreadings.view.ArticlesList');
-			//this.getMain().add(this.articlesView);
-			me.articleView = Ext.create('myreadings.view.article');
-			
-			Ext.Viewport.add(Ext.create('myreadings.view.Main'));
-			Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
-			Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
-			
-			me.bases = result.config.bases;
-			me.lang = result.locale.lang;
-			me.localtxt=result.locale.controller;
-			//console.log(bases);
-			var newOptions = [];
-			for (var base in me.bases) {
-				console.log(base);
-				console.log(me.bases[base]);
-				newOptions.push({text: base,  value: me.bases[base]});
+			if(result.config.connect=="noprotect"||result.config.connect=="protectok") {
+				if(me.isInit==true) {
+					me.getBtconfigpanelhide().show();
+					me.getConfigpanel().hide();
+					//me.getArticleslist().show();
+				}
+				
+				me.bases = result.config.bases;
+				//console.log(bases);
+				var newOptions = [];
+				for (var base in me.bases) {
+					//console.log(base);
+					//console.log(me.bases[base]);
+					newOptions.push({text: base,  value: me.bases[base]});
+				}
+				Ext.getCmp('base').setOptions(newOptions);
+				//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
+				//Passe en enabled ensuite
+				Ext.getCmp('base').enable();
+				me.pathbase=Ext.getCmp('base').getValue();
+				
+				Ext.getCmp('profil').enable();
+				
+				me.showArticles();
+				
+				if(result.config.connect=="noprotect") {
+					me.getLoginfieldset().hide();
+				} else {
+					me.logged = true;
+					me.getLoginBt().setText(me.localtxt.notlogin);
+					me.getUsernameCt().hide();
+					me.getPasswordCt().hide();
+				}
+			} else {
+				//Login/pass incorrect
+				if(me.isInit!=true) {
+					me.logged=false;
+					//Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
+					//Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
+					me.getBtconfigpanelhide().hide();
+					me.getConfigpanel().show();
+					Ext.Msg.alert(me.localtxt.error,me.localtxt.mustloginandpass);
+					me.isInit=true;
+				} else {
+					Ext.Msg.alert(me.localtxt.error,me.localtxt.errorlogin);
+				}
 			}
-			Ext.getCmp('base').setOptions(newOptions);
-			//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
-			//Passe en enabled ensuite
-			Ext.getCmp('base').enable();
-			me.pathbase=Ext.getCmp('base').getValue();
-			
-			me.showArticles();
-			
-			if(me.logged==true) me.LogIn();
 			
 		} else alert('Error Configuration.');
             }
@@ -215,7 +216,6 @@ Ext.define('myreadings.controller.articlesControl', {
     },
     
     onSearchTap: function() {
-	    //Ext.getCmp('searchpanel').show();
 	    Ext.getCmp('searchview').show();
     },
     onConfigTap: function() {
@@ -228,6 +228,8 @@ Ext.define('myreadings.controller.articlesControl', {
         var store = listview.getStore();
 	//if(list!='')
 	store.getProxy().setExtraParam('pathbase',this.pathbase);
+	store.getProxy().setExtraParam('mylogin',this.username);
+        store.getProxy().setExtraParam('mypass',this.password);
 	store.getProxy().setExtraParam('list', list);
         store.getProxy().setExtraParam('search', search);
 	//Affiche le début de la liste
@@ -240,43 +242,35 @@ Ext.define('myreadings.controller.articlesControl', {
     },
     
     onLoginTap: function() {
-		if(this.logged!=true) {
-			var username = this.getUsernameCt().getValue(),
-				password = this.getPasswordCt().getValue();
-			if(!Ext.isEmpty(password) && !Ext.isEmpty(username)) {
-				var user = Ext.create('myreadings.model.CurrentUser', {
-					id: 1,
-					name: username,
-					pass: password
-				});
-				user.save();
-				this.username=username;
-				this.password=password;
-				this.LogIn();
-				
-			} else Ext.Msg.alert(this.localtxt.error,this.localtxt.mustloginandpass);
-		} else {
-			Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
-				success: function(user) {
-					Ext.Msg.confirm(this.localtxt.msg, this.localtxt.notloginconfirm, function(confirmed) {
-						if (confirmed == 'yes') {
-							user.erase({success: function() {window.location.reload(); } });
-						}
-					}, this);
-				},
-				failure: function() {
-					// this should not happen, nevertheless:
-					window.location.reload();
-				}
-			}, this);
-		}
-	},
-	LogIn: function() {
-		this.logged = true;
-		this.getLoginBt().setText(this.localtxt.notlogin);
-		this.getUsernameCt().hide();
-		this.getPasswordCt().hide();
-	},
+	if(this.logged!=true) {
+		this.username = this.getUsernameCt().getValue(),
+		this.password = this.getPasswordCt().getValue();
+		if(!Ext.isEmpty(this.password) && !Ext.isEmpty(this.username)) {
+			var user = Ext.create('myreadings.model.CurrentUser', {
+				id: 1,
+				name: this.username,
+				pass: this.password
+			});
+			user.save();
+			//window.location.reload();
+			this.init();
+		} else Ext.Msg.alert(this.localtxt.error,this.localtxt.mustloginandpass);
+	} else {
+		Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
+			success: function(user) {
+				Ext.Msg.confirm(this.localtxt.msg, this.localtxt.notloginconfirm, function(confirmed) {
+					if (confirmed == 'yes') {
+						user.erase({success: function() {window.location.reload(); } });
+					}
+				}, this);
+			},
+			failure: function() {
+				// this should not happen, nevertheless:
+				window.location.reload();
+			}
+		}, this);
+	}
+    },
     
     nl2br: function(str) {
 	    // Converts newlines to HTML line breaks
