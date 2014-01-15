@@ -28,6 +28,7 @@ Ext.define('myreadings.view.ArticlesList', {
     },
 
     initialize: function() {
+	//console.log("ArticlesList init");
 	this.setItems(
         [
 	{
@@ -41,14 +42,13 @@ Ext.define('myreadings.view.ArticlesList', {
     	    	    iconCls: 'search',
     	    	    name: 'searchbutton',
     	    	    id:'searchbutton',
-    	    	    iconMask: true,
-    	    	    align: 'left'
+    	    	    iconMask: true
     	    },
     	    {
     	    	    xtype: 'selectfield',
-    	    	    //label: 'Tri',
     	    	    name: 'order',
-    	    	    width: 230,
+    	    	    //dans articlesControl: flex: 1 si iphone, width: 230 sinon
+    	    	    //width: 230,
     	    	    id: 'order',
     	    	    itemId: 'order',
     	    	    options: [{
@@ -79,8 +79,7 @@ Ext.define('myreadings.view.ArticlesList', {
     	    	   iconCls: 'settings',
     	    	   name: 'configbutton',
     	    	   id:'configbutton',
-    	    	   iconMask: true,
-    	    	   align: 'right'
+    	    	   iconMask: true
     	    }
     	    ]
 	}
@@ -98,7 +97,7 @@ Ext.define('myreadings.view.ArticlesList', {
             store = this.getStore(),
             idarticle;
             //console.log("id:"+element.id);
-        if(element.hasCls('vignette')||element.hasCls('fond')||element.hasCls('name')||element.hasCls('txtpetit')) {
+        if(element.hasCls('vignette')||element.hasCls('fond')||element.hasCls('name')||element.hasCls('txtpetit')||element.hasCls('tapclass')) {
         	if (!element.hasCls('clsarticle')) {
         		element = Ext.get(e.target).parent('.clsarticle');
         	}
@@ -114,10 +113,14 @@ Ext.define('myreadings.view.ArticlesList', {
     },
 
     applyCount: function(count) {
+	//console.log("applyCount");
+	var mycontroller = myreadings.app.getController('articlesControl');
         if (count == "auto") {
-            count = 9;
+            //count = 9;
+	    count = mycontroller.countPortrait;
             if (Ext.Viewport.getOrientation() == "landscape") {
-                count = 8;
+                //count = 8;
+		count = mycontroller.countLandscape;
             }
         }
 

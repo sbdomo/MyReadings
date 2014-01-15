@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html manifest="" lang="fr-FR">
+<head>
+	<meta charset="UTF-8">
+	<title>MyReadings - Galaxy Tab 2 7.0	</title>
+<style type="text/css">	
+#galaxytab {
+}
+
+#galaxytab.landscape {
+  background: url('skin/galaxytab2_landscape.png');
+  width: 1265px;
+  height: 803px;
+}
+#galaxytab.portrait {
+  background: url('skin/galaxytab2_portrait.png');
+  width: 803px;
+  height: 1265px;
+}
+#galaxytab #frame {
+  border: none;
+  background: #fff;
+  position: relative;
+  left: 120px;
+  top: 101px;
+}
+
+#galaxytab.landscape #frame {
+  width: 1024px;
+  height: 554px;
+}
+#ipad.portrait #frame {
+  width: 554px;
+  height: 1024px;
+}
+
+#frame::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
+#frame::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.75); -webkit-border-radius: 4px; border-radius: 4px; width: 4px; height: 4px; }
+
+.button {
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+  display: block;
+  float: left;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button#rotate {
+  background: url('skin/rotate.png');
+}
+</style>
+</head>
+<body>
+<script type="text/javascript">
+function change_orient() {
+	var deviceformat = document.getElementById("galaxytab");
+	if(deviceformat.className=="landscape") deviceformat.className= "portrait";
+	else deviceformat.className= "landscape";
+}
+</script>
+<div id="galaxytab" class="landscape">
+<div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
+<iframe id="frame" src="./#profil/gtab"></iframe>
+</div>
+</body>
+</html>

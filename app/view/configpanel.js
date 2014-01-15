@@ -8,7 +8,6 @@ Ext.define('myreadings.view.configpanel', {
 	txtLogin: "",
 	txtPass: "",
 	txtLoginButton: "",
-	txtProfil: "",
 	config: {
 		hidden: true
 	},
@@ -32,6 +31,30 @@ Ext.define('myreadings.view.configpanel', {
 					form.hide();
 				}
 			}]
+		},
+		{
+			xtype: 'fieldset',
+			title: this.txtTitleLogin,
+			name: 'loginfieldset',
+			items:[
+			{
+				xtype: 'textfield',
+				name: 'login',
+				autoCapitalize: false,
+				placeHolder: this.txtLogin
+			},
+			{
+				xtype: 'passwordfield',
+				name: 'pass',
+				placeHolder: this.txtPass
+			},
+			{
+				xtype: 'button',
+				text: this.txtLoginButton,
+				name: 'loginbutton',
+				ui: 'confirm'
+			}
+			]
 		},
 		{
 			xtype: 'fieldset',
@@ -66,48 +89,9 @@ Ext.define('myreadings.view.configpanel', {
 				}
 			},
 			{
-				xtype: 'selectfield',
-				label: this.txtProfil,
-				name:'profil',
-				id:'profil',
-				itemId:'profil',
-				disabled: true,
-				options: [
-					{text:"Ipad / Ipad Mini", value:"ipad"}
-					],
-				listeners:
-				{
-					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-
-						}
-					}
-				}
-			}
-			]
-		},
-		{
-			xtype: 'fieldset',
-			title: this.txtTitleLogin,
-			name: 'loginfieldset',
-			items:[
-			{
-				xtype: 'textfield',
-				name: 'login',
-				autoCapitalize: false,
-				placeHolder: this.txtLogin
-			},
-			{
-				xtype: 'passwordfield',
-				name: 'pass',
-				placeHolder: this.txtPass
-			},
-			{
-				xtype: 'button',
-				text: this.txtLoginButton,
-				name: 'loginbutton',
-				ui: 'confirm'
+				id:"profil",
+				padding: 10,
+				html:''
 			}
 			]
 		}

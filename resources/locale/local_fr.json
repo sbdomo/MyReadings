@@ -45,8 +45,7 @@
 	"txtTitleLogin": "Connexion",
 	"txtLogin": "Nom",
 	"txtPass": "Mot de passe",
-	"txtLoginButton": "S'identifier",
-	txtProfil: "Profil"
+	"txtLoginButton": "S'identifier"
 }
 },
 "controller":{
@@ -57,7 +56,13 @@
 	"msg":"Message",
 	"notloginconfirm":"Voulez-vous vous déconnecter?",
 	"yes":"oui",
-	"no":"non"
+	"no":"non",
+	"ok":"OK",
+	"cancel":"Annuler",
+	"txtProfil": "Profil",
+	"ipad": "Ipad/ Ipad Mini",
+	"gtab": "Galaxy Tab",
+	"iphone": "iPhone"
 },
 "lang":
 {

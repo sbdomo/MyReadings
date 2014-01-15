@@ -16,7 +16,7 @@ Ext.application({
     requires: [
         'Ext.MessageBox'
     ],
-    models:['article','listmodel','CurrentUser'],
+    models:['article','listmodel','myreadingsUser'],
     stores:['liststore'],
     controllers: ['articlesControl'],
     views: ['ArticlesList', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel'],
@@ -41,8 +41,7 @@ Ext.application({
 
     launch: function() {
     	//console.log('launch app.js');   	
-    	
-        // Destroy the #appLoadingIndicator element
+       // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();
 
         // Initialize the main view

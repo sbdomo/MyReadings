@@ -110,10 +110,15 @@
         "skin",
         "php",
         "ipad.html",
+        "ipadmini.html",
+        "iphone.html",
+        "galaxytab.html",
         "favicon.ico",
         "recordjson.php",
         "recordsjson.php",
-        "listjson.php"
+        "listjson.php",
+	"configtemplate.php",
+	"testpath.php"
     ],
 
     /**

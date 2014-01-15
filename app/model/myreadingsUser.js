@@ -1,15 +1,14 @@
-Ext.define('myreadings.model.CurrentUser', {
+Ext.define('myreadings.model.myreadingsUser', {
 	extend: 'Ext.data.Model',
 	config: {
 		fields: [
 			{name: 'name', type: 'string'},
-			{name: 'pass', type: 'string'},
-			{name: 'profil', type: 'profil'}
+			{name: 'pass', type: 'string'}
 		],
 
 		proxy: {
 			type: 'localstorage',
-			id: 'login-data'
+			id: 'login-myreadings'
 		}
 	}
 });

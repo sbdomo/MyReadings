@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html manifest="" lang="fr-FR">
+<head>
+	<meta charset="UTF-8">
+	<title>MyVera - iPhone</title>
+<style type="text/css">
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Droid Sans', 'Liberation Sans', FreeSans, 'Helvetica Neue LT Std', 'Helvetica LT Std', Helvetica, Arial, Tahoma, 'Lucida Grande', 'Lucida Sans', sans-serif;
+}
+
+#device {
+}
+
+#device.landscape {
+  background: url('skin/iphone_landscape.png');
+  width: 713px;
+  height: 365px;
+}
+
+#device.portrait {
+  background: url('skin/iphone_portrait.png');
+  width: 365px;
+  height: 713px;
+}
+
+#device #frame {
+  border: none;
+  background: #fff;
+  position: relative;
+}
+
+#device.landscape #frame {
+  width: 480px;
+  height: 300px;
+  left: 48px;
+  top: 41px;
+}
+
+#device.portrait #frame {
+  width: 320px;
+  height: 460px;
+  left: 24px;
+  top: 83px;
+}
+
+#frame::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
+#frame::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.75); -webkit-border-radius: 4px; border-radius: 4px; width: 4px; height: 4px; }
+
+.button {
+  width: 40px;
+  height: 40px;
+  margin-left: 30px;
+  margin-top: 15px;
+  display: block;
+  float: left;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button#rotate {
+  background: url('skin/rotate.png');
+}
+
+
+</style>
+</head>
+<body>
+<script type="text/javascript">
+function change_orient() {
+	var deviceformat = document.getElementById("device");
+	if(deviceformat.className=="landscape") deviceformat.className= "portrait";
+	else deviceformat.className= "landscape";
+}
+</script>
+<div id="device" class="portrait">
+<div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
+<iframe id="frame" src="./#profil/iphone"></iframe>
+</div>
+</body>
+</html>

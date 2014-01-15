@@ -744,9 +744,9 @@ Ext.ClassManager.addNameAlternateMappings({
     "Ext.viewport.WP"
   ],
   "myreadings.controller.articlesControl": [],
-  "myreadings.model.CurrentUser": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
+  "myreadings.model.myreadingsUser": [],
   "myreadings.store.liststore": [],
   "myreadings.view.Articles": [],
   "myreadings.view.ArticlesList": [],
@@ -1699,9 +1699,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [],
   "myreadings.controller.articlesControl": [],
-  "myreadings.model.CurrentUser": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
+  "myreadings.model.myreadingsUser": [],
   "myreadings.store.liststore": [],
   "myreadings.view.Articles": [
     "widget.articles"

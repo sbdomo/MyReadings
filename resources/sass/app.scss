@@ -31,6 +31,7 @@ body,
   background-image: linear-gradient(top, #7a2224, #8e282a 10%, #a32d30 65%, #a42e30);
 }
 
+@include sencha-toolbar-ui('flat', $base-color, 'flat');
 
 //articlescls: les articles de Article.js (pour le carousel)
 .articlescls {
@@ -57,8 +58,9 @@ body,
             border-bottom: 0;
         }
     }
-//Style du cadre d'un article
-    .clsarticle {
+//Style du cadre d'un article (dans clsarticle)
+//par défaut
+    .tablet {
         color: black;
         width: 100%;
         text-align: center;
@@ -180,6 +182,20 @@ body,
         	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
         	text-decoration: none;
         }
+	.epubiphone {
+        	display: block;
+        	@include background-gradient(#936e54, glossy);
+        	@include border-radius(5px);
+        	border: 1px solid darken(#936e54, 10);
+        	margin: 15px 30px;
+        	text-align: center;
+        	padding: 5px;
+        	font-size: 12px;
+        	font-weight: bold;
+        	color: #fff;
+        	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+        	text-decoration: none;
+	}
     }
 }
 

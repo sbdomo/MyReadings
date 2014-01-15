@@ -4,7 +4,8 @@
     
     <meta name="msapplication-TileColor" content="#d7aa72"/>
     <meta name="msapplication-TileImage" content="./resources/images/tuiles/tile4.png"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta charset="UTF-8">
     <title>My Readings</title>
     <style type="text/css">
@@ -13,7 +14,8 @@
          * It is recommended to keep this as minimal as possible to provide instant feedback
          * while other resources are still being loaded for the first time
          */
-        /*html, body {
+        /*
+         html, body {
             height: 100%;
             background-color: #1985D0
         }*/
@@ -52,6 +54,96 @@
                 opacity: 0.8
             }
         }
+	
+
+.iphone	{
+	width: 100%;
+        text-align: center;
+        white-space: nowrap;
+}
+.iphone .fond {
+        	margin-top: 7px;
+        	margin-left: auto;
+        	margin-right: auto;
+        	height: 143px;
+        	width: 99px;
+        	text-align:center;
+        	/*background-repeat: no-repeat;
+        	background-position: center center;
+        	background-image:url(../images/bg_book.png);*/
+        }
+.iphone .vignette {
+        	width: 90px;
+        	height: 134px;
+        	position: relative;
+        	top: 2px;
+        	left: -3px;
+        }
+.iphone .name {
+            padding: 2px 5px 2px 5px;
+            font-size: 10px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+/*style qui déclenche le tap pour permettre d'ajoute un style perso dans le template*/
+.iphone .tapclass {
+	white-space: normal;
+	overflow: visible;
+}
+.iphone .txt {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.iphone .txtpetit {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.iphone .txtpetititalique {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+.titreiphone {
+	font-size : 10px;
+	color : #431313;
+	font-weight: bold;
+}
+.txt_normaliphone {
+	font-size: 10px;
+}
+.txt_normaliphone .txt_fonce {
+	color: #7f2323;
+	font-style:normal;
+	font-weight : bold;
+}
+.coveriphone {
+	max-width: 100px;
+}
+.commentiphone {
+	font-size : 10px;
+	color : #000000;
+}
+.epubiphone {
+        	display: block;
+        	@include background-gradient(#936e54, glossy);
+        	@include border-radius(5px);
+        	border: 1px solid darken(#936e54, 10);
+        	margin: 15px 30px;
+        	text-align: center;
+        	padding: 5px;
+        	font-size: 12px;
+        	font-weight: bold;
+        	color: #fff;
+        	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+        	text-decoration: none;
+}
+
+
 </style>
     <!-- The line below must be kept intact for Sencha Command to build your application -->
     <script id="microloader" type="text/javascript" src=".sencha/app/microloader/development.js"></script>

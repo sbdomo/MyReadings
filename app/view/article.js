@@ -1,5 +1,5 @@
 Ext.define('myreadings.view.article', {
-//****    extend: 'Ext.Sheet',
+    //extend: 'Ext.Sheet',
     extend: 'Ext.Panel',
     
     xtype: 'article',
@@ -12,8 +12,9 @@ Ext.define('myreadings.view.article', {
     config: {
         baseCls: 'article-view',
         centered: true,
-        width: '92%',
-        height: '92%',
+        //dans articlesControl: width et height à 100% si iphone, 92% sinon
+        //width: '92%',
+        //height: '92%',
         modal: true,
         hideOnMaskTap: true,
 	scrollable: true,
@@ -21,14 +22,12 @@ Ext.define('myreadings.view.article', {
             type: 'vbox'
         },
         showAnimation: {
-		type: 'pop'//,
-		//type: 'fadeIn'//,
+            type: 'pop'//,
             //duration: 250,
             //easing: 'ease-out'
         },
         hideAnimation: {
             type: 'popOut',
-		//type: 'fadeOut',
             duration: 250,
             easing: 'ease-in'
         }
@@ -47,12 +46,10 @@ Ext.define('myreadings.view.article', {
     	    	xtype: "button",
 		ui: 'decline',
     	    	    	   	   align: 'left',
-				   //width: 50,
     	    	    	   	   iconCls: 'delete',
     	    	    	   	   iconMask: true,
     	    	    	   	   handler: function(){
     	    	    	   	   	   me.hide();
-					   //Ext.getCmp('searchview').hide();
     	    	    	   	   }
     	}
 	]
@@ -61,24 +58,7 @@ Ext.define('myreadings.view.article', {
 		id:'contenu',
 		cls: 'description',
 		tpl:  new Ext.XTemplate(
-			'<p>&nbsp;</p>',
-			'<tpl for="books">',
-				'<div>',
-				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="cover"/></tpl></div>',
-				'<tpl if="authorsName"><div class="titre">'+this.txtBy+' {authorsName}</div></tpl>',
-				'<div><span class="txt_normal">',
-					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>',
-					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>',
-					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>',
-					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>',
-					'<br /><span class="comment">{comment}</span>',
-				'</span><br /></div>',
-				'</div>',
-			'</tpl>',
-			'<tpl for="files">',
-				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>',
-			'</tpl>',
-
+		    this.tplinit(myreadings.app.getController('articlesControl').profil),
 		    {
 			    pathCover: function(relativepath) {
 				    return myreadings.app.getController('articlesControl').pathbase+relativepath+"/cover.jpg";
@@ -138,5 +118,50 @@ Ext.define('myreadings.view.article', {
 		    alert(me.msgError);
 	    }
         });
+    },
+    tplinit: function(profil) {
+	    var tplipad='<p>&nbsp;</p>'+
+			'<tpl for="books">'+
+				'<div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="cover"/></tpl></div>'+
+				'<tpl if="authorsName"><div class="titre">'+this.txtBy+' {authorsName}</div></tpl>'+
+				'<div><span class="txt_normal">'+
+					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
+					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
+					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
+					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<br /><span class="comment">{comment}</span>'+
+				'</span><br /></div>'+
+				'</div>'+
+			'</tpl>'+
+			'<tpl for="files">'+
+				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>'+
+			'</tpl>';
+	    var tpliphone='<p>&nbsp;</p>'+
+			'<tpl for="books">'+
+				'<div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="coveriphone"/></tpl></div>'+
+				'<tpl if="authorsName"><div class="titreiphone">'+this.txtBy+' {authorsName}</div></tpl>'+
+				'<div><span class="txt_normaliphone">'+
+					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
+					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
+					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
+					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<br /><span class="commentiphone">{comment}</span>'+
+				'</span></div>'+
+				'</div>'+
+			'</tpl>'+
+			'<tpl for="files">'+
+				'<div class="clear"><a class="epubiphone" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>'+
+			'</tpl>';
+	    var mycontroller = myreadings.app.getController('articlesControl');
+	    if(profil=="gtab") {
+		    return tplgtab;
+	    } else if(profil=="iphone") {
+		    return tpliphone;
+
+	    } else {
+		    return tplipad;
+	    }
     }
 });

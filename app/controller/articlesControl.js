@@ -8,6 +8,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    searchview: 'searchview',
             searchpanel: 'searchpanel',
 	    configpanel: 'configpanel',
+	    listview: 'listview',
 	    searchBt: 'articleslist [name=searchbutton]',
 	    configBt: 'articleslist [name=configbutton]',
 	    titlebar: 'articleslist [name=maintitlebar]',
@@ -17,6 +18,10 @@ Ext.define('myreadings.controller.articlesControl', {
 	    passwordCt: 'configpanel [name=pass]',
 	    loginfieldset: 'configpanel [name=loginfieldset]',
 	    btconfigpanelhide: 'configpanel [name=bthide]',
+	    
+	    typelistfind: 'listview [name=typelist]',
+	    searchfieldfind: 'listview [name=listviewSearchfield]',
+	    btsearchfind: 'listview [name=btsearch]',
 	    
             articleView: {
                 autoCreate: true,
@@ -36,13 +41,25 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    loginBt: {
 		    tap: 'onLoginTap'
+	    },
+	    
+	    typelistfind: {
+		    change: 'onChangeListView'
+	    },
+	    searchfieldfind: {
+		    action: 'onChangeListView'
+	    },
+	    btsearchfind: {
+		    tap: 'onChangeListView'
 	    }
-        }//,
+        },
 
-        //routes: {
-        //    '': 'showArticles',
-        //    ':id': 'showArticles'
-        //}//,
+        routes: {
+	//pour une url du type: http://myurl/#profil/ipad
+		'profil/:id': 'profilchoice',
+	//si par de paramètre, lance profilchoice et initialise avec profil=ipad par défaut
+		'':  'profilchoice'
+        }//,
 
         //stack: []
     },
@@ -86,18 +103,16 @@ Ext.define('myreadings.controller.articlesControl', {
     init: function() {
 	//console.log('init controller');
 	var me=this;
+	//var me=myreadings.app.getController('articlesControl');
         me.callParent();
 	me.isList = false;
-	//me.username="";
-	//me.password="";
 	if(!me.isInit) {
-		Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
+		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			scope: this,
 			success: function(cachedLoggedInUser) {
 				delete cachedLoggedInUser.phantom;
 				me.username=cachedLoggedInUser.get('name');
 				me.password=cachedLoggedInUser.get('pass');
-				
 				console.info('Auto-Login succeeded.');
 			},
 			failure : function() {
@@ -116,7 +131,6 @@ Ext.define('myreadings.controller.articlesControl', {
             },
             success: function(result, request) {
 		if(result.success==true) {
-			//var me=myreadings.app.getController('articlesControl');
 			if(me.isInit!=true) {
 				var translations = result.locale.views;
 				for (var view in translations) {
@@ -126,18 +140,32 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.localtxt=result.locale.controller;
 				
 				var MB = Ext.MessageBox;
-				Ext.apply(MB, {
-					YES: { text: me.localtxt.yes, itemId: 'yes', ui: 'action' },
-					NO: { text: me.localtxt.no, itemId: 'no' }
-				});
-				Ext.apply(MB, {
-						YESNO: [MB.NO, MB.YES]
-				});
-				//A faire pour une version iphone
-				//Ext.override(Ext.Picker, {
-				//		doneButton: 'OK',
-				//		cancelButton: 'Annuler'
-				//});
+				MB.OK.text = me.localtxt.ok;
+				MB.CANCEL.text = me.localtxt.cancel;
+				MB.YES.text = me.localtxt.yes;
+				MB.NO.text = me.localtxt.no;
+				MB.OKCANCEL[0].text = me.localtxt.cancel;    // Cancel
+				MB.OKCANCEL[1].text = me.localtxt.ok;        // OK
+				MB.YESNOCANCEL[0].text = me.localtxt.cancel; // Cancel
+				MB.YESNOCANCEL[1].text = me.localtxt.no;     // No
+				MB.YESNOCANCEL[2].text = me.localtxt.yes;    // Yes
+				MB.YESNO[0].text = me.localtxt.no;           // No
+				MB.YESNO[1].text = me.localtxt.yes;          // Yes
+				//A faire pour la version iphone
+				if (Ext.picker) {
+				if (Ext.picker.Picker){
+					Ext.override(Ext.picker.Picker, {
+						config: {
+							doneButton: {
+								text: me.localtxt.ok
+							},
+							cancelButton: {
+								text: me.localtxt.cancel
+							}
+						}
+					});
+				}
+				}
 				
 				me.articleView = Ext.create('myreadings.view.article');
 				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
@@ -149,15 +177,11 @@ Ext.define('myreadings.controller.articlesControl', {
 				if(me.isInit==true) {
 					me.getBtconfigpanelhide().show();
 					me.getConfigpanel().hide();
-					//me.getArticleslist().show();
 				}
 				
 				me.bases = result.config.bases;
-				//console.log(bases);
 				var newOptions = [];
 				for (var base in me.bases) {
-					//console.log(base);
-					//console.log(me.bases[base]);
 					newOptions.push({text: base,  value: me.bases[base]});
 				}
 				Ext.getCmp('base').setOptions(newOptions);
@@ -166,9 +190,23 @@ Ext.define('myreadings.controller.articlesControl', {
 				Ext.getCmp('base').enable();
 				me.pathbase=Ext.getCmp('base').getValue();
 				
-				Ext.getCmp('profil').enable();
+				//console.log("set profil dans config panel " + me.profil);
+				Ext.getCmp('profil').setHtml(me.localtxt.txtProfil+": "+me.localtxt[me.profil])
 				
 				me.showArticles();
+				
+				if(me.profil=="iphone") {
+					me.getTitlebar().setTitle('');
+					Ext.getCmp('order').setFlex(1);
+					me.getTypelistfind().setFlex(1);
+					me.articleView.setWidth('100%');
+					me.articleView.setHeight('100%');
+				} else {
+					Ext.getCmp('order').setWidth(230);
+					me.getTypelistfind().setWidth(150);
+					me.articleView.setWidth('92%');
+					me.articleView.setHeight('92%');
+				}
 				
 				if(result.config.connect=="noprotect") {
 					me.getLoginfieldset().hide();
@@ -182,8 +220,6 @@ Ext.define('myreadings.controller.articlesControl', {
 				//Login/pass incorrect
 				if(me.isInit!=true) {
 					me.logged=false;
-					//Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
-					//Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
 					me.getBtconfigpanelhide().hide();
 					me.getConfigpanel().show();
 					Ext.Msg.alert(me.localtxt.error,me.localtxt.mustloginandpass);
@@ -224,9 +260,7 @@ Ext.define('myreadings.controller.articlesControl', {
     
     loadliststore: function(list, search) {
         var listview = Ext.getCmp('listview');
-        //if (search == '') return false;
         var store = listview.getStore();
-	//if(list!='')
 	store.getProxy().setExtraParam('pathbase',this.pathbase);
 	store.getProxy().setExtraParam('mylogin',this.username);
         store.getProxy().setExtraParam('mypass',this.password);
@@ -246,17 +280,16 @@ Ext.define('myreadings.controller.articlesControl', {
 		this.username = this.getUsernameCt().getValue(),
 		this.password = this.getPasswordCt().getValue();
 		if(!Ext.isEmpty(this.password) && !Ext.isEmpty(this.username)) {
-			var user = Ext.create('myreadings.model.CurrentUser', {
+			var user = Ext.create('myreadings.model.myreadingsUser', {
 				id: 1,
 				name: this.username,
 				pass: this.password
 			});
 			user.save();
-			//window.location.reload();
 			this.init();
 		} else Ext.Msg.alert(this.localtxt.error,this.localtxt.mustloginandpass);
 	} else {
-		Ext.ModelMgr.getModel('myreadings.model.CurrentUser').load(1, {
+		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			success: function(user) {
 				Ext.Msg.confirm(this.localtxt.msg, this.localtxt.notloginconfirm, function(confirmed) {
 					if (confirmed == 'yes') {
@@ -271,7 +304,17 @@ Ext.define('myreadings.controller.articlesControl', {
 		}, this);
 	}
     },
+    //Lancé si dans routes une profil existant est indiqué
+    profilchoice: function(profil) {
+	    //console.log("profilchoice"+ profil);
+	    if(profil=="ipad"||profil=="gtab"||profil=="iphone") this.profil=profil;
+	    else this.profil="ipad";
+    },
     
+    onChangeListView: function() {
+	    this.loadliststore(this.getTypelistfind().getValue(), this.getSearchfieldfind().getValue());
+    },
+    //Non nécessaire pour le résumé du livre.
     nl2br: function(str) {
 	    // Converts newlines to HTML line breaks
 	    var breakTag = '<br />';
