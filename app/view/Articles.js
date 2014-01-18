@@ -69,47 +69,16 @@ Ext.define('myreadings.view.Articles', {
                     '</tpl>'+
                 '</div>'+
             '</tpl>';
-	    
-	    var tplgtab = '<tpl if="landscape">'+
-                '<div class="row landscape">'+
-                    '<tpl for="items">'+
-                        '{% if (xindex < 5) { %}'+mytplipad+
-                        '{% } %}'+
-                    '</tpl>'+
-                '</div>'+
-
-            '</tpl>'+
-
-            '<tpl if="!landscape">'+
-                '<div class="row portrait">'+
-                    '<tpl for="items">'+
-                        '{% if (xindex < 4) { %}'+mytplipad+
-                        '{% } %}'+
-                    '</tpl>'+
-                '</div>'+
-                '<div class="row portrait">'+
-                    '<tpl for="items">'+
-                        '{% if (xindex > 3 && xindex < 7) { %}'+mytplipad+
-                       '{% } %}'+
-                    '</tpl>'+
-                '</div>'+
-                '<div class="row portrait">'+
-                    '<tpl for="items">'+
-                        '{% if (xindex > 6 && xindex <10) { %}'+mytplipad+
-                        '{% } %}'+
-                    '</tpl>'+
-                '</div>'+
-            '</tpl>';
-	    
-            //avec retour à la ligne pour title (avec tapclass), sans pubDate, sans txtBy
-	    var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
+	
+	//avec retour à la ligne pour title et seriesName (avec tapclass), sans pubDate, sans txtBy
+	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
 			'</div>'+
 			'<div class="name"><span class="tapclass">{data.title}</span></div>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
-                        '<tpl if="data.seriesName"><div class="txtpetititalique">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="txtpetititalique"><span class="tapclass">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl><span class="tapclass"></div></tpl>'+
                     '</div></div>';
 		    //sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
@@ -122,7 +91,7 @@ Ext.define('myreadings.view.Articles', {
                     '</div></div>';
 
 	    
-	    var tpliphone = '<tpl if="landscape">'+
+	var tpliphone = '<tpl if="landscape">'+
                 '<div class="row landscape">'+
                     '<tpl for="items">'+
                         '{% if (xindex < 5) { %}'+mytpliphone+
@@ -146,13 +115,57 @@ Ext.define('myreadings.view.Articles', {
                     '</tpl>'+
                 '</div>'+
             '</tpl>';
-	    
-	    
+	
+	//version galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.
+	var mytplgtab= '<div class="clsarticle" ref="{data.id}"><div class="gtab">'+
+    			'<div class="fond">'+
+    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+			'</div>'+
+			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
+                        '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
+                        '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="txtpetititalique">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+                    '</div></div>';
+	var tplgtab = '<tpl if="landscape">'+
+                '<div class="row landscape">'+
+                    '<tpl for="items">'+
+                        '{% if (xindex < 5) { %}'+mytplgtab+
+                        '{% } %}'+
+                    '</tpl>'+
+                '</div>'+
+                '<div class="row landscape">'+
+                    '<tpl for="items">'+
+                        '{% if (xindex > 4 && xindex < 9) { %}'+mytplgtab+
+                        '{% } %}'+
+                    '</tpl>'+
+                '</div>'+
+            '</tpl>'+
+
+            '<tpl if="!landscape">'+
+                '<div class="row portrait">'+
+                    '<tpl for="items">'+
+                        '{% if (xindex < 4) { %}'+mytplipad+
+                        '{% } %}'+
+                    '</tpl>'+
+                '</div>'+
+                '<div class="row portrait">'+
+                    '<tpl for="items">'+
+                        '{% if (xindex > 3 && xindex < 7) { %}'+mytplipad+
+                       '{% } %}'+
+                    '</tpl>'+
+                '</div>'+
+                '<div class="row portrait">'+
+                    '<tpl for="items">'+
+                        '{% if (xindex > 6 && xindex <10) { %}'+mytplipad+
+                        '{% } %}'+
+                    '</tpl>'+
+                '</div>'+
+            '</tpl>';
 	    
 	    var mycontroller = myreadings.app.getController('articlesControl');
 	    if(profil=="gtab") {
 		    mycontroller.countPortrait=9;
-		    mycontroller.countLandscape=4;
+		    mycontroller.countLandscape=8;
 		    return tplgtab;
 	    } else if(profil=="iphone") {
 		    mycontroller.countPortrait=6;

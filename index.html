@@ -1,12 +1,11 @@
 <!DOCTYPE HTML>
 <html manifest="" lang="fr-FR">
 <head>
-    
+    <meta charset="UTF-8">
     <meta name="msapplication-TileColor" content="#d7aa72"/>
     <meta name="msapplication-TileImage" content="./resources/images/tuiles/tile4.png"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta charset="UTF-8">
     <title>My Readings</title>
     <style type="text/css">
          /**
@@ -14,11 +13,10 @@
          * It is recommended to keep this as minimal as possible to provide instant feedback
          * while other resources are still being loaded for the first time
          */
-        /*
-         html, body {
+        html, body {
             height: 100%;
-            background-color: #1985D0
-        }*/
+            background-color: #edd8bb;
+        }
 
         #appLoadingIndicator {
             position: absolute;
@@ -55,7 +53,61 @@
             }
         }
 	
-
+.gtab	{
+	color: black;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+}
+.gtab .fond {
+        	margin-top: 10px;
+        	margin-left: auto;
+        	margin-right: auto;
+        	height: 170px;
+        	width: 119px;
+        	text-align:center;
+        	background-repeat: no-repeat;
+        	background-position: center center;
+		background-size: cover;
+		background-image:url(./resources/images/bg_book.png);
+        }
+.gtab .vignette {
+        	width: 108px;
+        	height: 161px;
+        	position: relative;
+        	top: 2px;
+        	left: -6px;
+        }
+/*idem ipad*/
+.gtab .name {
+            padding: 3px 10px 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab .txt {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab .txtpetit {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab .txtpetititalique {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+	
+	
+	
+	
+	
+	
 .iphone	{
 	width: 100%;
         text-align: center;
@@ -66,18 +118,19 @@
         	margin-left: auto;
         	margin-right: auto;
         	height: 143px;
-        	width: 99px;
+        	width: 98px;
         	text-align:center;
-        	/*background-repeat: no-repeat;
+        	background-repeat: no-repeat;
         	background-position: center center;
-        	background-image:url(../images/bg_book.png);*/
+		background-size: cover;
+        	background-image:url(./resources/images/bg_book.png);
         }
 .iphone .vignette {
         	width: 90px;
-        	height: 134px;
+        	height: 135px;
         	position: relative;
         	top: 2px;
-        	left: -3px;
+        	left: -4px;
         }
 .iphone .name {
             padding: 2px 5px 2px 5px;
@@ -124,6 +177,9 @@
 .coveriphone {
 	max-width: 100px;
 }
+.covergtab {
+	max-width: 180px;
+}
 .commentiphone {
 	font-size : 10px;
 	color : #000000;
@@ -143,8 +199,7 @@
         	text-decoration: none;
 }
 
-
-</style>
+    </style>
     <!-- The line below must be kept intact for Sencha Command to build your application -->
     <script id="microloader" type="text/javascript" src=".sencha/app/microloader/development.js"></script>
 </head>

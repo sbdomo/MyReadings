@@ -154,6 +154,24 @@ Ext.define('myreadings.view.article', {
 			'<tpl for="files">'+
 				'<div class="clear"><a class="epubiphone" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>'+
 			'</tpl>';
+	    //pour galaxy tab comme ipad mais avec image plus petite
+	    var tplgtab='<p>&nbsp;</p>'+
+			'<tpl for="books">'+
+				'<div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="covergtab"/></tpl></div>'+
+				'<tpl if="authorsName"><div class="titre">'+this.txtBy+' {authorsName}</div></tpl>'+
+				'<div><span class="txt_normal">'+
+					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
+					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
+					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
+					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<br /><span class="comment">{comment}</span>'+
+				'</span><br /></div>'+
+				'</div>'+
+			'</tpl>'+
+			'<tpl for="files">'+
+				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>'+
+			'</tpl>';
 	    var mycontroller = myreadings.app.getController('articlesControl');
 	    if(profil=="gtab") {
 		    return tplgtab;

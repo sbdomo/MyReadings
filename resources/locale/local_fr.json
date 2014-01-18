@@ -26,7 +26,7 @@
 	"txtSeries":"Séries:",
 	"txtPubdate":"Année de publication:",
 	"txtLang":"Langue(s):",
-	"msgError":"Problème lors de la recherche."	
+	"msgError":"Problème lors de la recherche."
 },
 "Articles":{
 	"txtBy": "de"
@@ -66,6 +66,7 @@
 },
 "lang":
 {
-	"fra": "français"
+	"fra": "français",
+	"eng": "anglais"
 }
 }

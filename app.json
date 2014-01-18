@@ -73,8 +73,17 @@
     "css": [
         {
             "path": "resources/css/app.css",
+	    "theme": "Default",
+	    "platform": ["desktop", "phone", "tablet"],
+	    //"platform": ["android", "blackberry", "chrome", "desktop", "firefox", "ie10", "ios", "ios-classic", "phone", "safari", "tablet", "tizen"],
             "update": "full"
-        }
+        },
+        {
+            "path": "resources/css/flat.css",
+	    "platform": ["flat"],
+	    "theme": "Flat",
+	    "update": "full"
+	}
     ],
 
     /**
@@ -144,5 +153,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "26304731-5da2-41da-b376-9b5219d6ee9f"
+    "id": "f50979be-2dc0-4bf5-932c-b0c40c3561ff"
 }

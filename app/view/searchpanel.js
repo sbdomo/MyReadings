@@ -15,18 +15,18 @@ Ext.define('myreadings.view.searchpanel', {
 	txtFindTextButton: "",
 	txtFieldsetList: "",
 	txtFieldsetListButton: "",
-	config: {
-		fullscreen: true,
+	//config: {
+		//fullscreen: true,
 		//modal: true,
 		//hideOnMaskTap: true,
 		//centered: true,
-		hidden: true//,
+		//hidden: true//,
 		//width: '500px',
 		//height: '600px',
 		//maxWidth: '95%',
 		//maxHeight: '95%',
 		//items:
-	},
+	//},
 	initialize: function() {
     	    this.setItems(
     	    [
@@ -49,9 +49,9 @@ Ext.define('myreadings.view.searchpanel', {
     	    {
     	    	    xtype: 'fieldset',
     	    	    title: this.txtFieldsetFindText,
-    	    	    defaults: {
-    	    	    	    labelWidth: '90px'
-    	    	    },
+    	    	    //defaults: {
+    	    	    //	    labelWidth: '90px'
+    	    	    //},
     	    	    items:[
     	    	    	  {
     	    	    	  	  xtype:'searchfield',

@@ -1,18 +1,18 @@
 {"views":
 {
 "searchpanel":{
-	"txtTitle":"Recherche",
-	"txtFieldsetFindText": "Rechercher du texte :",
-	"txtSearchfieldFind": "Texte à rechercher...",
-	"txtFindTextType": "dans",
-	"txtFindTextTypeTitle": "le titre",
-	"txtFindTextTypeAuthor": "le nom de l'auteur",
-	"txtFindTextTypeSerie": "la série",
-	"txtFindTextTypeTag": "l'étiquette",
-	"txtFindTextToStart": "au début",
-	"txtFindTextButton": "Rechercher",
-	"txtFieldsetList": "ou recherche dans une liste:",
-	"txtFieldsetListButton": "Afficher la liste",
+	"txtTitle":"Search",
+	"txtFieldsetFindText": "Search for text :",
+	"txtSearchfieldFind": "Text to search...",
+	"txtFindTextType": "in",
+	"txtFindTextTypeTitle": "the title",
+	"txtFindTextTypeAuthor": "the name of the author",
+	"txtFindTextTypeSerie": "the series",
+	"txtFindTextTypeTag": "the tag",
+	"txtFindTextToStart": "At first",
+	"txtFindTextButton": "Search",
+	"txtFieldsetList": "or search in a list:",
+	"txtFieldsetListButton": "Show the list",
 },
 "ArticlesList":{
 	"txtOrderRecent":" Added last ones",
@@ -21,25 +21,48 @@
 	"txtOrderSerie": " By series",
 },
 "article":{
-	"txtBy": "de",
-	"txtTags":"Etiquettes:",
-	"txtSeries":"Collections:",
-	"txtPubdate":"Année de publication:",
-	"txtLang":"Langue :",
-	"msgError":"Problème lors de la recherche."	
+	"txtBy": "by",
+	"txtTags":"Tags:",
+	"txtSeries":"Series:",
+	"txtPubdate":"Year of publication:",
+	"txtLang":"Language(s):",
+	"msgError":"Problem during the search."
 },
 "Articles":{
-	"txtBy": "de"
+	"txtBy": "by"
 },
 "listview":{
-	"txtAuthor":" Auteurs",
-	"txtSerie":" Séries",
-	"txtTag":" Etiquettes",
-	"txtSearch":" Rechercher",
-	"txtLoadMore":"Chargement...",
-	"txtnoMoreRecords":"Fin de la liste",
-	"txtEmpty":"Liste vide"
+	"txtAuthor":" Authors",
+	"txtSerie":" Series",
+	"txtTag":" Tags",
+	"txtSearch":" Search",
+	"txtLoadMore":"More...",
+	"txtnoMoreRecords":"End of the list",
+	"txtEmpty":"Empty list"
+},
+"configpanel":{
+	"txtSelectbase": "Calibre Store",
+	"txtTitleLogin": "Connection",
+	"txtLogin": "Name",
+	"txtPass": "Password",
+	"txtLoginButton": "Log in"
 }
+},
+"controller":{
+	"notlogin":"Logout",
+	"error":"Error",
+	"mustloginandpass":"You need a login and password.",
+	"errorlogin":"Invalid login.",
+	"msg":"Message",
+	"notloginconfirm":"Do you want to logout?",
+	"yes":"yes",
+	"no":"no",
+	"ok":"OK",
+	"cancel":"Cancel",
+	"txtProfil": "Profile",
+	"ipad": "Ipad/ Ipad Mini",
+	"gtab": "Galaxy Tab",
+	"iphone": "iPhone"
 },
 "lang":
 {

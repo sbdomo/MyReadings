@@ -2,34 +2,39 @@
 <html manifest="" lang="fr-FR">
 <head>
 	<meta charset="UTF-8">
-	<title>MyReadings - Galaxy Tab 2 7.0	</title>
+	<title>MyReadings - iPad</title>
 <style type="text/css">	
-#galaxytab {
+#ipad {
 }
 
-#galaxytab.landscape {
+#ipad.landscape {
   background: url('skin/galaxytab2_landscape.png');
   width: 1265px;
   height: 803px;
 }
-#galaxytab.portrait {
+
+#ipad.portrait {
   background: url('skin/galaxytab2_portrait.png');
   width: 803px;
   height: 1265px;
 }
-#galaxytab #frame {
+
+#ipad #frame {
   border: none;
   background: #fff;
   position: relative;
-  left: 120px;
-  top: 101px;
 }
 
-#galaxytab.landscape #frame {
+#ipad.landscape #frame {
+  left: 35px;
+  top: 101px;
   width: 1024px;
   height: 554px;
 }
+
 #ipad.portrait #frame {
+  left: 63px;
+  top: 120px;
   width: 554px;
   height: 1024px;
 }
@@ -40,7 +45,8 @@
 .button {
   width: 40px;
   height: 40px;
-  margin: 8px;
+  margin-left: 45px;
+  margin-top: 45px;
   display: block;
   float: left;
   text-align: center;
@@ -50,17 +56,19 @@
 .button#rotate {
   background: url('skin/rotate.png');
 }
+
+
 </style>
 </head>
 <body>
 <script type="text/javascript">
 function change_orient() {
-	var deviceformat = document.getElementById("galaxytab");
-	if(deviceformat.className=="landscape") deviceformat.className= "portrait";
-	else deviceformat.className= "landscape";
+	var ipadformat = document.getElementById("ipad");
+	if(ipadformat.className=="landscape") ipadformat.className= "portrait";
+	else ipadformat.className= "landscape";
 }
 </script>
-<div id="galaxytab" class="landscape">
+<div id="ipad" class="landscape">
 <div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
 <iframe id="frame" src="./#profil/gtab"></iframe>
 </div>

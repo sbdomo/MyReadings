@@ -50,6 +50,7 @@ Ext.define('myreadings.view.configpanel', {
 			},
 			{
 				xtype: 'button',
+				margin: '10 40 10 40',
 				text: this.txtLoginButton,
 				name: 'loginbutton',
 				ui: 'confirm'
