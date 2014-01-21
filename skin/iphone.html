@@ -14,13 +14,13 @@ body {
 }
 
 #device.landscape {
-  background: url('skin/iphone_landscape.png');
+  background: url('./iphone_landscape.png');
   width: 713px;
   height: 365px;
 }
 
 #device.portrait {
-  background: url('skin/iphone_portrait.png');
+  background: url('./iphone_portrait.png');
   width: 365px;
   height: 713px;
 }
@@ -60,7 +60,7 @@ body {
 }
 
 .button#rotate {
-  background: url('skin/rotate.png');
+  background: url('./rotate.png');
 }
 
 
@@ -76,7 +76,7 @@ function change_orient() {
 </script>
 <div id="device" class="portrait">
 <div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
-<iframe id="frame" src="./#profil/iphone"></iframe>
+<iframe id="frame" src="../#profil/iphone"></iframe>
 </div>
 </body>
 </html>

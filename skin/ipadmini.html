@@ -2,41 +2,39 @@
 <html manifest="" lang="fr-FR">
 <head>
 	<meta charset="UTF-8">
-	<title>MyReadings - iPad</title>
+	<title>MyReadings - iPad mini</title>
 <style type="text/css">	
 #ipad {
 }
 
 #ipad.landscape {
-  background: url('skin/galaxytab2_landscape.png');
-  width: 1265px;
-  height: 803px;
+  background: url('./ipadmini_landscape.png');
+  width: 1278px;
+  height: 841px;
 }
 
 #ipad.portrait {
-  background: url('skin/galaxytab2_portrait.png');
-  width: 803px;
-  height: 1265px;
+  background: url('./ipadmini_portrait.png');
+  width: 846px;
+  height: 1278px;
 }
 
 #ipad #frame {
   border: none;
   background: #fff;
   position: relative;
+  left: 38px;
+  top: 58px;
 }
 
 #ipad.landscape #frame {
-  left: 35px;
-  top: 101px;
   width: 1024px;
-  height: 554px;
+  height: 750px;
 }
 
 #ipad.portrait #frame {
-  left: 63px;
-  top: 120px;
-  width: 554px;
-  height: 1024px;
+  width: 768px;
+  height: 1004px;
 }
 
 #frame::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
@@ -45,8 +43,7 @@
 .button {
   width: 40px;
   height: 40px;
-  margin-left: 45px;
-  margin-top: 45px;
+  margin: 25px;
   display: block;
   float: left;
   text-align: center;
@@ -54,7 +51,7 @@
 }
 
 .button#rotate {
-  background: url('skin/rotate.png');
+  background: url('./rotate.png');
 }
 
 
@@ -70,7 +67,7 @@ function change_orient() {
 </script>
 <div id="ipad" class="landscape">
 <div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
-<iframe id="frame" src="./#profil/gtab"></iframe>
+<iframe id="frame" src="../index.html"></iframe>
 </div>
 </body>
 </html>

@@ -2,34 +2,34 @@
 <html manifest="" lang="fr-FR">
 <head>
 	<meta charset="UTF-8">
-	<title>MyReadings - iPad mini</title>
+	<title>MyReadings - iPad</title>
 <style type="text/css">	
 #ipad {
 }
 
 #ipad.landscape {
-  background: url('skin/ipadmini_landscape.png');
-  width: 1278px;
-  height: 841px;
+  background: url('./ipad_landscape.png');
+  width: 1108px;
+  height: 852px;
 }
 
 #ipad.portrait {
-  background: url('skin/ipadmini_portrait.png');
-  width: 846px;
-  height: 1278px;
+  background: url('./ipad_portrait.png');
+  width: 852px;
+  height: 1108px;
 }
 
 #ipad #frame {
   border: none;
   background: #fff;
   position: relative;
-  left: 38px;
-  top: 58px;
+  left: -14px;
+  top: 62px;
 }
 
 #ipad.landscape #frame {
   width: 1024px;
-  height: 750px;
+  height: 748px;
 }
 
 #ipad.portrait #frame {
@@ -43,7 +43,7 @@
 .button {
   width: 40px;
   height: 40px;
-  margin: 25px;
+  margin: 8px;
   display: block;
   float: left;
   text-align: center;
@@ -51,7 +51,7 @@
 }
 
 .button#rotate {
-  background: url('skin/rotate.png');
+  background: url('./rotate.png');
 }
 
 
@@ -67,7 +67,7 @@ function change_orient() {
 </script>
 <div id="ipad" class="landscape">
 <div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
-<iframe id="frame" src="./index.html"></iframe>
+<iframe id="frame" src="../?platform=wood"></iframe>
 </div>
 </body>
 </html>

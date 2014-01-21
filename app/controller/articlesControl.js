@@ -123,7 +123,7 @@ Ext.define('myreadings.controller.articlesControl', {
 		});
 	}
 	Ext.data.JsonP.request({
-            url: './php/getConfig.php',
+            url: './getConfig.php',
             callbackKey: 'callback',
             params: {
             	   mylogin: me.username,

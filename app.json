@@ -74,14 +74,14 @@
         {
             "path": "resources/css/app.css",
 	    "theme": "Default",
-	    "platform": ["desktop", "phone", "tablet"],
+	    "platform": ["desktop", "phone", "tablet", "flat"],
 	    //"platform": ["android", "blackberry", "chrome", "desktop", "firefox", "ie10", "ios", "ios-classic", "phone", "safari", "tablet", "tizen"],
             "update": "full"
         },
         {
-            "path": "resources/css/flat.css",
-	    "platform": ["flat"],
-	    "theme": "Flat",
+            "path": "resources/css/wood.css",
+	    "platform": ["wood"],
+	    "theme": "wood",
 	    "update": "full"
 	}
     ],
@@ -117,11 +117,7 @@
         "resources/startup",
         "resources/locale",
         "skin",
-        "php",
-        "ipad.html",
-        "ipadmini.html",
-        "iphone.html",
-        "galaxytab.html",
+        "getConfig.php",
         "favicon.ico",
         "recordjson.php",
         "recordsjson.php",

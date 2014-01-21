@@ -21,7 +21,7 @@ Ext.define("myreadings.view.listview",{
             '{name} ({count})'
 	    ],
 	    listeners: {
-		    disclose: function(list, record) {
+		    itemtap: function(view, index, target, record, event){
 			    Ext.getCmp('searchview').hide();
 			    myreadings.app.getController('articlesControl').showArticles({
 			    	type: this.getStore().getProxy().getExtraParams()['list'],

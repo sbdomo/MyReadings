@@ -8,33 +8,35 @@
 }
 
 #ipad.landscape {
-  background: url('skin/ipad_landscape.png');
-  width: 1108px;
-  height: 852px;
+  background: url('./galaxytab2_landscape.png');
+  width: 1265px;
+  height: 803px;
 }
 
 #ipad.portrait {
-  background: url('skin/ipad_portrait.png');
-  width: 852px;
-  height: 1108px;
+  background: url('./galaxytab2_portrait.png');
+  width: 803px;
+  height: 1265px;
 }
 
 #ipad #frame {
   border: none;
   background: #fff;
   position: relative;
-  left: -14px;
-  top: 62px;
 }
 
 #ipad.landscape #frame {
+  left: 35px;
+  top: 101px;
   width: 1024px;
-  height: 748px;
+  height: 554px;
 }
 
 #ipad.portrait #frame {
-  width: 768px;
-  height: 1004px;
+  left: 63px;
+  top: 120px;
+  width: 554px;
+  height: 1024px;
 }
 
 #frame::-webkit-scrollbar { width: 4px; height: 4px; background: transparent; }
@@ -43,7 +45,8 @@
 .button {
   width: 40px;
   height: 40px;
-  margin: 8px;
+  margin-left: 45px;
+  margin-top: 45px;
   display: block;
   float: left;
   text-align: center;
@@ -51,7 +54,7 @@
 }
 
 .button#rotate {
-  background: url('skin/rotate.png');
+  background: url('./rotate.png');
 }
 
 
@@ -67,7 +70,7 @@ function change_orient() {
 </script>
 <div id="ipad" class="landscape">
 <div class="buttons"><div class="button" id="rotate" onclick="change_orient()"></div></div>
-<iframe id="frame" src="./index.html"></iframe>
+<iframe id="frame" src="../#profil/gtab"></iframe>
 </div>
 </body>
 </html>

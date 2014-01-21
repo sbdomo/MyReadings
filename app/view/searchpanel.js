@@ -49,9 +49,9 @@ Ext.define('myreadings.view.searchpanel', {
     	    {
     	    	    xtype: 'fieldset',
     	    	    title: this.txtFieldsetFindText,
-    	    	    //defaults: {
-    	    	    //	    labelWidth: '90px'
-    	    	    //},
+    	    	    defaults: {
+    	    	    	    labelWidth: '35%'
+    	    	    },
     	    	    items:[
     	    	    	  {
     	    	    	  	  xtype:'searchfield',
