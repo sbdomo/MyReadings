@@ -74,9 +74,9 @@ Ext.define('myreadings.view.configpanel', {
 						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
 						if(!this.getDisabled()) {
 							var mycontroller = myreadings.app.getController('articlesControl');
-							mycontroller.pathbase=value;
 							//toute la base : type=all
 							mycontroller.showArticles({
+									pathbase: value,
 									type: "all",
 									debut: 5
 							});

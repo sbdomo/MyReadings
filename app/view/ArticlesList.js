@@ -47,6 +47,7 @@ Ext.define('myreadings.view.ArticlesList', {
     	    {
     	    	    xtype: 'selectfield',
     	    	    name: 'order',
+		    disabled: true, //Pour ne pas activer l'événement change lors de l'initialisation
     	    	    //dans articlesControl: flex: 1 si iphone, width: 230 sinon
     	    	    //width: 230,
     	    	    id: 'order',
@@ -68,10 +69,13 @@ Ext.define('myreadings.view.ArticlesList', {
     	    	    listeners:
     	    	    {
     	    	    	change:function(selectbox,value,oldvalue){
+				//Test si enabled, ne fait rien sinon (sert lors de l'initialisation)
+				if(!this.getDisabled()) {
     	    	    		myreadings.app.getController('articlesControl').showArticles({
     	    	    			order: value,
     	    	    			debut: 4
     	    	    		});
+				}
     	    	    	}
     	    	    }
     	    },
