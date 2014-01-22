@@ -1,6 +1,5 @@
 # My Readings
 ======
-![Myreadings Icon](http://sbdomo.esy.es/wp-content/uploads/2014/01/Iconipad@2x.png)
 ### Interface web pour Calibre
 (optimisée pour les appareils tactiles, sans besoin d'un serveur Calibre)
 
