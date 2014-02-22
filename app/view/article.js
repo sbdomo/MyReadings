@@ -38,21 +38,21 @@ Ext.define('myreadings.view.article', {
 	[
 	{
 		xtype:'titlebar',
-		    docked: 'top',
-		    id:"articletitle",
-		    ui: "searchbar",
-		    items: [
-	{
-    	    	xtype: "button",
-		ui: 'decline',
-    	    	    	   	   align: 'left',
-    	    	    	   	   iconCls: 'delete',
-    	    	    	   	   iconMask: true,
-    	    	    	   	   handler: function(){
-    	    	    	   	   	   me.hide();
-    	    	    	   	   }
-    	}
-	]
+		docked: 'top',
+		id:"articletitle",
+		ui: "searchbar",
+		items: [
+		{
+			xtype: "button",
+			ui: 'decline',
+			align: 'left',
+			iconCls: 'delete',
+			iconMask: true,
+			handler: function(){
+				me.hide();
+			}
+		}
+		]
 	},
 	{
 		id:'contenu',
@@ -80,6 +80,17 @@ Ext.define('myreadings.view.article', {
 			    }
 		    }
 		)
+	},
+	{
+		id:'cbzview',
+		text: 'Lire',
+		xtype: 'button',
+		margin:20,
+		handler: function() {
+			var result=Ext.getCmp('contenu').getData();
+			me.hide();
+			myreadings.app.getController('articlesControl').comicviewer(result, me.cbzpath);
+		}
 	}
 	]
 	);
@@ -90,9 +101,15 @@ Ext.define('myreadings.view.article', {
     	var me = this;
 	me.setMasked({xtype: 'loadmask'});
 	Ext.getCmp('articletitle').setTitle(newData.title);
-	me.relativePath = newData.relativePath;
+	
+	console.log("id: " + newData.id + " title: " + newData.title);
+	
 	Ext.getCmp('contenu').setData({});
+	Ext.getCmp('cbzview').hide();
 	var mycontrol=myreadings.app.getController('articlesControl');
+	
+	console.log("pathbase: "+mycontrol.pathbase);
+	
 	Ext.data.JsonP.request({
             url: './recordjson.php',
             callbackKey: 'callback',
@@ -108,9 +125,20 @@ Ext.define('myreadings.view.article', {
                 //Ext.Viewport.unmask();
 		if(result.success==true) {
 			var resultat = result.resultat;
-			if (result.resultat) {
-				//console.log("fiche OK " + result.resultat.films[0].datesortie);
-				Ext.getCmp('contenu').setData(result.resultat);
+			if (resultat) {
+				me.relativePath = resultat.books[0].relativePath;
+				Ext.getCmp('contenu').setData(resultat);
+				//console.log(resultat);
+				if(!newData.viewer) {
+				for (var fileId in resultat.files) {
+					//console.log(resultat.files[fileId].extension);
+					if(resultat.files[fileId].extension=="CBZ") {
+						//console.log("show");
+						me.cbzpath=myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
+						Ext.getCmp('cbzview').show();
+					}
+				}
+				}
 			} else alert(me.msgError);
 		} else Ext.Msg.alert("Error",result.message);
             },

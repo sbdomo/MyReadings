@@ -79,6 +79,12 @@ Ext.define('myreadings.view.ArticlesList', {
     	    	    	}
     	    	    }
     	    },
+	    {
+    	    	    iconCls: 'eye',
+    	    	    name: 'viewer',
+    	    	    id:'viewer',
+    	    	    iconMask: true
+    	    },
     	    {
     	    	   iconCls: 'settings',
     	    	   name: 'configbutton',

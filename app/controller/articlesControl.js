@@ -13,12 +13,14 @@ Ext.define('myreadings.controller.articlesControl', {
 	    configBt: 'articleslist [name=configbutton]',
 	    titlebar: 'articleslist [name=maintitlebar]',
 	    orderfield: 'articleslist [name=order]',
+	    viewerBt: 'articleslist [name=viewer]',
 	    
 	    loginBt: 'configpanel [name=loginbutton]',
 	    usernameCt: 'configpanel [name=login]',
 	    passwordCt: 'configpanel [name=pass]',
 	    loginfieldset: 'configpanel [name=loginfieldset]',
 	    btconfigpanelhide: 'configpanel [name=bthide]',
+	    comicSettings: 'configpanel [name=comicSettings]',
 	    
 	    typelistfind: 'listview [name=typelist]',
 	    searchfieldfind: 'listview [name=listviewSearchfield]',
@@ -28,6 +30,11 @@ Ext.define('myreadings.controller.articlesControl', {
                 autoCreate: true,
                 xtype: 'article',
                 selector: 'article'
+            },
+	    comicView: {
+                autoCreate: true,
+                xtype: 'comicview',
+                selector: 'comicview'
             }
         },
         control: {
@@ -42,6 +49,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    loginBt: {
 		    tap: 'onLoginTap'
+	    },
+	    viewerBt: {
+		    tap: 'opencomicviewer'
 	    },
 	    
 	    typelistfind: {
@@ -120,10 +130,14 @@ Ext.define('myreadings.controller.articlesControl', {
     init: function() {
 	//console.log('init controller');
 	var me=this;
+	
 	//var me=myreadings.app.getController('articlesControl');
         me.callParent();
 	me.isList = false;
 	if(!me.isInit) {
+		myreadings.currentbook = {};
+		myreadings.settings = {};
+		
 		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			scope: this,
 			success: function(cachedLoggedInUser) {
@@ -141,6 +155,21 @@ Ext.define('myreadings.controller.articlesControl', {
 				//me.list=cachedLoggedInUser.get('list');
 				//me.search=cachedLoggedInUser.get('search');
 				
+				myreadings.settings.zoom_on_tap=cachedLoggedInUser.get('zoom_on_tap');
+				myreadings.settings.toggle_paging_bar=cachedLoggedInUser.get('toggle_paging_bar');
+				myreadings.settings.page_turn_drag_threshold=cachedLoggedInUser.get('page_turn_drag_threshold');
+				myreadings.settings.page_fit_mode=cachedLoggedInUser.get('page_fit_mode');
+				myreadings.settings.page_change_area_width=cachedLoggedInUser.get('page_change_area_width');
+				myreadings.settings.open_current_comic_at_launch=cachedLoggedInUser.get('open_current_comic_at_launch');
+				
+				myreadings.currentbook.idbook=cachedLoggedInUser.get('book_id');
+				myreadings.currentbook.reading=cachedLoggedInUser.get('book_reading');
+				myreadings.currentbook.name=cachedLoggedInUser.get('book_title');
+				myreadings.currentbook.idbase=cachedLoggedInUser.get('book_idbase');
+				myreadings.currentbook.path=cachedLoggedInUser.get('book_path');
+				myreadings.currentbook.current_page_nr=cachedLoggedInUser.get('book_currentpage');
+				myreadings.currentbook.number_of_pages=cachedLoggedInUser.get('book_pages');
+				
 				
 				console.info('Auto-Login succeeded.');
 			},
@@ -155,6 +184,23 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.idlist="";
 				//me.list="author";
 				//me.search="";
+				
+				//*************SETTINGS*****************
+				//Zoom: 1:SingleTap, 2:DoubleTap
+				myreadings.settings.zoom_on_tap =1;
+				//Cache barre d'outils: 1:SingleTap, 2:DoubleTap
+				myreadings.settings.toggle_paging_bar=2;
+				//taille déplacement pour swipe
+				myreadings.settings.page_turn_drag_threshold=75;
+				// 1: Fit width, 2: Full page
+				myreadings.settings.page_fit_mode=1;
+				//Largeur bande pour changement de page
+				myreadings.settings.page_change_area_width=50;
+				//Open comic at launch
+				myreadings.settings.open_current_comic_at_launch=1;
+				
+				myreadings.currentbook.reading=false;
+				
 				console.warn('Auto-Login failed (user was not logged in).');
 			}
 		});
@@ -204,6 +250,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				}
 				
+				me.comicView = Ext.create('myreadings.view.comicview');
 				me.articleView = Ext.create('myreadings.view.article');
 				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
 				Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
@@ -213,6 +260,7 @@ Ext.define('myreadings.controller.articlesControl', {
 			if(result.config.connect=="noprotect"||result.config.connect=="protectok") {
 				if(me.isInit==true) {
 					me.getBtconfigpanelhide().show();
+					me.getComicSettings().show();
 					me.getConfigpanel().hide();
 				}
 				
@@ -244,6 +292,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.showArticles();
 				
+				me.showViewerBt();
+				
+				if(myreadings.currentbook.reading) me.opencomicviewer();
+				
 				if(me.profil=="iphone") {
 					me.getTitlebar().setTitle('');
 					Ext.getCmp('order').setFlex(1);
@@ -271,6 +323,7 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.logged=false;
 					me.getBtconfigpanelhide().hide();
 					me.getConfigpanel().show();
+					me.getComicSettings().hide();
 					Ext.Msg.alert(me.localtxt.error,me.localtxt.mustloginandpass);
 					me.isInit=true;
 				} else {
@@ -299,11 +352,27 @@ Ext.define('myreadings.controller.articlesControl', {
 
         articleView.show();
     },
+    openArticle_CurrentBook: function() {
+        var articleView = this.getArticleView();
+	
+	articleView.setData({
+			id: myreadings.currentbook.idbook,
+			title: myreadings.currentbook.name,
+			viewer: true
+	});
+	
+	if (!articleView.getParent()) {
+		Ext.Viewport.add(articleView);
+        }
+	
+        articleView.show();
+    },
     
     onSearchTap: function() {
 	    Ext.getCmp('searchview').show();
     },
     onConfigTap: function() {
+	    Ext.getCmp('configpanel').down('#comicSettings').onInit();
 	    Ext.getCmp('configpanel').show();
     },
     
@@ -332,7 +401,14 @@ Ext.define('myreadings.controller.articlesControl', {
 			var user = Ext.create('myreadings.model.myreadingsUser', {
 				id: 1,
 				name: this.username,
-				pass: this.password
+				pass: this.password,
+				
+				zoom_on_tap: myreadings.settings.zoom_on_tap,
+				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
+				page_turn_drag_threshold: myreadings.settings.page_turn_drag_threshold,
+				page_fit_mode: myreadings.settings.page_fit_mode,
+				page_change_area_width: myreadings.settings.page_change_area_width,
+				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch
 			});
 			user.save();
 			this.init();
@@ -373,11 +449,60 @@ Ext.define('myreadings.controller.articlesControl', {
 				type: this.type,
 				find: this.find,
 				start: this.start,
-				idlist: this.idlist//,
+				idlist: this.idlist,
+				
+				zoom_on_tap: myreadings.settings.zoom_on_tap,
+				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
+				page_turn_drag_threshold: myreadings.settings.page_turn_drag_threshold,
+				page_fit_mode: myreadings.settings.page_fit_mode,
+				page_change_area_width: myreadings.settings.page_change_area_width,
+				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
+				
+				book_id: myreadings.currentbook.idbook,
+				book_reading: myreadings.currentbook.reading,
+				book_title: myreadings.currentbook.name,
+				book_idbase: myreadings.currentbook.idbase,
+				book_path: myreadings.currentbook.path,
+				book_currentpage: myreadings.currentbook.current_page_nr,
+				book_pages: myreadings.currentbook.number_of_pages
+				
 				//list: this.list,
 				//search: this.search
 	    });
 	    user.save();
+    },
+    comicviewer: function(book, path) {
+	    var comicView = this.getComicView();
+	    //articleView.setData(record.data);
+	    if (!comicView.getParent()) {
+		    Ext.Viewport.add(comicView);
+	    }
+	    
+	    //Mise à jour currentbook
+	    myreadings.currentbook.idbook=book.books[0].id;
+	    myreadings.currentbook.name=book.books[0].title;
+	    myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
+	    myreadings.currentbook.path=path;
+	    myreadings.currentbook.current_page_nr=0;
+	    //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
+	    myreadings.app.getController('comic').initComic();
+	    comicView.show();
+	    this.showViewerBt();
+    },
+    opencomicviewer: function() {
+	    var comicView = this.getComicView();
+	    if (!comicView.getParent()) {
+		    Ext.Viewport.add(comicView);
+	    }
+	    myreadings.app.getController('comic').openComic();
+	    comicView.show();
+    },
+    showViewerBt: function() {
+	    if(myreadings.currentbook.idbook==null) {
+		    this.getViewerBt().hide();
+	    } else {
+		    this.getViewerBt().show();
+	    }
     },
     //Non nécessaire pour le résumé du livre.
     nl2br: function(str) {

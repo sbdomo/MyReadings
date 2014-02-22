@@ -21,4 +21,15 @@ $language="fr";
 $protect=false;
 $login="toto";
 $pass="test";
+
+
+//Contrôle parental - actif si $control=true, ignoré sinon.
+//Pour ajouter des bibliothèques à la liste par défaut (de $calibre)
+//si login2 et pass2 est utilisé
+$control=false;
+$limited=array(
+	"Autre" => "../calibre3/"
+);
+$login2="toto2";
+$pass2="test2";
 ?>

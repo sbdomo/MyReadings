@@ -11,8 +11,7 @@ $primary-text-color: #ce6f00;
 @import 'sencha-touch/cupertino';
 @import 'sencha-touch/cupertino/all';
 
-
-
+@include icon('eye');
 
 //articlescls: les articles de Article.js (pour le carousel)
 .articlescls {

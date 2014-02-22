@@ -32,6 +32,7 @@
 <?php
 require_once('config.php');
 if($calibre) {
+if($control==true) $calibre=array_merge ($calibre, $limited);
 foreach ($calibre as $key => $path) {
 	$connect=false;
 	$result="";

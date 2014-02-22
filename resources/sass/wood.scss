@@ -9,6 +9,8 @@ $toolbar-gradient: 'glossy';
 @import 'sencha-touch/default';
 //@import 'sencha-touch/default/all';
 
+@include icon('eye');
+
 @import 'sencha-touch/default/src/Class';
 @import 'sencha-touch/default/src/Button';
 @import 'sencha-touch/default/src/Panel';

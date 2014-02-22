@@ -18,6 +18,10 @@ if($protect==true) {
 	if($mylogin==$login&&$mypass==$pass) {
 		$result['bases']=$calibre;
 		$result['connect']="protectok";
+	}
+	elseif($control==true&&$mylogin==$login2&&$mypass==$pass2) {
+		$result['bases']=array_merge ($calibre, $limited);
+		$result['connect']="protectok";
 	} else {
 		$result['connect']="error";
 	}

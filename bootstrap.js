@@ -744,13 +744,18 @@ Ext.ClassManager.addNameAlternateMappings({
     "Ext.viewport.WP"
   ],
   "myreadings.controller.articlesControl": [],
+  "myreadings.controller.comic": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
   "myreadings.store.liststore": [],
   "myreadings.view.Articles": [],
   "myreadings.view.ArticlesList": [],
+  "myreadings.view.ImageViewer": [],
   "myreadings.view.article": [],
+  "myreadings.view.comicSettings": [],
+  "myreadings.view.comicSettingsPopup": [],
+  "myreadings.view.comicview": [],
   "myreadings.view.configpanel": [],
   "myreadings.view.listview": [],
   "myreadings.view.searchpanel": [],
@@ -1699,6 +1704,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [],
   "myreadings.controller.articlesControl": [],
+  "myreadings.controller.comic": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
@@ -1709,8 +1715,20 @@ Ext.ClassManager.addNameAliasMappings({
   "myreadings.view.ArticlesList": [
     "widget.articleslist"
   ],
+  "myreadings.view.ImageViewer": [
+    "widget.imageviewer"
+  ],
   "myreadings.view.article": [
     "widget.article"
+  ],
+  "myreadings.view.comicSettings": [
+    "widget.comicSettings"
+  ],
+  "myreadings.view.comicSettingsPopup": [
+    "widget.comicSettingsPopup"
+  ],
+  "myreadings.view.comicview": [
+    "widget.comicview"
   ],
   "myreadings.view.configpanel": [
     "widget.configpanel"

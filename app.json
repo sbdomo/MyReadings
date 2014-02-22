@@ -123,6 +123,7 @@
         "recordsjson.php",
         "listjson.php",
 	"configtemplate.php",
+	"comicsreader.php",
 	"testpath.php"
     ],
 

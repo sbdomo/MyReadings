@@ -46,6 +46,22 @@
 	"txtLogin": "Nom",
 	"txtPass": "Mot de passe",
 	"txtLoginButton": "S'identifier"
+},
+"comicSettings":{
+	"txtTitle": "Paramètres du lecteur",
+	"txtcomic_at_launch": "Réouvrir le livre au lancement",
+	"txtpage_fit_mode": "Ajustement de l'affichage",
+	"txtFitWidth": "à la largeur",
+	"txtFullPage": "à la page",
+	"txtZoom": "Zoom lors d'un clic",
+	"txtOff": "Arrêt",
+	"txtSingleTap": "Clic",
+	"txtDoubleTap": "Double-clic",
+	"txtToggleBar": "Afficher/masquer menu",
+	"txtDrag": "Glisser pour changer la page",
+	"txtDragThreshold": "Taille du glissement",
+	"txtChange": "Cliquer pour change de page ",
+	"txtChangeWidth": "Zone du clic",
 }
 },
 "controller":{
@@ -59,6 +75,7 @@
 	"no":"non",
 	"ok":"OK",
 	"cancel":"Annuler",
+	"openingcomic":"Ouverture du livre...",
 	"txtProfil": "Profil",
 	"ipad": "Ipad/ Ipad Mini",
 	"gtab": "Galaxy Tab",

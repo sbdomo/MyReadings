@@ -9,6 +9,7 @@ Ext.define('myreadings.view.configpanel', {
 	txtPass: "",
 	txtLoginButton: "",
 	config: {
+		layout:'vbox',
 		hidden: true
 	},
 	initialize: function() {
@@ -28,6 +29,7 @@ Ext.define('myreadings.view.configpanel', {
 				iconMask: true,
 				handler: function(){
 					var form = this.getParent().getParent().getParent();
+					form.down('#comicSettings').onSave();
 					form.hide();
 				}
 			}]
@@ -84,7 +86,15 @@ Ext.define('myreadings.view.configpanel', {
 							Ext.getCmp('searchview').setActiveItem(0);
 							Ext.getCmp('listviewSearchfield').setValue('');
 							mycontroller.isList=false;
-							this.getParent().getParent().hide();
+							
+							console.log("cache");
+							myreadings.currentbook.idbook=null;
+							mycontroller.showViewerBt();
+							
+							var form=this.getParent().getParent();
+							//sauvegarde les paramètres du comic viewer au cas où ils auraient été modifés avant le changement de base
+							form.down('#comicSettings').onSave();
+							form.hide();
 						}
 					}
 				}
@@ -95,6 +105,15 @@ Ext.define('myreadings.view.configpanel', {
 				html:''
 			}
 			]
+		},
+		{
+			xtype:'comicSettings',
+			name:'comicSettings',
+			itemId:'comicSettings',
+			height: 400,
+			scrollable: false
+			//layout: 'vbox'
+			//flex: 1
 		}
 		]
 		);
