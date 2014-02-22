@@ -124,6 +124,8 @@
         "listjson.php",
 	"configtemplate.php",
 	"comicsreader.php",
+	"cache.php",
+	"cache.json",
 	"testpath.php"
     ],
 

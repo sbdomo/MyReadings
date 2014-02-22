@@ -317,6 +317,23 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.getUsernameCt().hide();
 					me.getPasswordCt().hide();
 				}
+				//Ouverture OK - Effacement ancien du cache
+				Ext.data.JsonP.request({
+						url: './cache.php',
+						callbackKey: 'callback',
+						params: {
+							mylogin: me.username,
+							mypass: me.password
+						},
+						success: function(result, request) {
+							if(result.success==false) console.log('Error in cache.');
+							else console.log('Cache: '+result.resultat);
+						},
+						failure: function(result, request) {
+							console.log('Php Error for cache.');
+						}
+				});
+				
 			} else {
 				//Login/pass incorrect
 				if(me.isInit!=true) {

@@ -32,6 +32,26 @@
 <?php
 require_once('config.php');
 if($calibre) {
+
+if (!extension_loaded("sqlite3")) {
+  exit("sqlite3 extension not loaded. Please check your php.ini");
+} else {
+	echo '<p class="soustitre">Extension sqlite3 OK</p>';
+}
+// zip extension is needed for reading cbz files
+if (!extension_loaded("zip")) {
+	echo '<p class="soustitre">Extension zip non disponible (pour lire les cbz)</p>';
+} else {
+	echo '<p class="soustitre">Extension Zip OK</p>';
+}
+
+// zip extension is needed for reading cbz files
+if (!extension_loaded("rar")) {
+	echo '<p class="soustitre">Extension Rar non disponible (pour lire les cbr) - non géré pour l\'instant</p>';
+} else {
+	echo '<p class="soustitre">Extension Rar OK (pour lire les cbr) - non géré pour l\'instant</p>';
+}
+
 if($control==true) $calibre=array_merge ($calibre, $limited);
 foreach ($calibre as $key => $path) {
 	$connect=false;
