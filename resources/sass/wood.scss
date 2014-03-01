@@ -10,6 +10,10 @@ $toolbar-gradient: 'glossy';
 //@import 'sencha-touch/default/all';
 
 @include icon('eye');
+@include icon('switch');
+@include icon('bird');
+@include icon('anchor');
+@include icon('plane');
 
 @import 'sencha-touch/default/src/Class';
 @import 'sencha-touch/default/src/Button';

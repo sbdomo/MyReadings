@@ -719,6 +719,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Iframe": [],
   "Ext.ux.MenuButton": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
@@ -745,6 +746,7 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "myreadings.controller.articlesControl": [],
   "myreadings.controller.comic": [],
+  "myreadings.controller.epub": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
@@ -757,6 +759,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.view.comicSettingsPopup": [],
   "myreadings.view.comicview": [],
   "myreadings.view.configpanel": [],
+  "myreadings.view.epubview": [],
   "myreadings.view.listview": [],
   "myreadings.view.searchpanel": [],
   "myreadings.view.searchview": []
@@ -1673,6 +1676,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Iframe": [
+    "widget.iframe"
+  ],
   "Ext.ux.MenuButton": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
@@ -1705,6 +1711,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.viewport.WindowsPhone": [],
   "myreadings.controller.articlesControl": [],
   "myreadings.controller.comic": [],
+  "myreadings.controller.epub": [],
   "myreadings.model.article": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
@@ -1732,6 +1739,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.configpanel": [
     "widget.configpanel"
+  ],
+  "myreadings.view.epubview": [
+    "widget.epubview"
   ],
   "myreadings.view.listview": [
     "widget.listview"

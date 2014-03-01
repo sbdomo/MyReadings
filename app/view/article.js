@@ -82,6 +82,17 @@ Ext.define('myreadings.view.article', {
 		)
 	},
 	{
+		id:'epubview',
+		text: 'Lire epub',
+		xtype: 'button',
+		margin:20,
+		handler: function() {
+			var result=Ext.getCmp('contenu').getData();
+			me.hide();
+			myreadings.app.getController('articlesControl').epubviewer(result, me.epubpath);
+		}
+	},
+	{
 		id:'cbzview',
 		text: 'Lire',
 		xtype: 'button',
@@ -105,6 +116,7 @@ Ext.define('myreadings.view.article', {
 	console.log("id: " + newData.id + " title: " + newData.title);
 	
 	Ext.getCmp('contenu').setData({});
+	Ext.getCmp('epubview').hide();
 	Ext.getCmp('cbzview').hide();
 	var mycontrol=myreadings.app.getController('articlesControl');
 	
@@ -132,6 +144,11 @@ Ext.define('myreadings.view.article', {
 				if(!newData.viewer) {
 				for (var fileId in resultat.files) {
 					//console.log(resultat.files[fileId].extension);
+					if(resultat.files[fileId].extension=="EPUB") {
+						//console.log("show");
+						me.epubpath=myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
+						Ext.getCmp('epubview').show();
+					}
 					if(resultat.files[fileId].extension=="CBZ") {
 						//console.log("show");
 						me.cbzpath=myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";

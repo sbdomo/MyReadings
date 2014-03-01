@@ -35,6 +35,11 @@ Ext.define('myreadings.controller.articlesControl', {
                 autoCreate: true,
                 xtype: 'comicview',
                 selector: 'comicview'
+            },
+	    epubView: {
+                autoCreate: true,
+                xtype: 'epubview',
+                selector: 'epubview'
             }
         },
         control: {
@@ -51,7 +56,7 @@ Ext.define('myreadings.controller.articlesControl', {
 		    tap: 'onLoginTap'
 	    },
 	    viewerBt: {
-		    tap: 'opencomicviewer'
+		    tap: 'openviewer'
 	    },
 	    
 	    typelistfind: {
@@ -115,7 +120,6 @@ Ext.define('myreadings.controller.articlesControl', {
 		store.getProxy().setExtraParam('start', this.start);
 		store.getProxy().setExtraParam('idlist', this.idlist);
 	}
-        //console.log("store load");
 	store.load();
 	var articlesView= this.getArticleslist();
 
@@ -162,6 +166,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.page_change_area_width=cachedLoggedInUser.get('page_change_area_width');
 				myreadings.settings.open_current_comic_at_launch=cachedLoggedInUser.get('open_current_comic_at_launch');
 				
+				myreadings.settings.epub_mode=cachedLoggedInUser.get('epub_mode');
+				myreadings.settings.epub_font=cachedLoggedInUser.get('epub_font');
+				myreadings.settings.epub_fontsize=cachedLoggedInUser.get('epub_fontsize');
+				
 				myreadings.currentbook.idbook=cachedLoggedInUser.get('book_id');
 				myreadings.currentbook.reading=cachedLoggedInUser.get('book_reading');
 				myreadings.currentbook.name=cachedLoggedInUser.get('book_title');
@@ -169,6 +177,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.currentbook.path=cachedLoggedInUser.get('book_path');
 				myreadings.currentbook.current_page_nr=cachedLoggedInUser.get('book_currentpage');
 				myreadings.currentbook.number_of_pages=cachedLoggedInUser.get('book_pages');
+				myreadings.currentbook.book_type=cachedLoggedInUser.get('book_type');
 				
 				
 				console.info('Auto-Login succeeded.');
@@ -198,6 +207,12 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.page_change_area_width=50;
 				//Open comic at launch
 				myreadings.settings.open_current_comic_at_launch=1;
+				
+				//epub
+				myreadings.settings.epub_mode="jour";
+				myreadings.settings.epub_font="arial";
+				myreadings.settings.epub_fontsize="1.45";
+				
 				
 				myreadings.currentbook.reading=false;
 				
@@ -251,6 +266,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				
 				me.comicView = Ext.create('myreadings.view.comicview');
+				me.epubView = Ext.create('myreadings.view.epubview');
 				me.articleView = Ext.create('myreadings.view.article');
 				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
 				Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
@@ -294,7 +310,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.showViewerBt();
 				
-				if(myreadings.currentbook.reading) me.opencomicviewer();
+				if(myreadings.currentbook.reading) me.openviewer();
 				
 				if(me.profil=="iphone") {
 					me.getTitlebar().setTitle('');
@@ -475,13 +491,18 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_change_area_width: myreadings.settings.page_change_area_width,
 				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
 				
+				epub_mode: myreadings.settings.epub_mode,
+				epub_font: myreadings.settings.epub_font,
+				epub_fontsize: myreadings.settings.epub_fontsize,
+				
 				book_id: myreadings.currentbook.idbook,
 				book_reading: myreadings.currentbook.reading,
 				book_title: myreadings.currentbook.name,
 				book_idbase: myreadings.currentbook.idbase,
 				book_path: myreadings.currentbook.path,
 				book_currentpage: myreadings.currentbook.current_page_nr,
-				book_pages: myreadings.currentbook.number_of_pages
+				book_pages: myreadings.currentbook.number_of_pages,
+				book_type: myreadings.currentbook.book_type
 				
 				//list: this.list,
 				//search: this.search
@@ -501,10 +522,33 @@ Ext.define('myreadings.controller.articlesControl', {
 	    myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
 	    myreadings.currentbook.path=path;
 	    myreadings.currentbook.current_page_nr=0;
+	    myreadings.currentbook.book_type="comic";
 	    //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
 	    myreadings.app.getController('comic').initComic();
 	    comicView.show();
 	    this.showViewerBt();
+    },
+    epubviewer: function(book, path) {
+    	   var epubView = this.getEpubView();
+	    if (!epubView.getParent()) {
+		    Ext.Viewport.add(epubView);
+	    }
+	    //Mise à jour currentbook
+	    myreadings.currentbook.idbook=book.books[0].id;
+	    myreadings.currentbook.name=book.books[0].title;
+	    myreadings.currentbook.path=path;
+	    myreadings.currentbook.book_type="epub";
+	    
+	    myreadings.app.getController('epub').initEpub();
+	    this.showViewerBt();
+	    //epubView.show();
+    },
+    openviewer: function() {
+    	    if(myreadings.currentbook.book_type=="epub") {
+    	    	  this.openepubviewer();
+    	    } else if(myreadings.currentbook.book_type=="comic") {
+    	    	    this.opencomicviewer();
+    	    }
     },
     opencomicviewer: function() {
 	    var comicView = this.getComicView();
@@ -513,6 +557,14 @@ Ext.define('myreadings.controller.articlesControl', {
 	    }
 	    myreadings.app.getController('comic').openComic();
 	    comicView.show();
+    },
+    openepubviewer: function() {
+	    var epubView = this.getEpubView();
+	    if (!epubView.getParent()) {
+		    Ext.Viewport.add(epubView);
+	    }
+	    myreadings.app.getController('epub').openEpub();
+	    //comicView.show();
     },
     showViewerBt: function() {
 	    if(myreadings.currentbook.idbook==null) {

@@ -19,6 +19,11 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'page_change_area_width', type: 'int', defaultValue: 50},
 			{name: 'open_current_comic_at_launch', type: 'int', defaultValue: 1},
 			
+			//setting epub viewer
+			{name: 'epub_mode', type: 'string', defaultValue: 'jour'},
+			{name: 'epub_font', type: 'string', defaultValue: 'arial'},
+			{name: 'epub_fontsize', type: 'string', defaultValue: '1.45'},
+			
 			//livre en cours
 			{name: 'book_reading', type: 'boolean', defaultValue: false},
 			{name: 'book_id', type: 'int'},
@@ -26,7 +31,8 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'book_path', type: 'string'},
 			{name: 'book_title', type: 'string'},
 			{name: 'book_currentpage', type: 'int'},
-			{name: 'book_pages', type: 'int'}
+			{name: 'book_pages', type: 'int'},
+			{name: 'book_type', type: 'string'}
 		],
 
 		proxy: {

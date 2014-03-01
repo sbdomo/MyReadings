@@ -29,7 +29,7 @@ else erreur("No page number");
 //Le chemin est en dur pour éviter le détournement de ClearCache
 $cache="./cache";
 
-//Sera initilaisé par ParseComicArchive
+//Sera initialisé par ParseComicArchive
 $number_of_page=0;
 
 //$defaut_maxwidth=2048;

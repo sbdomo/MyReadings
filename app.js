@@ -14,12 +14,13 @@ Ext.application({
     name: 'myreadings',
 
     requires: [
-        'Ext.MessageBox'
+        'Ext.ux.Iframe',
+	'Ext.MessageBox'
     ],
     models:['article','listmodel','myreadingsUser'],
     stores:['liststore'],
-    controllers: ['articlesControl', 'comic'],
-    views: ['ArticlesList', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettings', 'comicSettingsPopup'],
+    controllers: ['articlesControl', 'comic', 'epub'],
+    views: ['ArticlesList', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettings', 'comicSettingsPopup', 'epubview'],
 
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -40,7 +41,7 @@ Ext.application({
     },
 
     launch: function() {
-    	//console.log('launch app.js');   	
+    	//console.log('launch app.js'); 	
         // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();
 

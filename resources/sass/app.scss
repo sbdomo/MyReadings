@@ -12,6 +12,24 @@ $primary-text-color: #ce6f00;
 @import 'sencha-touch/cupertino/all';
 
 @include icon('eye');
+@include icon('switch');
+@include icon('bird');
+@include icon('anchor');
+@include icon('plane');
+
+.x-toolbar .x-segmentedbutton, .x-segmentedbutton {
+	.x-button {
+		&.x-button-pressed {
+			background-color: $ios7-blue;
+			.x-button-icon {
+				color: #fff;
+			}
+		}
+	}
+}
+
+
+
 
 //articlescls: les articles de Article.js (pour le carousel)
 .articlescls {

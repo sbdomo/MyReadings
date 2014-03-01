@@ -56,7 +56,6 @@ Ext.define('myreadings.controller.comic', {
 	},
 //***************Initialisation
 	init: function() {
-		//console.log("comic view init");
 		var me = this;
 		me.preload_count = 1; // number of pages to preload before and after the current page.
                            // if 0, preloading is disabled.
@@ -75,7 +74,6 @@ Ext.define('myreadings.controller.comic', {
 	},
 	//Lancé pour initialisé l'ouverture d'un livre
 	initComic: function() {
-		console.log("openComic");
 		var me=this,
 			titlebar = me.getComictitle(),
 			imageviewer = me.getImageviewer();
@@ -119,20 +117,10 @@ Ext.define('myreadings.controller.comic', {
 		this.ShowPage(myreadings.currentbook.current_page_nr);
 	},
 	onShow: function() {
-		this.UpdateSettings();
-		//non utilisé
-		//console.log("show "+myreadings.currentbook.idbook+"page"+myreadings.currentbook.current_page_nr);
-		//if(myreadings.currentbook.current_page_nr==0&&myreadings.currentbook.number_of_pages=null) this.PreloadPage(0);
-		//this.ShowPage(myreadings.currentbook.current_page_nr);
-		
-	},
-	onActivate: function() {
-		//Non utilisé
-		console.log("activate");
+		this.UpdateSettings();		
 	},
 	//Initialise le comportement de ImageViewer
 	onImageViewerInitDone: function() {
-		console.log("onImageViewerInitDone");
 		var me = this,
 			imageviewer = me.getImageviewer();
 		
@@ -188,7 +176,6 @@ Ext.define('myreadings.controller.comic', {
 //Chargement des pages du livre
 //ShowPage lance PreloadPages
 	ShowPage: function(pagenr) {
-		//console.log("ShowPage "+pagenr);
 		var me = this,
 			imageviewer = me.getImageviewer(),
 			scroller = imageviewer.getScrollable().getScroller(),
@@ -216,7 +203,6 @@ Ext.define('myreadings.controller.comic', {
 	},
 	//Préchargement des pages
 	PreloadPages: function() {
-	    //console.log("PreloadPages");
 	    var me = this,
 	    	i = 0;
 	    // Clear old cache images, not the page info.
@@ -241,7 +227,6 @@ Ext.define('myreadings.controller.comic', {
 	    for (i = myreadings.currentbook.current_page_nr - 1; i >= myreadings.currentbook.current_page_nr - me.preload_count; i--) me.PreloadPage(i);
 	},
 	PreloadPage: function(pagenr) {
-		//console.log("PreloadPage"+ pagenr);
 		var me = this;
 		
 		if (pagenr < 0 || pagenr >= myreadings.currentbook.number_of_pages) return;
@@ -254,7 +239,6 @@ Ext.define('myreadings.controller.comic', {
 			return;
 		}
 
-		console.log("GetPage " + pagenr);
 		Ext.data.JsonP.request({
 				url: './comicsreader.php',
 				callbackKey: 'callback',
@@ -268,7 +252,6 @@ Ext.define('myreadings.controller.comic', {
 				},
 				success: function(result, request) {
 					if(result.success==true) {
-						//console.log(result.resultat);
 						me.cache[result.resultat.page] = result.resultat;
 						me.PreloadImage(result.resultat.page);
 					} else Ext.Msg.alert("Error", result.message);
@@ -287,7 +270,7 @@ Ext.define('myreadings.controller.comic', {
 		    return;
 	    }
 	    
-	    console.log("PreloadImage" + pagenr);
+	    //console.log("PreloadImage" + pagenr);
 	    me.cache[pagenr].img = Ext.create('Ext.Img', {
 			    src: me.cache[pagenr].src,
 			    mode: 'element', // create <img> instead of <div>
@@ -330,7 +313,7 @@ Ext.define('myreadings.controller.comic', {
 			scroller = imageviewer.getScrollable().getScroller(),
 			nextPageIcon = me.getNextPageIcon(),
 			previousPageIcon = me.getPrevPageIcon();
-		console.log('Image Loaded '+myreadings.currentbook.current_page_nr);
+		//console.log('Image Loaded '+myreadings.currentbook.current_page_nr);
 		me.getLoadingIndicator().hide();
 		
 		nextPageIcon.hide();
@@ -350,7 +333,6 @@ Ext.define('myreadings.controller.comic', {
 		
 		if (myreadings.currentbook.current_page_nr < (myreadings.currentbook.number_of_pages-1)) {
 			nextPageIcon.show();
-			//console.log("onNextButton ShowPage");
 			Ext.defer(function() { me.ShowPage(++myreadings.currentbook.current_page_nr); }, 150);
 		} else {
 			// TODO: need a way to determine what is the next comic...	
@@ -364,7 +346,6 @@ Ext.define('myreadings.controller.comic', {
 		if (myreadings.currentbook.current_page_nr > 0) {
 			prevPageIcon.show();
 			Ext.defer(function() { this.hide(); }, 500, prevPageIcon);
-			//console.log("onPreviousButton ShowPage");
 			Ext.defer(function() { me.ShowPage(--myreadings.currentbook.current_page_nr); }, 150);
 		} else {
 			me.onCloseButton();
@@ -457,10 +438,6 @@ Ext.define('myreadings.controller.comic', {
 			imageviewer = me.getImageviewer(),
 			scroller = imageviewer.getScrollable().getScroller();
 		
-		//console.log("pos x: " + scroller.position.x + " y: " + scroller.position.y);
-		//console.log("min x: " + scroller.getMinPosition().x + " y: " + scroller.getMinPosition().y);
-		//console.log("max x: " + scroller.getMaxPosition().x + " y: " + scroller.getMaxPosition().y);
-		
 		if ((scroller.position.x < scroller.getMinPosition().x - myreadings.settings.page_turn_drag_threshold) || 
 			(scroller.position.y < scroller.getMinPosition().y - myreadings.settings.page_turn_drag_threshold))
 		{
@@ -476,11 +453,9 @@ Ext.define('myreadings.controller.comic', {
 	onSliderChange: function(slider) {
 		var me = this;
 		myreadings.currentbook.current_page_nr = Math.round((myreadings.currentbook.number_of_pages-1) * slider.getValue() / SLIDER_RANGE);
-		console.log("onSliderChange ShowPage");
 		me.ShowPage(myreadings.currentbook.current_page_nr);
 	},
 	onCloseButton: function() {
-		console.log("close");
 		myreadings.currentbook.reading=false;
 		myreadings.app.getController('articlesControl').saveuser();
 		this.getComicview().hide();
