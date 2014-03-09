@@ -9,7 +9,7 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('config.php');
 
-if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) erreur("login error");
+if($protect==true&&($mylogin!=$login||$mypass!=$pass)) erreur("login error");
 
 if(isset($_GET['min'])) $min=$_GET['min'];
 else      $min=0;

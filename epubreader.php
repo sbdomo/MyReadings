@@ -5,7 +5,7 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('config.php');
 
-if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) {
+if($protect==true&&($mylogin!=$login||$mypass!=$pass)) {
 	echo "Non autorisé";
 	die;
 }
@@ -29,7 +29,8 @@ if(isset($_GET['font'])) $font=$_GET['font'];
 else $font="arial";
 
 if(isset($_GET['taille'])) $taille=$_GET['taille'];
-else $taille="1.45";
+else $taille="";
+if($taille=="") $taille="1.45";
 
 $bodyday="background-color: #FFFEFC; color: #210;";
 $bodynight="background-color: #191919; color: white;";
@@ -46,7 +47,7 @@ if($mode=="nuit") {
 //Arial Rounded MT Bold, monospace 
 $fontarial="font-family: Thonburi, Helvetica, Arial, sans-serif;";
 $fontTimes="font-family: Palatino, Georgia, Times New Roman, serif;";
-if($font=="arial") {
+if($font=="arial"||$font=="") {
 	$fontfamily=$fontarial;
 } else {
 	$fontfamily=$fontTimes;
@@ -112,7 +113,7 @@ var bookContentsMenu = {};
 var scrubber = {};
 var bodyreader = '<?php echo $body; ?>';
 var fontreader = '<?php echo $fontfamily; ?>';
-var taillefont = <? echo $taille ?>;
+var taillefont = <?php echo $taille ?>;
 
 // Initialize the reader element.
 Monocle.Events.listen(

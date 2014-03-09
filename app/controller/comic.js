@@ -93,8 +93,8 @@ Ext.define('myreadings.controller.comic', {
 				idbase: myreadings.currentbook.idbase,
 				path: myreadings.currentbook.path,
 				page: "number_of_pages",
-				mylogin: myreadings.app.getController('articlesControl').username,
-				mypass: myreadings.app.getController('articlesControl').password
+				mylogin: myreadings.conf.username,
+				mypass: myreadings.conf.password
 			},
 			success: function(result, request) {
 				if(result.success==true) {
@@ -247,8 +247,8 @@ Ext.define('myreadings.controller.comic', {
 					idbase: myreadings.currentbook.idbase,
 					path: myreadings.currentbook.path,
 					page: pagenr,
-					mylogin: myreadings.app.getController('articlesControl').username,
-					mypass: myreadings.app.getController('articlesControl').password
+					mylogin: myreadings.conf.username,
+					mypass: myreadings.conf.password
 				},
 				success: function(result, request) {
 					if(result.success==true) {

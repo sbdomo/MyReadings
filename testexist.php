@@ -30,38 +30,24 @@
 </head>
 <body>
 <?php
+require_once('confadmin.php');
+if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) exit("Not login");
+if(!file_exists('config.php')) exit("No configuration file");
+
 require_once('config.php');
 if($calibre) {
 
-if (!extension_loaded("sqlite3")) {
-  exit("sqlite3 extension not loaded. Please check your php.ini");
-} else {
-	echo '<p class="soustitre">Extension sqlite3 OK</p>';
-}
-// zip extension is needed for reading cbz files
-if (!extension_loaded("zip")) {
-	echo '<p class="soustitre">Extension zip non disponible (pour lire les cbz)</p>';
-} else {
-	echo '<p class="soustitre">Extension Zip OK</p>';
-}
-
-// zip extension is needed for reading cbz files
-if (!extension_loaded("rar")) {
-	echo '<p class="soustitre">Extension Rar non disponible (pour lire les cbr) - non géré pour l\'instant</p>';
-} else {
-	echo '<p class="soustitre">Extension Rar OK (pour lire les cbr) - non géré pour l\'instant</p>';
-}
+if (!extension_loaded("sqlite3"))  exit("sqlite3 extension not loaded. Please check your php.ini");
 
 if($control==true) $calibre=array_merge ($calibre, $limited);
 foreach ($calibre as $key => $path) {
 	$connect=false;
 	$result="";
 	$nocover="";
-	echo '<div class="titre">Test de la base '.$key.":</div>";
+	echo '<div class="titre">Test library '.$key.":</div>";
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, 
 	has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
-	echo '<p><span class="soustitre">Test de connexion:<span> <span class="normal">';
 	try{
 		$pdo = new PDO('sqlite:'.$path.'metadata.db');
 		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
@@ -71,11 +57,10 @@ foreach ($calibre as $key => $path) {
 		$result = $stmt->fetchAll();
 		$connect=true;
 	} catch(Exception $e) {
-		echo "Impossible d'accéder à la base de données SQLite - ".$e->getMessage()."</span></p>";
+		echo '<p class="red">Connection error - '.$e->getMessage()."</p>";
 	}
 	if($connect==true) {
-		echo 'Connection OK.</span></p>';
-		echo '<p class="soustitre">Erreurs d\'accès:</p><div class="normalmargin">';
+		echo '<p class="soustitre">Access error:</p><div class="normalmargin">';
 		$query2 = "select data.format as extension, data.name as filename, data.uncompressed_size as size from data where book = ?";
 		$erreur=false;
 		foreach ($result as $key => $book) {
@@ -100,19 +85,19 @@ foreach ($calibre as $key => $path) {
 				}
 			}
 		}
-		if($erreur==false) echo "Pas d'erreur.</div>";
+		if($erreur==false) echo "No error.</div>";
 		else echo "</div>";
 		
 		
 		
 		if($nocover!="") {
-			echo '<p class="soustitre">Ebooks sans jaquette:</p><div class="normalmargin">'.$nocover."</div>";
+			echo '<p class="soustitre">Ebooks without cover:</p><div class="normalmargin">'.$nocover."</div>";
 		}
 		echo '<p>&nbsp;</p>';
 	}
 }
 } else {
-	echo "Configuration des bases Calibre non trouvée.<br />";
+	echo "No Calibre libraries.<br />";
 }
 ?>
 </body>

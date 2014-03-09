@@ -9,6 +9,8 @@ Ext.define('myreadings.view.article', {
     txtPubdate:"",
     txtLang:"",
     msgError:"",
+    readcbz:"",
+    readepub:"",
     config: {
         baseCls: 'article-view',
         centered: true,
@@ -60,11 +62,36 @@ Ext.define('myreadings.view.article', {
 		tpl:  new Ext.XTemplate(
 		    this.tplinit(myreadings.app.getController('articlesControl').profil),
 		    {
-			    pathCover: function(relativepath) {
-				    return myreadings.app.getController('articlesControl').pathbase+relativepath+"/cover.jpg";
+			    pathCover: function(relativepath, id) {
+				    if(myreadings.conf.fetchmode=='direct') {
+					    return myreadings.conf.pathbase+relativepath+"/cover.jpg";
+				    } else {
+					    var params = {
+						    path: relativepath,
+						    id: id,
+						    base: myreadings.conf.txtbase,
+						    mylogin: myreadings.conf.username,
+						    mypass: myreadings.conf.password
+					    };
+					    var paramsencode = Ext.urlEncode(params);
+					    return "./cover.php?"+paramsencode;
+				    }
 			    },
 			    pathepub: function(filename, extension) {
-				    return myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+filename+"."+extension.toLowerCase();
+				    if(myreadings.conf.fetchmode=='direct') {
+					    return myreadings.conf.pathbase+me.relativePath+"/"+filename+"."+extension.toLowerCase();
+				    } else {
+					    var params = {
+						    path: me.relativePath,
+						    filename: filename,
+						    extension: extension.toLowerCase(),
+						    base: myreadings.conf.txtbase,
+						    mylogin: myreadings.conf.username,
+						    mypass: myreadings.conf.password
+					    };
+					    var paramsencode = Ext.urlEncode(params);
+					    return "./getbook.php?"+paramsencode;
+				    }
 			    },
 			    lang: function(language) {
 				    var localelang = myreadings.app.getController('articlesControl').lang[language];
@@ -83,7 +110,7 @@ Ext.define('myreadings.view.article', {
 	},
 	{
 		id:'epubview',
-		text: 'Lire epub',
+		text: this.readepub,
 		xtype: 'button',
 		margin:20,
 		handler: function() {
@@ -94,7 +121,7 @@ Ext.define('myreadings.view.article', {
 	},
 	{
 		id:'cbzview',
-		text: 'Lire',
+		text: this.readcbz,
 		xtype: 'button',
 		margin:20,
 		handler: function() {
@@ -113,23 +140,23 @@ Ext.define('myreadings.view.article', {
 	me.setMasked({xtype: 'loadmask'});
 	Ext.getCmp('articletitle').setTitle(newData.title);
 	
-	console.log("id: " + newData.id + " title: " + newData.title);
+	//console.log("id: " + newData.id + " title: " + newData.title);
 	
 	Ext.getCmp('contenu').setData({});
 	Ext.getCmp('epubview').hide();
 	Ext.getCmp('cbzview').hide();
-	var mycontrol=myreadings.app.getController('articlesControl');
+	//var mycontrol=myreadings.app.getController('articlesControl');
 	
-	console.log("pathbase: "+mycontrol.pathbase);
+	//console.log("pathbase: "+mycontrol.pathbase);
 	
 	Ext.data.JsonP.request({
             url: './recordjson.php',
             callbackKey: 'callback',
             params: {
 		    id: newData.id,
-		    pathbase: mycontrol.pathbase,
-		    mylogin: mycontrol.username,
-		    mypass: mycontrol.password
+		    pathbase: myreadings.conf.pathbase,
+		    mylogin: myreadings.conf.username,
+		    mypass: myreadings.conf.password
             },
             success: function(result, request) {
                 // Unmask the viewport
@@ -146,12 +173,12 @@ Ext.define('myreadings.view.article', {
 					//console.log(resultat.files[fileId].extension);
 					if(resultat.files[fileId].extension=="EPUB") {
 						//console.log("show");
-						me.epubpath=myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
+						me.epubpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
 						Ext.getCmp('epubview').show();
 					}
 					if(resultat.files[fileId].extension=="CBZ") {
 						//console.log("show");
-						me.cbzpath=myreadings.app.getController('articlesControl').pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
+						me.cbzpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
 						Ext.getCmp('cbzview').show();
 					}
 				}
@@ -168,7 +195,7 @@ Ext.define('myreadings.view.article', {
 	    var tplipad='<p>&nbsp;</p>'+
 			'<tpl for="books">'+
 				'<div>'+
-				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="cover"/></tpl></div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{[this.pathCover(values.relativePath, values.id)]}" class="cover"/></tpl></div>'+
 				'<tpl if="authorsName"><div class="titre">'+this.txtBy+' {authorsName}</div></tpl>'+
 				'<div><span class="txt_normal">'+
 					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
@@ -185,7 +212,7 @@ Ext.define('myreadings.view.article', {
 	    var tpliphone='<p>&nbsp;</p>'+
 			'<tpl for="books">'+
 				'<div>'+
-				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="coveriphone"/></tpl></div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{[this.pathCover(values.relativePath, values.id)]}" class="coveriphone"/></tpl></div>'+
 				'<tpl if="authorsName"><div class="titreiphone">'+this.txtBy+' {authorsName}</div></tpl>'+
 				'<div><span class="txt_normaliphone">'+
 					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
@@ -203,7 +230,7 @@ Ext.define('myreadings.view.article', {
 	    var tplgtab='<p>&nbsp;</p>'+
 			'<tpl for="books">'+
 				'<div>'+
-				'<div class="divcover"><tpl if="hasCover==1"><img src="{relativePath:this.pathCover}" class="covergtab"/></tpl></div>'+
+				'<div class="divcover"><tpl if="hasCover==1"><img src="{[this.pathCover(values.relativePath, values.id)]}" class="covergtab"/></tpl></div>'+
 				'<tpl if="authorsName"><div class="titre">'+this.txtBy+' {authorsName}</div></tpl>'+
 				'<div><span class="txt_normal">'+
 					'<tpl if="tagsName"><span class="txt_fonce">'+this.txtTags+'</span> {tagsName}<br /></tpl>'+
@@ -217,7 +244,7 @@ Ext.define('myreadings.view.article', {
 			'<tpl for="files">'+
 				'<div class="clear"><a class="epub" href="{[this.pathepub(values.filename, values.extension)]}">{extension}  ({size:this.octToMo} Mo)</a></div>'+
 			'</tpl>';
-	    var mycontroller = myreadings.app.getController('articlesControl');
+	    //var mycontroller = myreadings.app.getController('articlesControl');
 	    if(profil=="gtab") {
 		    return tplgtab;
 	    } else if(profil=="iphone") {

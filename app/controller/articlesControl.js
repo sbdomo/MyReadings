@@ -80,57 +80,6 @@ Ext.define('myreadings.controller.articlesControl', {
         //stack: []
     },
 
-    showArticles: function(data) {
- 	var store = Ext.create("Ext.data.Store", {
-    	    model: "myreadings.model.article",
-    	    pageSize: 100,
-    	    clearOnPageLoad: false
-        });
-        if(data) {
-        	if(data.debut==4) {//changement d'ordre de tri demandé
-			store.getProxy().setExtraParam('order', data.order);
-			this.order=data.order;
-		} else if(data.debut==3) {//lancement depuis listview
-			store.getProxy().setExtraParam('type', data.type);
-			store.getProxy().setExtraParam('idlist', data.idlist);
-			this.type=data.type;
-			this.idlist=data.idlist;
-		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
-			store.getProxy().setExtraParam('pathbase',data.pathbase);
-			store.getProxy().setExtraParam('type', data.type);
-			this.pathbase=data.pathbase;
-			this.type=data.type;
-		} else {//lancement depuis searchpanel
-			store.getProxy().setExtraParam('type', data.type);
-			store.getProxy().setExtraParam('find', data.find);
-			store.getProxy().setExtraParam('start', data.debut);
-			this.type=data.type;
-			this.find=data.find;
-			this.start=data.debut;
-		}
-		this.saveuser(); //pour sauver la base par défaut
-        } else {
-		//lors du premier lancement, pas de data car requête par défaut
-		store.getProxy().setExtraParam('pathbase',this.pathbase);
-		store.getProxy().setExtraParam('mylogin',this.username);
-		store.getProxy().setExtraParam('mypass',this.password);
-		store.getProxy().setExtraParam('order', this.order);
-		store.getProxy().setExtraParam('type', this.type);
-		store.getProxy().setExtraParam('find', this.find);
-		store.getProxy().setExtraParam('start', this.start);
-		store.getProxy().setExtraParam('idlist', this.idlist);
-	}
-	store.load();
-	var articlesView= this.getArticleslist();
-
-	//empty the store before adding the new one
-	var  articlesStore = articlesView.getStore();
-	if (articlesStore) {
-            articlesStore.removeAll();
-        }
-
-	articlesView.setStore(store);
-    },
     init: function() {
 	//console.log('init controller');
 	var me=this;
@@ -141,15 +90,16 @@ Ext.define('myreadings.controller.articlesControl', {
 	if(!me.isInit) {
 		myreadings.currentbook = {};
 		myreadings.settings = {};
+		myreadings.conf = {};
 		
 		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			scope: this,
 			success: function(cachedLoggedInUser) {
 				delete cachedLoggedInUser.phantom;
-				me.username=cachedLoggedInUser.get('name');
-				me.password=cachedLoggedInUser.get('pass');
+				myreadings.conf.username=cachedLoggedInUser.get('name');
+				myreadings.conf.password=cachedLoggedInUser.get('pass');
 				
-				me.pathbase=cachedLoggedInUser.get('pathbase');
+				myreadings.conf.pathbase=cachedLoggedInUser.get('pathbase');
 				me.order=cachedLoggedInUser.get('order');
 				
 				me.type=cachedLoggedInUser.get('type');
@@ -183,9 +133,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				console.info('Auto-Login succeeded.');
 			},
 			failure : function() {
-				me.username="";
-				me.password="";
-				me.pathbase="";
+				myreadings.conf.username="";
+				myreadings.conf.password="";
+				myreadings.conf.pathbase="";
 				me.order="recent";
 				me.type="";
 				me.find="";
@@ -224,8 +174,8 @@ Ext.define('myreadings.controller.articlesControl', {
             url: './getConfig.php',
             callbackKey: 'callback',
             params: {
-            	   mylogin: me.username,
-            	   mypass: me.password
+            	   mylogin: myreadings.conf.username,
+            	   mypass: myreadings.conf.password
             },
             success: function(result, request) {
 		if(result.success==true) {
@@ -280,13 +230,15 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.getConfigpanel().hide();
 				}
 				
+				myreadings.conf.fetchmode=result.config.fetchmode;
+				
 				me.bases = result.config.bases;
 				var newOptions = [];
 				var basevalue="";
 				for (var base in me.bases) {
 					newOptions.push({text: base,  value: me.bases[base]});
 					//Cherche si la dernière base utilisée peut être réouverte
-					if(me.bases[base]==me.pathbase) basevalue=me.bases[base];
+					if(me.bases[base]==myreadings.conf.pathbase) basevalue=me.bases[base];
 				}
 				Ext.getCmp('base').setOptions(newOptions);
 				if(basevalue!="") Ext.getCmp('base').setValue(basevalue);
@@ -294,7 +246,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
 				//Passe en enabled ensuite
 				Ext.getCmp('base').enable();
-				me.pathbase=Ext.getCmp('base').getValue();
+				
+				myreadings.conf.pathbase=Ext.getCmp('base').getValue();
+				myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
+				
 				
 				//console.log("set profil dans config panel " + me.profil);
 				Ext.getCmp('profil').setHtml(me.localtxt.txtProfil+": "+me.localtxt[me.profil])
@@ -333,13 +288,14 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.getUsernameCt().hide();
 					me.getPasswordCt().hide();
 				}
-				//Ouverture OK - Effacement ancien du cache
+				
+				//Ouverture OK - Effacement du cache ancien des cbz
 				Ext.data.JsonP.request({
 						url: './cache.php',
 						callbackKey: 'callback',
 						params: {
-							mylogin: me.username,
-							mypass: me.password
+							mylogin: myreadings.conf.username,
+							mypass: myreadings.conf.password
 						},
 						success: function(result, request) {
 							if(result.success==false) console.log('Error in cache.');
@@ -367,6 +323,59 @@ Ext.define('myreadings.controller.articlesControl', {
 		} else alert('Error Configuration.');
             }
         });
+    },
+    
+    showArticles: function(data) {
+ 	var store = Ext.create("Ext.data.Store", {
+    	    model: "myreadings.model.article",
+    	    pageSize: 100,
+    	    clearOnPageLoad: false
+        });
+        if(data) {
+        	if(data.debut==4) {//changement d'ordre de tri demandé
+			store.getProxy().setExtraParam('order', data.order);
+			this.order=data.order;
+		} else if(data.debut==3) {//lancement depuis listview
+			store.getProxy().setExtraParam('type', data.type);
+			store.getProxy().setExtraParam('idlist', data.idlist);
+			this.type=data.type;
+			this.idlist=data.idlist;
+		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
+			store.getProxy().setExtraParam('pathbase',data.pathbase);
+			store.getProxy().setExtraParam('type', data.type);
+			myreadings.conf.pathbase=data.pathbase;
+			myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
+			this.type=data.type;
+		} else {//lancement depuis searchpanel
+			store.getProxy().setExtraParam('type', data.type);
+			store.getProxy().setExtraParam('find', data.find);
+			store.getProxy().setExtraParam('start', data.debut);
+			this.type=data.type;
+			this.find=data.find;
+			this.start=data.debut;
+		}
+		this.saveuser(); //pour sauver la base par défaut
+        } else {
+		//lors du premier lancement, pas de data car requête par défaut
+		store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+		store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
+		store.getProxy().setExtraParam('mypass', myreadings.conf.password);
+		store.getProxy().setExtraParam('order', this.order);
+		store.getProxy().setExtraParam('type', this.type);
+		store.getProxy().setExtraParam('find', this.find);
+		store.getProxy().setExtraParam('start', this.start);
+		store.getProxy().setExtraParam('idlist', this.idlist);
+	}
+	store.load();
+	var articlesView= this.getArticleslist();
+
+	//empty the store before adding the new one
+	var  articlesStore = articlesView.getStore();
+	if (articlesStore) {
+            articlesStore.removeAll();
+        }
+
+	articlesView.setStore(store);
     },
     getArticleView: function() {
     	    //console.log('getArticleView');
@@ -412,9 +421,9 @@ Ext.define('myreadings.controller.articlesControl', {
     loadliststore: function(list, search) {
         var listview = Ext.getCmp('listview');
         var store = listview.getStore();
-	store.getProxy().setExtraParam('pathbase',this.pathbase);
-	store.getProxy().setExtraParam('mylogin',this.username);
-        store.getProxy().setExtraParam('mypass',this.password);
+	store.getProxy().setExtraParam('pathbase',myreadings.conf.pathbase);
+	store.getProxy().setExtraParam('mylogin',myreadings.conf.username);
+        store.getProxy().setExtraParam('mypass',myreadings.conf.password);
 	store.getProxy().setExtraParam('list', list);
         store.getProxy().setExtraParam('search', search);
 	//Affiche le début de la liste
@@ -428,13 +437,13 @@ Ext.define('myreadings.controller.articlesControl', {
     
     onLoginTap: function() {
 	if(this.logged!=true) {
-		this.username = this.getUsernameCt().getValue(),
-		this.password = this.getPasswordCt().getValue();
-		if(!Ext.isEmpty(this.password) && !Ext.isEmpty(this.username)) {
+		myreadings.conf.username = this.getUsernameCt().getValue(),
+		myreadings.conf.password = this.getPasswordCt().getValue();
+		if(!Ext.isEmpty(myreadings.conf.password) && !Ext.isEmpty(myreadings.conf.username)) {
 			var user = Ext.create('myreadings.model.myreadingsUser', {
 				id: 1,
-				name: this.username,
-				pass: this.password,
+				name: myreadings.conf.username,
+				pass: myreadings.conf.password,
 				
 				zoom_on_tap: myreadings.settings.zoom_on_tap,
 				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
@@ -475,9 +484,9 @@ Ext.define('myreadings.controller.articlesControl', {
     saveuser: function() {
 	    var user = Ext.create('myreadings.model.myreadingsUser', {
 				id: 1,
-				name: this.username,
-				pass: this.password,
-				pathbase: this.pathbase,
+				name: myreadings.conf.username,
+				pass: myreadings.conf.password,
+				pathbase: myreadings.conf.pathbase,
 				order: this.order,
 				type: this.type,
 				find: this.find,

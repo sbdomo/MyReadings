@@ -11,8 +11,21 @@ Ext.define('myreadings.view.Articles', {
     	new Ext.XTemplate(
             this.tplinit(myreadings.app.getController('articlesControl').profil),
 	    {
-		    pathCover: function(relativepath) {
-			   return myreadings.app.getController('articlesControl').pathbase+relativepath+"/cover.jpg";
+		    pathCover: function(relativepath, id) {
+			    if(myreadings.conf.fetchmode=='direct') {
+				    return myreadings.conf.pathbase+relativepath+"/cover.jpg";
+			    } else {
+				    var params = {
+					    path: relativepath,
+					    id: id,
+					    base: myreadings.conf.txtbase,
+					    mylogin: myreadings.conf.username,
+					    mypass: myreadings.conf.password
+				    };
+				    var paramsencode = Ext.urlEncode(params);
+				    return "./cover.php?"+paramsencode;
+			    }
+			   
 		    }
 	    }
         )
@@ -24,7 +37,7 @@ Ext.define('myreadings.view.Articles', {
     	//Configuration de l'affichage d'un livre
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
     			'<div class="fond">'+
-    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
 			'</div>'+
 			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
@@ -73,7 +86,7 @@ Ext.define('myreadings.view.Articles', {
 	//avec retour à la ligne pour title et seriesName (avec tapclass), sans pubDate, sans txtBy
 	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond">'+
-    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
 			'</div>'+
 			'<div class="name"><span class="tapclass">{data.title}</span></div>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
@@ -83,7 +96,7 @@ Ext.define('myreadings.view.Articles', {
 		    //sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond">'+
-    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
 			'</div>'+
 			'<div class="name">{data.title}</div>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
@@ -119,7 +132,7 @@ Ext.define('myreadings.view.Articles', {
 	//version galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.
 	var mytplgtab= '<div class="clsarticle" ref="{data.id}"><div class="gtab">'+
     			'<div class="fond">'+
-    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{data.relativePath:this.pathCover}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+    				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
 			'</div>'+
 			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+

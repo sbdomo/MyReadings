@@ -110,7 +110,7 @@ Ext.define('myreadings.view.configpanel', {
 			xtype:'comicSettings',
 			name:'comicSettings',
 			itemId:'comicSettings',
-			height: 400,
+			height: 450,
 			scrollable: false
 			//layout: 'vbox'
 			//flex: 1

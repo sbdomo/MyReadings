@@ -7,6 +7,7 @@ Ext.define('myreadings.controller.epub', {
 			closeminibutton: 'epubview #closeminibutton',
 			closebutton: 'epubview #closebutton',
 			epubtoolbar: 'epubview #epubtoolbar',
+			epubtoolbar1: 'epubview #epubtoolbar1',
 			minitoolbar: 'epubview #minitoolbar',
 			btClosetoolbar: 'epubview #closetoolbar',
 			togglemode: 'epubview #togglemode',
@@ -48,7 +49,7 @@ Ext.define('myreadings.controller.epub', {
 	},
 	initEpub: function() {
 		var me=this;
-		
+		if(myreadings.settings.epub_fontsize==""||myreadings.settings.epub_fontsize==null) myreadings.settings.epub_fontsize="1.45";
 		me.getBookview().updateHref("");
 		var params = {
 			path: myreadings.currentbook.path,
@@ -58,8 +59,8 @@ Ext.define('myreadings.controller.epub', {
 			font: myreadings.settings.epub_font,
 			taille: myreadings.settings.epub_fontsize,
 			
-			mylogin: myreadings.app.getController('articlesControl').username,
-			mypass: myreadings.app.getController('articlesControl').password
+			mylogin: myreadings.conf.username,
+			mypass: myreadings.conf.password
 		};
 		var paramsencode = Ext.urlEncode(params);
 		me.getBookview().updateHref("./epubreader.php?"+paramsencode);
@@ -99,10 +100,20 @@ Ext.define('myreadings.controller.epub', {
 	},
 	onBtshowbarTap: function() {
 		this.getMinitoolbar().hide();
-		this.getEpubtoolbar().show();
+		if(myreadings.app.getController('articlesControl').profil=="iphone") {
+			this.getEpubtoolbar().show();
+			this.getEpubtoolbar1().show();
+		} else {
+			this.getEpubtoolbar().show();
+		}
 	},
 	onBtClosetoolbar: function() {
-		this.getEpubtoolbar().hide();
+		if(myreadings.app.getController('articlesControl').profil=="iphone") {
+			this.getEpubtoolbar().hide();
+			this.getEpubtoolbar1().hide();
+		} else {
+			this.getEpubtoolbar().hide();
+		}
 		this.getMinitoolbar().show();
 		
 	},

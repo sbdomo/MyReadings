@@ -8,7 +8,7 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('config.php');
 
-if($protect==true&&($mylogin!=$login&&$mypass!=$pass)) erreur("login error");
+if($protect==true&&($mylogin!=$login||$mypass!=$pass)) erreur("login error");
 
 //Le chemin est en dur pour éviter le détournement de ClearCache
 $cache="./cache";
@@ -24,7 +24,7 @@ if($lastcache<$reftime) {
 	$folder = new DirectoryIterator($cache);
 	$filenbr=0;
 	foreach($folder as $file) {
-		if($file->isFile() && !$file->isDot() && ($file->getMTime()<$reftime)) {
+		if($file->isFile() && !$file->isDot() && ($file->getMTime()<$reftime) && ($file->getFilename()!="writetest.html")) {
 			unlink($file->getPathname());
 			$filenbr=$filenbr+1;
 		}

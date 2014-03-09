@@ -30,7 +30,7 @@ if($protect==true) {
 	$result['connect']="noprotect";
 }
 
-
+$result['fetchmode']=$fetchmode;
 
 $json=json_encode($result);
 $json='{"config":'.$json.',"success":true,"locale":'.$locale.'}';
