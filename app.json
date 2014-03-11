@@ -120,6 +120,7 @@
 	"resources/jquery",
         "skin",
 	"admin.php",
+	"admintools.php",
 	"cache.json",
 	"cache.php",
 	"comicsreader.php",

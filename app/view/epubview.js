@@ -3,6 +3,11 @@ Ext.define('myreadings.view.epubview', {
     requires: ['Ext.field.Select', 'Ext.SegmentedButton'],
     xtype: 'epubview',
     config: {
+	    masked: {
+		    xtype: 'loadmask'//,
+		    //message: 'My message'
+	    }//,
+	    //scrollable: null
     },
     initialize: function() {
 	    if(myreadings.app.getController('articlesControl').profil=="iphone") {

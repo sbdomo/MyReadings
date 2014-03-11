@@ -265,7 +265,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.showViewerBt();
 				
-				if(myreadings.currentbook.reading) me.openviewer();
+				if(myreadings.settings.open_current_comic_at_launch==1&&myreadings.currentbook.reading) me.openviewer();
 				
 				if(me.profil=="iphone") {
 					me.getTitlebar().setTitle('');

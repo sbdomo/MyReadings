@@ -32,4 +32,10 @@ $limited=array(
 );
 $login2="toto2";
 $pass2="test2";
+
+//Mode de transfert des images et ebooks
+//valeurs: direct resize resize_and_cache noresize
+$fetchmode="resize_and_cache";
+//Uitlisation de X-Sendfile - false ou true
+$XSendfile=false;
 ?>

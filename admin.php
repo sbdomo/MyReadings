@@ -20,11 +20,11 @@ if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-	<link rel="apple-touch-icon-precomposed" href="./img/icon.png"/>
+	<link rel="apple-touch-icon-precomposed" href="./resources/icons/Icon.png"/>
 	
-	<link rel="apple-touch-startup-image" href="img/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
-	<link rel="apple-touch-startup-image" href="img/ipad-landscape.png"  media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
-	<link rel="apple-touch-startup-image" href="images/iphone-lowres.png" media="screen and (min-device-width: 200px) and (max-device-width: 320) and (orientation:portrait)" />
+	<link rel="apple-touch-startup-image" href="resources/startup/768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
+	<link rel="apple-touch-startup-image" href="resources/startup/768x1004.png"  media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
+	<link rel="apple-touch-startup-image" href="resources/startup/320x460.jpg" media="screen and (min-device-width: 200px) and (max-device-width: 320) and (orientation:portrait)" />
 	
 	<title>My Readings - Configuration</title> 
 	<link rel="stylesheet" href="./resources/jquery/myreadings.min.css" />
@@ -190,6 +190,19 @@ $(function() {
 		});
 		return false;
 	});
+	$('#deletethumbform').submit(function(){
+		$.mobile.loading( "show");
+		$.get("./admintools.php", $('#deletethumbform').serialize(),
+		function(data){
+			if(data.success=="true") alert("Thumb was emptied.");
+			else alert(data.resultat);
+		}, "json")
+		.error(function() {
+			alert("error");
+		});
+		$.mobile.loading( "hide" );
+		return false;
+	});
 });
 </script>
 <div data-role="tabs" id="tabs">
@@ -198,6 +211,7 @@ $(function() {
       <li><a href="#makeconfig" data-ajax="false">Configuration</a></li>
       <li><a href="#runtest" data-ajax="false">Compatibility test</a></li>
       <li><a href="#runtestexist" data-ajax="false">Test covers and ebooks</a></li>
+      <li><a href="#tools" data-ajax="false">Tools</a></li>
     </ul>
   </div>
 
@@ -349,7 +363,25 @@ foreach ($limited as $key => $value) {
 </form>
 <div id="testexistresult"></div>
 </div><!-- /runtestexist tab -->
+<div id="tools">
+	<div data-role="collapsible" data-collapsed="false">
+		<h2>Examples of syntax for the url of My Readings</h2>
+		For iPad/iPad mini: <a href="./" class="ui-btn ui-corner-all  ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		For iphone: <a href="./#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		For Galaxy Tab: <a href="./#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a>
+	</div>
+	<div data-role="collapsible" data-collapsed="false">
+		<h2>Management of the directory thumb</h2>
+		<p>This directory is use to store thumbnail of book cover in access mode with resize and cache</p>
+		<form action="#" method="get" enctype="multipart/form-data" name="deletethumbform" id="deletethumbform" >
+		<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
+		<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
+		<input name="action" type="hidden" value="deletethumb"/>
+		<input type="submit" name="Submit" value="Delete files in cache" data-theme="b" />
+		</form>
+	</div>
 
+</div><!-- /tools tab -->
 
 </div>
 

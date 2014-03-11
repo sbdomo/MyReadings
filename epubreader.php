@@ -89,7 +89,7 @@ $book->initSpineComponent ();
     <script type="text/javascript" src="resources/epub/monocle/monocore.js"></script>
     <script type="text/javascript" src="resources/epub/monocle/monoctrl.js"></script>
 <script type="text/javascript">
-Monocle.DEBUG = true; 
+Monocle.DEBUG = false; 
 var bookData = {
           getComponents: function () {
             <?php echo "return [" . implode (", ", array_map (function ($comp) { return "'" . $comp . "'"; }, $book->components ())) . "];"; ?>
@@ -132,6 +132,9 @@ Monocle.Events.listen(
 		readerOptions.stylesheet = "body { "+bodyreader+fontreader+"}";
 			
 		readerOptions.fontScale = taillefont;
+		
+		//launch when loaded
+		Monocle.Events.listen('rabbit', 'monocle:loaded', isloaded);
 		
 		/* Initialize the reader */
 		window.reader = Monocle.Reader(
@@ -232,6 +235,11 @@ Monocle.Events.listen(
 );
 
 //******fonction supplémentaires
+//Pour indiquer à My Readings que le chargement est fini. (cache le "loading mask")
+function isloaded() {
+	parent.myreadings.app.getController('epub').isloaded();
+	
+}
 	//Changement de la taille de la police
 	function setFontsize(taille) {
 		window.reader.formatting.setFontScale(parseFloat(taille), true);

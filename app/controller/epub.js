@@ -63,6 +63,7 @@ Ext.define('myreadings.controller.epub', {
 			mypass: myreadings.conf.password
 		};
 		var paramsencode = Ext.urlEncode(params);
+		
 		me.getBookview().updateHref("./epubreader.php?"+paramsencode);
 		if(!me.isInit) {
 			me.getFsize().setValue(myreadings.settings.epub_fontsize);
@@ -83,6 +84,7 @@ Ext.define('myreadings.controller.epub', {
 			me.isInit=true;
 		}
 		myreadings.currentbook.reading=true;
+		this.getEpubview().setMasked(true);
 		this.getEpubview().show();
 		myreadings.app.getController('articlesControl').saveuser();
 	},
@@ -161,5 +163,8 @@ Ext.define('myreadings.controller.epub', {
 	},
 	onInfoButton: function() {
 		myreadings.app.getController('articlesControl').openArticle_CurrentBook();
+	},
+	isloaded: function() {
+		this.getEpubview().setMasked(false);
 	}
 });

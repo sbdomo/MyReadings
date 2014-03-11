@@ -12,40 +12,38 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 	if(file_exists('config.php')) {
 		require_once('config.php');
 		if($calibre) {
-			if (extension_loaded("sqlite3")) {
-				$success="true";
-				if(phpversion()<=5.2) $result.='<p>Your php version is '.phpversion().'. If you have a problem, you could test a newer version.</p>';
-				$result.='<p>Connection Test:</p>';
-				$result.="<p>If all is OK, you must see a cover for each library.</p>";
-				$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
-				$result=testconnect($calibre, $result, $fetchmode, $login, $pass);
-				if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass);
-				if(fw("./thumb")) {
-					$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
-				} else {
-					$result.='<p class="red">Directory thumb is not writable (you can\'t use access mode with resize and cache)</p>';
-				}
-				if(ini_get('open_basedir')) {
-					$result.='<p class="yellow">You have a open_basedir restriction. If you can\'t access to your library, try to add your library path in open_basedir.</p>';
-				}
-				if (extension_loaded("zip")) {
-					$result.='<p>Zip extension loaded (use by cbz viewer)</p>';
-				} else {
-					$result.='<p class="red">Zip extension not loaded (you can\'t use viewer)</p>';
-				}
+			$success="true";
+			if (!extension_loaded("sqlite3")) $result='<p class="yellow">Sqlite3 extension could be not loaded.</p>';
 				
-				//if (!extension_loaded("rar")) {
-				//	$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
-				//} else {
-				//	$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
-				//}
-				if(fw("./cache")) {
-					$result.='<p>Directory cache is writable (use by cbz viewer)</p>';
-				} else {
-					$result.='<p class="red">Directory cache is not writable (you can\'t use viewer)</p>';
-				}
+			if(phpversion()<=5.2) $result.='<p>Your php version is '.phpversion().'. If you have a problem, you could test a newer version.</p>';
+			$result.='<p>Connection Test:</p>';
+			$result.="<p>If all is OK, you must see a cover for each library.</p>";
+			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass);
+			if(fw("./thumb")) {
+				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
 			} else {
-				$result="Sqlite3 extension not loaded. Please check your php.ini";
+				$result.='<p class="red">Directory thumb is not writable (you can\'t use access mode with resize and cache)</p>';
+			}
+			if(ini_get('open_basedir')) {
+				$result.='<p class="yellow">You have a open_basedir restriction. If you can\'t access to your library, try to add your library path in open_basedir.</p>';
+			}
+			if (extension_loaded("zip")) {
+				$result.='<p>Zip extension loaded (use by cbz viewer)</p>';
+			} else {
+				$result.='<p class="red">Zip extension not loaded (you can\'t use viewer)</p>';
+			}
+				
+			//if (!extension_loaded("rar")) {
+			//	$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
+			//} else {
+			//	$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
+			//}
+			if(fw("./cache")) {
+				$result.='<p>Directory cache is writable (use by cbz viewer)</p>';
+			} else {
+				$result.='<p class="red">Directory cache is not writable (you can\'t use viewer)</p>';
 			}
 		} else {
 			$result="Calibre libraires are not defined";
