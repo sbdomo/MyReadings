@@ -9,7 +9,11 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('config.php');
 
-if($protect==true&&($mylogin!=$login||$mypass!=$pass)) erreur("login error");
+if($protect==true&&(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
+	 //OK
+} else {
+	erreur("login error");
+}
 
 //Utilisé pour la pagination de la requête sql avec la commande LIMIT
 if(isset($_GET['min'])) $min=$_GET['min'];
