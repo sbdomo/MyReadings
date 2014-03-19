@@ -14,7 +14,7 @@ La version de production (qui est compilée et s'excécute plus rapidement) est 
 Ce projet est open source (GPL v2)<br />
 My Readings - 2014 (c) sbdomo<br />
 
-Sources utilisées:
+Sources utilisées:<br />
 '[Sencha Touch](http://www.sencha.com/products/touch)'<br />
 '[Jquery Mobile](http://jquerymobile.com/)' - pour la partie administration<br />
 <br />

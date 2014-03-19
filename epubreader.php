@@ -99,20 +99,20 @@ $book->initSpineComponent ();
     <script type="text/javascript" src="resources/epub/monocle/monocore.js"></script>
     <script type="text/javascript" src="resources/epub/monocle/monoctrl.js"></script>
 <script type="text/javascript">
-Monocle.DEBUG = false; 
+Monocle.DEBUG = false;
 var bookData = {
           getComponents: function () {
             <?php echo "return [" . implode (", ", array_map (function ($comp) { return "'" . $comp . "'"; }, $book->components ())) . "];"; ?>
           },
           getContents: function () {
-            <?php echo "return [" . implode (", ", array_map (function ($content) { return "{title: '" . $content["title"] . "', src: '". $content["src"] . "'}"; }, $book->contents ())) . "];"; ?>
+            <?php echo "return [" . implode (", ", array_map (function ($content) { return "{title: '" . addslashes($content["title"]) . "', src: '". $content["src"] . "'}"; }, $book->contents ())) . "];"; ?>
           },
           getComponent: function (componentId) {
             return { url: "epubfs.php?<?php echo $add ?>comp="  + componentId };
           },
           getMetaData: function(key) {
             return {
-              title: "<?php echo $title; ?>",
+              title: '<?php echo addslashes($title); ?>',
               creator: "My Readings"
             }[key];
           }

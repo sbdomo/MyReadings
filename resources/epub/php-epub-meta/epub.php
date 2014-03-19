@@ -3,7 +3,7 @@
  * PHP EPub Meta library
  *
  * @author Andreas Gohr <andi@splitbrain.org>
- * @author Sébastien Lucas <sebastien@slucas.fr>
+ * @author SÃ©bastien Lucas <sebastien@slucas.fr>
  */
 
 require_once(realpath( dirname( __FILE__ ) ) . '/tbszip.php');
@@ -218,7 +218,8 @@ class EPub {
     private function getNavPointDetail ($node) {
         $title = $this->toc_xpath->query('x:navLabel/x:text', $node)->item(0)->nodeValue;
         $src = $this->toc_xpath->query('x:content', $node)->item(0)->attr('src');
-        $src = $this->decodeComponentName ($src);
+        //$src = $this->decodeComponentName ($src);
+        $src = $this->encodeComponentName ($src);
         return array("title" => $title, "src" => $src);
     }
 
@@ -887,4 +888,4 @@ class EPubDOMElement extends DOMElement {
 
 }
 
-
+?>
