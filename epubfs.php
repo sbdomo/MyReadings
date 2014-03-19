@@ -1,4 +1,12 @@
 <?php
+/**
+* source code : COPS (Calibre OPDS PHP Server) class file
+*
+* @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+* @author     Sébastien Lucas <sebastien@slucas.fr>
+* modified for My readings
+*/
+  
 if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
 else      $mylogin="";
 if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];

@@ -1001,4 +1001,3 @@ class clsTbsZip {
 	}
 
 }
-?>
