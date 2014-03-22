@@ -101,6 +101,9 @@ else {
 		$login="";
 		$pass="";
 		$control=false;
+		$epubview=true;
+		$cbzview=true;
+		$cbrview=true;
 		$login2="";
 		$pass2="";
 		$fetchmode="resize_and_cache";
@@ -339,6 +342,23 @@ foreach ($limited as $key => $value) {
 	</ul>
 	<input type="button" id="addcalibre2" class="btn" value="Add library" />
 </div>
+
+<div data-role="collapsible" data-collapsed="false">
+	<h2>Viewers</h2>
+	<fieldset data-role="fieldcontain">
+	
+	<fieldset data-role="controlgroup">
+        <input type="checkbox" name="epubview" id="epubview" <?php if($epubview) echo "selected";?>>
+        <label for="epubview">Epub</label>
+        <input type="checkbox" name="cbzview" id="cbzview" <?php if($cbzview) echo "selected";?>>
+        <label for="cbzview">Cbz</label>
+        <input type="checkbox" name="cbrview" id="cbrview" <?php if($cbrview) echo "selected";?>>
+        <label for="cbrview">Cbr</label>
+	</fieldset>
+	<p>For cbz viewer, you must have zip extension and for cbr viewer, rar extension. You can verify that in compatibility test.</p>
+	</fieldset>
+</div>
+
 <input name="nbcal" id="nbcal" type="hidden" value=""/>
 <input name="nblim" id="nblim" type="hidden" value=""/>
 <input name="admin_login" type="hidden" value="<?php echo $admin_login;?>"/>

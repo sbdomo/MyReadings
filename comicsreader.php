@@ -8,7 +8,7 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('config.php');
 
-if($protect==true&&(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
+if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
 	 //OK
 } else {
 	erreur("login error");
@@ -36,6 +36,9 @@ $cache="./cache";
 //Sera initialisé par ParseComicArchive
 $number_of_page=0;
 
+//indique le format si IsRarFile ou IsZipFile = true
+$fileformat="";
+
 //$defaut_maxwidth=2048;
 $defaut_maxwidth=8192;
 
@@ -46,12 +49,11 @@ if($page=="number_of_pages") {
 	
 	//GetPage appel InternalGetPage (avec possiblité de mettre $max_width différent de la valeur par défaut)
 	//InternalGetPage: idem mais avec comme paramètre $filelist si elle existe déjà
-	//Appel ParseComicArchive pour faire $filelist (liste du contenu du zip)
-	//test :IsZipFile
+	//Appel ParseComicArchive pour faire $filelist (liste du contenu du zip), affectation de $fileformat et de $number_of_page
 	//resize image
 	//la met en cache
 	
-	//ParseComicArchive : appel de ParseCBZ (liste du cbz)
+	//ParseComicArchive : appel de IsRarFile et/ou IsZipFile puis ParseCBZ (liste du cbz) ou ParceCBR, $number_of_page
 	$result=GetPage($path, $page, NULL);
 }
 
@@ -64,7 +66,7 @@ if (isset($_GET['callback'])) {
 }
 
 
-
+//Non utilisé (fonction dans cache.php)
 function ClearCache($days) {
 	global $cache;
 	$folder = new DirectoryIterator($cache);
@@ -74,7 +76,6 @@ function ClearCache($days) {
 	}
 }
 
-  
 // Liste triée du contenu d'un CBZ.
 function ParseCBZ($filename)   {
     $zip = new ZipArchive();
@@ -82,10 +83,9 @@ function ParseCBZ($filename)   {
 
     if (!$zip->open($filename))
     {
-      trigger_error("ParseCBZ: cannot open $filename!\n", E_USER_ERROR);
+      //trigger_error("ParseCBZ: cannot open $filename!\n", E_USER_ERROR);
       return "ParseCBZ: cannot open $filename!";
     }
-    
     for ($i = 0; $i < $zip->numFiles; $i++) 
     {
       $entry = $zip->statIndex($i);
@@ -110,17 +110,82 @@ function ParseCBZ($filename)   {
     return $filelist;
 }
 
+// Liste triée du contenu d'un CBR
+function ParseCBR($filename)
+  {
+    if (!extension_loaded("rar"))
+    {
+      erreur("ParseCBR: CBR files not supported, because of missing php_rar extension.");
+    }
+    
+    $rar_file = rar_open($filename);
+    
+    if ($rar_file == FALSE)
+    {
+      erreur("ParseCBR: not a rar file.");
+    }
+        
+    $entries = rar_list($rar_file);
+        
+    if ($entries === FALSE)
+      erreur("ParseCBR: Failed fetching entries");
+    
+    $filelist = array();
+    //$comicinfo = null;
+    
+    foreach ($entries as $file) 
+    {
+      if ((!$file->isDirectory()) && ($file->getUnpackedSize() > 0))
+      {
+        if (preg_match('/(jp(e?)g|gif|png)$/i',$file->getName()))
+        {
+          $filelist[] = $file->getName();
+        }
+        
+        //if (preg_match('/ComicInfo.xml$/i',$file->getName()))
+        //{
+        //  $comicinfo = $entry["name"];
+        //}
+      }
+    }
+    
+    rar_close($rar_file);
+    //natcasesort($filelist);
+    sort($filelist);
+    return $filelist;
+}
+
+//test si c'est un fichier rar
+function IsRarFile($filename) {
+    global $fileformat;
+    if (!extension_loaded("rar")) return false;
+    $level = error_reporting(0);
+    $rar_file = rar_open($filename);
+    error_reporting($level);
+    
+    if ($rar_file == FALSE)
+    {
+      return false;
+    }
+    
+    rar_close($rar_file);
+    $fileformat="rar";
+    return true;
+}
+
 //test si c'est un fichier zip
 function IsZipFile($filename) {
+    global $fileformat;
+    if (!extension_loaded("zip")) return false;
     $level = error_reporting(0);
     $zip = new ZipArchive();
     error_reporting($level);
     if ($zip->open($filename) === TRUE)
     {
       $zip->close();
+      $fileformat="zip";
       return true;
-    } 
-    
+    }
     return false;
 }
 
@@ -130,12 +195,13 @@ function ParseComicArchive($filename) {
     
     $path_parts = pathinfo($filename);
     $ext = strtolower($path_parts["extension"]);
-    //if (($ext == "cbr" || $ext == "rar") && Comics::IsRarFile($filename))
-    //{
-    //  return $this->ParseCBR($filename);
-    //}
-    //else
-    if (($ext == "cbz" || $ext == "zip") && IsZipFile($filename)) {
+    if (($ext == "cbr" || $ext == "rar") && IsRarFile($filename))
+    {
+	    $result =ParseCBR($filename);
+	    $number_of_page=count($result);
+	    return $result;
+    }
+    else if (($ext == "cbz" || $ext == "zip") && IsZipFile($filename)) {
 	    $result =ParseCBZ($filename);
 	    $number_of_page=count($result);
 	    return $result;
@@ -167,10 +233,12 @@ function GetPage($filename, $page_id, $max_width) {
    */
 function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
   {
-    global $number_of_page, $defaut_maxwidth, $comic_id, $cache;
+    global $number_of_page, $fileformat, $defaut_maxwidth, $comic_id, $cache;
     // TODO: check if $page_id is a number and 0 < page_id < comic.numpages
     
-    if (!$filelist) $filelist = ParseComicArchive($filename);
+    //Ne sert à rien : if (!$filelist)
+    //Liste des fichiers, affectation de $fileformat et de $number_of_page
+    $filelist = ParseComicArchive($filename);
     
     if (gettype($filelist) == 'string') {
       return array(
@@ -210,9 +278,8 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
     
     if (!file_exists($cachepathname))
     {
-      /*
-	    if (Comics::IsRarFile($filename))
-      {
+      //if (IsRarFile($filename))
+      if ($fileformat=="rar") {
         try
         {
           $rar_file = rar_open($filename);
@@ -224,11 +291,12 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
         }
         catch(Exception $e)
         {
-          trigger_error($e.getMessage(), E_USER_NOTICE);
+           erreur($e.getMessage());
+           //trigger_error($e.getMessage(), E_USER_NOTICE);
         }
       }
-      else*/
-      if (IsZipFile($filename)) {
+      //else if (IsZipFile($filename))
+      else if ($fileformat=="zip") {
         $zip = new ZipArchive();
         if ($zip->open($filename) === TRUE) 
         {
@@ -237,20 +305,23 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
             $contents = $zip->getFromName($page_filename);
             if ($contents == false)
             {
-              trigger_error("Unable to extract page $page_filename from file $filename", E_USER_NOTICE);
+              erreur("Unable to extract page $page_filename from file $filename");
+              //trigger_error("Unable to extract page $page_filename from file $filename", E_USER_NOTICE);
             }
             else
             {
               $success = file_put_contents($cachepathname, $contents);
               if ($success === false)
               {
-                trigger_error("Error while extracting page $page_filename from file $filename", E_USER_NOTICE);
+                erreur("Error while extracting page $page_filename");
+                //trigger_error("Error while extracting page $page_filename from file $filename", E_USER_NOTICE);
               }
             }
           }
           catch(Exception $e)
           {
-            trigger_error($e.getMessage(), E_USER_NOTICE);
+            erreur($e.getMessage());
+            //trigger_error($e.getMessage(), E_USER_NOTICE);
           }
           
           $zip->close();
@@ -304,7 +375,6 @@ function GetNumberPages($filename) {
     $filelist = ParseComicArchive($filename);
     
     if (gettype($filelist) == 'string') erreur("INVALID_ARCHIVE");
-    
     return array(
       "nbrpages" => $number_of_page
     );

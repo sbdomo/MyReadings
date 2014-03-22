@@ -232,6 +232,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				myreadings.conf.fetchmode=result.config.fetchmode;
 				
+				myreadings.conf.epubview=result.config.epubview;
+				myreadings.conf.cbzview=result.config.cbzview;
+				myreadings.conf.cbrview=result.config.cbrview;
+				
 				me.bases = result.config.bases;
 				var newOptions = [];
 				var basevalue="";

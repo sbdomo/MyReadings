@@ -121,7 +121,7 @@ Ext.define('myreadings.view.article', {
 	},
 	{
 		id:'cbzview',
-		text: this.readcbz,
+		text: "viewer",
 		xtype: 'button',
 		margin:20,
 		handler: function() {
@@ -171,14 +171,19 @@ Ext.define('myreadings.view.article', {
 				if(!newData.viewer) {
 				for (var fileId in resultat.files) {
 					//console.log(resultat.files[fileId].extension);
-					if(resultat.files[fileId].extension=="EPUB") {
+					if(resultat.files[fileId].extension=="EPUB"&&myreadings.conf.epubview=="on") {
 						//console.log("show");
 						me.epubpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
 						Ext.getCmp('epubview').show();
-					}
-					if(resultat.files[fileId].extension=="CBZ") {
+					} else if (resultat.files[fileId].extension=="CBZ"&&myreadings.conf.cbzview=="on") {
 						//console.log("show");
 						me.cbzpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
+						Ext.getCmp('cbzview').setText(me.read+" cbz");
+						Ext.getCmp('cbzview').show();
+					} else if (resultat.files[fileId].extension=="CBR"&&myreadings.conf.cbrview=="on") {
+						//console.log("show");
+						me.cbzpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbr";
+						Ext.getCmp('cbzview').setText(me.read+" cbr");
 						Ext.getCmp('cbzview').show();
 					}
 				}

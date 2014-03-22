@@ -32,6 +32,10 @@ if($protect==true) {
 
 $result['fetchmode']=$fetchmode;
 
+$result['epubview']=$epubview;
+$result['cbzview']=$cbzview;
+$result['cbrview']=$cbrview;
+
 $json=json_encode($result);
 $json='{"config":'.$json.',"success":true,"locale":'.$locale.'}';
 

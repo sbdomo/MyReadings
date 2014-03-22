@@ -19,6 +19,10 @@ $phptxt.='$pass2="'.$_GET['pass2'].'";'."\r\n";
 $phptxt.='$fetchmode="'.$_GET['fetchmode'].'";'."\r\n";
 $phptxt.='$XSendfile='.$_GET['XSendfile'].';'."\r\n";
 
+$phptxt.='$epubview="'.$_GET['epubview'].'";'."\r\n";
+$phptxt.='$cbzview="'.$_GET['cbzview'].'";'."\r\n";
+$phptxt.='$cbrview="'.$_GET['cbrview'].'";'."\r\n";
+
 $phptxt.='$calibre=array('."\r\n";
 if(strval($_GET['nbcal'])>1) {
 	$nbcal=strval($_GET['nbcal'])-1;

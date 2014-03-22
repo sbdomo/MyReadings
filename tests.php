@@ -34,12 +34,11 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			} else {
 				$result.='<p class="red">Zip extension not loaded (you can\'t use viewer)</p>';
 			}
-				
-			//if (!extension_loaded("rar")) {
-			//	$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
-			//} else {
-			//	$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
-			//}
+			if (!extension_loaded("rar")) {
+				$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
+			} else {
+				$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
+			}
 			if(fw("./cache")) {
 				$result.='<p>Directory cache is writable (use by cbz viewer)</p>';
 			} else {
