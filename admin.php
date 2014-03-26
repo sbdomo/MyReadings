@@ -348,11 +348,11 @@ foreach ($limited as $key => $value) {
 	<fieldset data-role="fieldcontain">
 	
 	<fieldset data-role="controlgroup">
-        <input type="checkbox" name="epubview" id="epubview" <?php if($epubview) echo "selected";?>>
+        <input type="checkbox" name="epubview" id="epubview" <?php if($epubview=="on") echo "checked";?>>
         <label for="epubview">Epub</label>
-        <input type="checkbox" name="cbzview" id="cbzview" <?php if($cbzview) echo "selected";?>>
+        <input type="checkbox" name="cbzview" id="cbzview" <?php if($cbzview=="on") echo "checked";?>>
         <label for="cbzview">Cbz</label>
-        <input type="checkbox" name="cbrview" id="cbrview" <?php if($cbrview) echo "selected";?>>
+        <input type="checkbox" name="cbrview" id="cbrview" <?php if($cbrview=="on") echo "checked";?>>
         <label for="cbrview">Cbr</label>
 	</fieldset>
 	<p>For cbz viewer, you must have zip extension and for cbr viewer, rar extension. You can verify that in compatibility test.</p>

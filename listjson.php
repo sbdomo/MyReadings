@@ -90,7 +90,7 @@ try{
     $stmt->execute($params);
     $result["list"] = $stmt->fetchAll();
     
-    $resutl["success"]=true;
+    $result["success"]=true;
     $json=json_encode($result);
 
     if (isset($_GET['callback'])) {
