@@ -6,7 +6,7 @@ else      $admin_pw="";
 if(isset($_GET['action_login'])) $action_login=$_GET['action_login'];
 else      $action_login="";
 
-$adminpass="./confadmin.php";
+$adminpass="./config/confadmin.php";
 //Create $adminpass
 if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!="") {
 	$result='<?php $adpw="'.$admin_pw.'"; $adlogin="'.$admin_login.'"; ?>';
@@ -93,8 +93,8 @@ if($testconnect==false)	{?>
 require_once($adminpass);
 if($admin_login!=$adlogin||$admin_pw!=$adpw) echo "login error";
 else {
-	if(file_exists('config.php')) {
-		require_once('config.php');
+	if(file_exists('./config/config.php')) {
+		require_once('./config/config.php');
 	} else {
 		$language="en";
 		$protect=false;
@@ -114,6 +114,11 @@ else {
 ?>
 <script type="text/javascript">
 function removecalibre(me){
+	$(me).parents('li').remove();
+	return false;
+}
+
+function removeuser(me){
 	$(me).parents('li').remove();
 	return false;
 }
@@ -149,10 +154,22 @@ $(function() {
         		$('#calibrelibrary2').listview('refresh').trigger('create');
         });
         
+	var i3 = $('#userlist li').size();
+        $('#adduser').on('click', function() {
+			listItem = '<li><div data-role="controlgroup" data-type="horizontal">'+
+			'<input type="text" value="" id="userval' + i3 +'" name="userval' + i3 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
+			'<a href="#" id="userremove' + i3 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeuser(this);">Remove</a>'+
+			'</div></li>';
+			i3++;
+        		$('#userlist').append(listItem);
+        		$('#userlist').listview('refresh').trigger('create');
+        });
+	
 	$('#editconfig').submit(function(){
 		$.mobile.loading( "show");
 		$('#nbcal').val(i);
 		$('#nblim').val(i2);
+		$('#nbuser').val(i3);
 		$.get("./saveconfig.php", $('#editconfig').serialize(),
 		function(data){
 			if(data.success=="true") alert("Your configuration has been saved.");
@@ -226,6 +243,7 @@ $(function() {
 		<option>Language</option>
 		<option value="en" <?php if($language=="en") echo "selected";?> >English</option>
 		<option value="fr" <?php if($language=="fr") echo "selected";?> >French</option>
+		<option value="fr" <?php if($language=="spa") echo "selected";?> >Spanish</option>
 	</select>
 	<label for="fetchmode" class="select">Access mode to libraries </label>
 	<select name="fetchmode" id="fetchmode" data-native-menu="false">
@@ -272,6 +290,7 @@ $(function() {
 	<li data-role="list-divider">Calibre libraries - Enter the path of your metadata file and the name that will appear in My Readings</li>
 <?php
 $nbcalibre1=0;
+if($calibre) {
 foreach ($calibre as $key => $value) {
 	$nbcalibre1=$nbcalibre1+1;
 ?>
@@ -288,7 +307,7 @@ foreach ($calibre as $key => $value) {
 			</div>
 		</fieldset>
 	</li>
-<?php } ?>
+<?php }} ?>
 	</ul>
 	<input type="button" id="addcalibre1" class="btn" value="Add library" />
 </div>
@@ -321,6 +340,7 @@ Note the "/" at the end of the path is necessary.</p>
 	<li data-role="list-divider">Calibre libraries with parental control</li>
 <?php
 $nbcalibre2=0;
+if($limited) {
 foreach ($limited as $key => $value) {
 	$nbcalibre2=$nbcalibre2+1;
 ?>
@@ -337,8 +357,7 @@ foreach ($limited as $key => $value) {
 			</div>
 		</fieldset>
 	</li>
-<?php }
-?>
+<?php }} ?>
 	</ul>
 	<input type="button" id="addcalibre2" class="btn" value="Add library" />
 </div>
@@ -359,8 +378,32 @@ foreach ($limited as $key => $value) {
 	</fieldset>
 </div>
 
+<div data-role="collapsible" data-collapsed="false">
+	<h2>Users (For bookmarks)</h2>
+	<ul class="ui-li" data-role="listview" id="userlist" data-inset="true"  data-scroll="true">
+	<li data-role="list-divider">Add names of users - all names must be different</li>
+<?php
+$nbusers=0;
+if($users) {
+foreach ($users as $key => $value) {
+	$nbusers=$nbusers+1;
+?>
+<li><div data-role="controlgroup" data-type="horizontal">
+	<input type="text" value="<?php echo $value;?>" id="userval<?php echo $nbusers;?>" name="userval<?php echo $nbusers;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+	<a href="#" id="userremove<?php echo $nbusers;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeuser(this);">Remove</a>
+</div></li>
+<?php }} ?>
+
+
+	</ul>
+	<input type="button" id="adduser" class="btn" value="Add user" />
+</div>
+
+
+
 <input name="nbcal" id="nbcal" type="hidden" value=""/>
 <input name="nblim" id="nblim" type="hidden" value=""/>
+<input name="nbuser" id="nbuser" type="hidden" value=""/>
 <input name="admin_login" type="hidden" value="<?php echo $admin_login;?>"/>
 <input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
 <input type="submit" name="Submit" value="Save configuration" data-theme="b" />
@@ -386,9 +429,9 @@ foreach ($limited as $key => $value) {
 <div id="tools">
 	<div data-role="collapsible" data-collapsed="false">
 		<h2>Examples of syntax for the url of My Readings</h2>
-		For iPad/iPad mini: <a href="./" class="ui-btn ui-corner-all  ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
-		For iphone: <a href="./#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
-		For Galaxy Tab: <a href="./#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./?platform=wood#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a>
+		For iPad/iPad mini: <a href="./index.html" class="ui-btn ui-corner-all  ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		For iphone: <a href="./index.html#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		For Galaxy Tab: <a href="./index.html#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a>
 	</div>
 	<div data-role="collapsible" data-collapsed="false">
 		<h2>Management of the directory thumb</h2>

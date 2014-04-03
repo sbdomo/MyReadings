@@ -15,6 +15,7 @@ Ext.define('myreadings.controller.epub', {
 			fsize: 'epubview #fsize',
 			tocbt: 'epubview #toc',
 			bookview: 'epubview #bookview',
+			bookmarkbutton: 'epubview #bookmark',
 			infobutton: 'epubview #infobutton'
 		},
 		control: {
@@ -44,16 +45,24 @@ Ext.define('myreadings.controller.epub', {
 			},
 			infobutton: {
 				tap: 'onInfoButton'
+			},
+			bookmarkbutton: {
+				tap: 'onBookmarkbutton'
 			}
 		}
 	},
-	initEpub: function() {
+	initEpub: function(isnew, componentId, percent) {
 		var me=this;
 		if(myreadings.settings.epub_fontsize==""||myreadings.settings.epub_fontsize==null) myreadings.settings.epub_fontsize="1.45";
 		me.getBookview().updateHref("");
+		
 		var params = {
 			path: myreadings.currentbook.path,
 			title: myreadings.currentbook.name + " - " + myreadings.currentbook.idbook,
+			
+			isnew: isnew,
+			componentId: componentId,
+			percent: percent,
 			
 			mode: myreadings.settings.epub_mode,
 			font: myreadings.settings.epub_font,
@@ -91,7 +100,7 @@ Ext.define('myreadings.controller.epub', {
 	openEpub: function() {
 		var me=this;
 		if(me.getBookview().getHref()=="") {
-			me.initEpub();
+			me.initEpub("current", "", "");
 		} else {
 			if(!myreadings.currentbook.reading) {
 				myreadings.currentbook.reading=true;
@@ -159,6 +168,14 @@ Ext.define('myreadings.controller.epub', {
 			y.dom.contentWindow.setFontsize(myreadings.settings.epub_fontsize);
 			
 			myreadings.app.getController('articlesControl').saveuser();
+		}
+	},
+	onBookmarkbutton: function() {
+		var y = Ext.getCmp('bookview').iframeElement;
+		var bookmark=y.dom.contentWindow.getbookmark();
+		console.log(bookmark);
+		if(bookmark.componentId&&bookmark.percent) {
+			myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, bookmark.percent, bookmark.componentId, "bookmarkepub");
 		}
 	},
 	onInfoButton: function() {

@@ -30,11 +30,11 @@
 </head>
 <body>
 <?php
-require_once('confadmin.php');
+require_once('./config/confadmin.php');
 if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) exit("Not login");
-if(!file_exists('config.php')) exit("No configuration file");
+if(!file_exists('./config/config.php')) exit("No configuration file");
 
-require_once('config.php');
+require_once('./config/config.php');
 if($calibre) {
 
 if (!extension_loaded("sqlite3")) echo "sqlite3 extension could be not loaded.";

@@ -53,6 +53,16 @@ Ext.define('myreadings.view.article', {
 			handler: function(){
 				me.hide();
 			}
+		},
+		{
+			xtype: "button",
+			itemId: "bookmark",
+			align: 'right',
+			iconCls: 'eye', //bank: bookmark, truck: not read, box: read
+			iconMask: true,
+			handler: function(button) {
+				myreadings.app.getController('articlesControl').onBookmarkbt(button, me.bookmark);
+			}
 		}
 		]
 	},
@@ -116,7 +126,7 @@ Ext.define('myreadings.view.article', {
 		handler: function() {
 			var result=Ext.getCmp('contenu').getData();
 			me.hide();
-			myreadings.app.getController('articlesControl').epubviewer(result, me.epubpath);
+			myreadings.app.getController('articlesControl').epubviewer(result, me.epubpath, me.bookmark);
 		}
 	},
 	{
@@ -127,7 +137,7 @@ Ext.define('myreadings.view.article', {
 		handler: function() {
 			var result=Ext.getCmp('contenu').getData();
 			me.hide();
-			myreadings.app.getController('articlesControl').comicviewer(result, me.cbzpath);
+			myreadings.app.getController('articlesControl').comicviewer(result, me.cbzpath, me.bookmark);
 		}
 	}
 	]
@@ -139,7 +149,11 @@ Ext.define('myreadings.view.article', {
     	var me = this;
 	me.setMasked({xtype: 'loadmask'});
 	Ext.getCmp('articletitle').setTitle(newData.title);
-	
+	if(newData.bookmark==null||newData.bookmark=="0") Ext.getCmp('articletitle').down('#bookmark').setIconCls('truck');
+	else if(newData.bookmark=="-1") Ext.getCmp('articletitle').down('#bookmark').setIconCls('box');
+	else Ext.getCmp('articletitle').down('#bookmark').setIconCls('bank');
+	me.bookmark=newData.bookmark;
+	me.bookid=newData.id;
 	//console.log("id: " + newData.id + " title: " + newData.title);
 	
 	Ext.getCmp('contenu').setData({});

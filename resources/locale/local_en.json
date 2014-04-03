@@ -63,7 +63,7 @@
 	"txtDrag": "Drag page to change page",
 	"txtDragThreshold": "Page turn drag threshold",
 	"txtChange": "Tap sides to change page",
-	"txtChangeWidth": "Page turn area width",
+	"txtChangeWidth": "Page turn area width"
 }
 },
 "controller":{
@@ -81,11 +81,17 @@
 	"txtProfil": "Profile",
 	"ipad": "Ipad/ Ipad Mini",
 	"gtab": "Galaxy Tab",
-	"iphone": "iPhone"
+	"iphone": "iPhone",
+	"reading": "Reading, page",
+	"notread": "Book not read",
+	"read": "Book read",
+	"markread": "Mark as read",
+	"marknotread": "Mark as not read"
 },
 "lang":
 {
 	"fra": "french",
-	"eng": "english"
+	"eng": "english",
+	"spa": "spanish"
 }
 }

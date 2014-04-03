@@ -30,6 +30,13 @@ Ext.define('myreadings.view.comicview', {
 			{
 			xtype: 'button',
 			align: 'right',
+			itemId: 'bookmark',
+			iconCls: 'cart',
+			iconMask: true
+			},
+			{
+			xtype: 'button',
+			align: 'right',
 			itemId: 'settingsbutton',
 			iconCls: 'settings',
 			iconMask: true

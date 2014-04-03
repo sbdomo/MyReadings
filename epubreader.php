@@ -11,7 +11,7 @@ if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
 else      $mylogin="";
 if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
-require_once('config.php');
+require_once('./config/config.php');
 
 if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
 	 //OK
@@ -41,6 +41,17 @@ else $font="arial";
 if(isset($_GET['taille'])) $taille=$_GET['taille'];
 else $taille="";
 if($taille=="") $taille="1.45";
+
+if(isset($_GET['isnew'])) $isnew=$_GET['isnew'];
+else $isnew="new";
+
+if(isset($_GET['componentId'])) $componentId=$_GET['componentId'];
+else $componentId="";
+
+if(isset($_GET['percent'])) $percent=$_GET['percent'];
+else $percent="";
+
+
 
 $bodyday="background-color: #FFFEFC; color: #210;";
 $bodynight="background-color: #191919; color: white;";
@@ -121,6 +132,8 @@ var bookData = {
 //Pour accéder au menu listant les chapitres du livre
 var bookContentsMenu = {};
 var scrubber = {};
+var placeSaver = {};
+
 var bodyreader = '<?php echo $body; ?>';
 var fontreader = '<?php echo $fontfamily; ?>';
 var taillefont = <?php echo $taille ?>;
@@ -134,9 +147,21 @@ Monocle.Events.listen(
 		
 		/* PLACE SAVER */
 		var bkTitle = bookData.getMetaData('title');
-		var placeSaver = new Monocle.Controls.PlaceSaver(bkTitle);
-		readerOptions.place = placeSaver.savedPlace();
+		placeSaver = new Monocle.Controls.PlaceSaver(bkTitle);
 		
+		<?php if($isnew!="new") {
+			echo "readerOptions.place = placeSaver.savedPlace();";
+		} else {
+			if($componentId!="") {?>
+				readerOptions.place = {};
+				readerOptions.place.percent=<?php echo $percent; ?>;
+				readerOptions.place.componentId="<?php echo $componentId; ?>";
+			<?php }
+		}?>
+		//readerOptions.place.percent=0.8875;
+		//readerOptions.place.componentId="book_0002.xhtml";
+		
+		console.log(placeSaver.savedPlace());
 		//readerOptions.panels = Monocle.Panels.Marginal;
 		readerOptions.panels = Monocle.Panels.Magic;
 		readerOptions.stylesheet = "body { "+bodyreader+fontreader+"}";
@@ -290,6 +315,10 @@ function isloaded() {
 			window.reader.hideControl(scrubber);
 			window.reader.showControl(bookContentsMenu);
 		}
+	}
+	
+	function getbookmark() {
+		return placeSaver.savedPlace();
 	}
     </script>
 </head>

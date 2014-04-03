@@ -10,6 +10,7 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'start', type: 'string', defaultValue:"0"}, //recherche le texte de find au début si start!=0
 			{name: 'order', type: 'string', defaultValue:"recent"}, //ordre de tri ex: pubdate
 			{name: 'idlist', type: 'string', defaultValue:""}, //pour une recherche, par exemple id de l'auteur
+			{name: 'currentuser', type: 'string', defaultValue:""}, //utilisateur en cours (pour les bookmarks des livres)
 			
 			//settings comic viewer
 			{name: 'zoom_on_tap', type: 'int', defaultValue: 1},
@@ -27,7 +28,7 @@ Ext.define('myreadings.model.myreadingsUser', {
 			//livre en cours
 			{name: 'book_reading', type: 'boolean', defaultValue: false},
 			{name: 'book_id', type: 'int'},
-			{name: 'book_idbase', type: 'string'},
+			//{name: 'book_idbase', type: 'string'},
 			{name: 'book_path', type: 'string'},
 			{name: 'book_title', type: 'string'},
 			{name: 'book_currentpage', type: 'int'},

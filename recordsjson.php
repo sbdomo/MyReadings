@@ -7,7 +7,7 @@ if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
 else      $mylogin="";
 if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
-require_once('config.php');
+require_once('./config/config.php');
 
 if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
 	 //OK
@@ -23,6 +23,9 @@ else      $count=100;
 //Chemin de calibre
 if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
 else erreur("No pathbase");
+
+if(isset($_GET['userid'])) $userid=$_GET['userid'];
+else $userid="";
 
 if(isset($_GET['type'])) $type=$_GET['type'];
 else      $type="";
@@ -65,10 +68,14 @@ $COLUMNS="books.id as id, books.title as title, books.path as relativePath, book
 	(SELECT group_concat(name,', ') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book=books.id)) tagsName,
 	(SELECT group_concat(name,', ') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book=books.id)) seriesName,
 	(SELECT group_concat(name,', ') FROM authors WHERE authors.id IN (SELECT author from books_authors_link WHERE book=books.id)) authorsName";
-	
+
+if($userid!="") {
+	$COLUMNS=$COLUMNS.", (SELECT group_concat(value,', ') FROM custom_column_".$userid." WHERE custom_column_".$userid.".book=books.id) bookmark";
+}
+
 $SQL_ALL="SELECT ".$COLUMNS."
 	FROM books ORDER BY ".$order." LIMIT ";
-
+	
 $SQL_BY_TITLE="SELECT ".$COLUMNS."
 	FROM books where books.title LIKE ? ORDER BY ".$order." LIMIT ";
 	

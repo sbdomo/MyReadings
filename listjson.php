@@ -7,7 +7,7 @@ if(isset($_GET['mylogin'])) $mylogin=$_GET['mylogin'];
 else      $mylogin="";
 if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
-require_once('config.php');
+require_once('./config/config.php');
 
 if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
 	 //OK

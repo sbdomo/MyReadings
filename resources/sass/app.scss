@@ -16,6 +16,10 @@ $primary-text-color: #ce6f00;
 @include icon('bird');
 @include icon('anchor');
 @include icon('plane');
+@include icon('cart');
+@include icon('bank');
+@include icon('truck');
+@include icon('box');
 
 .x-toolbar .x-segmentedbutton, .x-segmentedbutton {
 	.x-button {

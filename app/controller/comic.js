@@ -11,6 +11,7 @@ Ext.define('myreadings.controller.comic', {
 			nextbutton: 'comicview #nextbutton',
 			previousbutton: 'comicview #previousbutton',
 			settingsbutton: 'comicview #settingsbutton',
+			bookmark: 'comicview #bookmark',
 			infobutton: 'comicview #infobutton',
 			nextPageIcon: 'comicview #nextPageIcon',
 			prevPageIcon: 'comicview #prevPageIcon',
@@ -34,6 +35,9 @@ Ext.define('myreadings.controller.comic', {
 			},
 			settingsbutton: {
 				tap: 'onSettingsButton'
+			},
+			bookmark: {
+				tap: 'onBookmark'
 			},
 			infobutton: {
 				tap: 'onInfoButton'
@@ -85,12 +89,15 @@ Ext.define('myreadings.controller.comic', {
 		titlebar.setTitle(myreadings.app.getController('articlesControl').localtxt.openingcomic);
 		imageviewer.loadImage('resources/images/no_image_available.jpg');
 		
+		//Si pas de users, pas de bookmark
+		if(myreadings.conf.current_user=="") me.getBookmark().hide();
+		console.log('initComic' + myreadings.currentbook.idbook)
 		Ext.data.JsonP.request({
 			url: './comicsreader.php',
 			callbackKey: 'callback',
 			params: {
 				id: myreadings.currentbook.idbook,
-				idbase: myreadings.currentbook.idbase,
+				idbase: myreadings.conf.txtbase,
 				path: myreadings.currentbook.path,
 				page: "number_of_pages",
 				mylogin: myreadings.conf.username,
@@ -244,7 +251,7 @@ Ext.define('myreadings.controller.comic', {
 				callbackKey: 'callback',
 				params: {
 					id: myreadings.currentbook.idbook,
-					idbase: myreadings.currentbook.idbase,
+					idbase: myreadings.conf.txtbase,
 					path: myreadings.currentbook.path,
 					page: pagenr,
 					mylogin: myreadings.conf.username,
@@ -468,6 +475,9 @@ Ext.define('myreadings.controller.comic', {
 			me.overlay = Ext.Viewport.add(me.getComicsettingsview());
 		}
 		me.overlay.show();
+	},
+	onBookmark: function() {
+		myreadings.app.getController('articlesControl').savebookmark();
 	},
 	onInfoButton: function() {
 		myreadings.app.getController('articlesControl').openArticle_CurrentBook();

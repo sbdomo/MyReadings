@@ -3,14 +3,14 @@ header('Content-Type: application/javascript; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 
-require_once('confadmin.php');
+require_once('./config/confadmin.php');
 $success="false";
 $result="";
 if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 	$result="login error";
 } else {
-	if(file_exists('config.php')) {
-		require_once('config.php');
+	if(file_exists('./config/config.php')) {
+		require_once('./config/config.php');
 		if($calibre) {
 			$success="true";
 			if (!extension_loaded("sqlite3")) $result='<p class="yellow">Sqlite3 extension could be not loaded.</p>';
@@ -19,8 +19,8 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			$result.='<p>Connection Test:</p>';
 			$result.="<p>If all is OK, you must see a cover for each library.</p>";
 			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
-			$result=testconnect($calibre, $result, $fetchmode, $login, $pass);
-			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass);
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users);
 			if(fw("./thumb")) {
 				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
 			} else {
@@ -34,7 +34,7 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			} else {
 				$result.='<p class="red">Zip extension not loaded (you can\'t use viewer)</p>';
 			}
-			if (!extension_loaded("rar")) {
+			if (extension_loaded("rar")) {
 				$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
 			} else {
 				$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
@@ -60,11 +60,12 @@ if (isset($_GET['callback'])) {
 	echo $json;
 }
 
-function testconnect($bases, $result, $fetchmode, $login, $pass) {
+function testconnect($bases, $result, $fetchmode, $login, $pass, $users) {
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
 	foreach ($bases as $key => $path) {
 	try{
+		if(file_exists($path.'metadata.db')) {
 		$pdo = new PDO('sqlite:'.$path.'metadata.db');
 		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
@@ -86,6 +87,20 @@ function testconnect($bases, $result, $fetchmode, $login, $pass) {
 				}
 			} else $resultat = $stmt->fetch();
 		}
+		//Cherche les customs column pour les users
+		if($users) {
+			$erroruser="";
+			foreach ($users as $key => $value) {
+				$queryuser = "SELECT id from custom_columns WHERE name = '".$value."'";
+				$resultquery = $pdo->query($queryuser)->fetch();
+				if(!$resultquery) {
+					$erroruser.=" ".$value." not found.";
+				}
+			}
+			if($erroruser!="") $result.='<p class="red">User error:'.$erroruser.'</p>';
+			else $result.='<p>All users OK</p>';
+		}
+		} else $result.='<p class="red">'.$path."metadata.db not found.</p>";
 	} catch(Exception $e) {
 		$result.='<p class="red">Connection error with '.$key.' - '.$e->getMessage()."</p>";
 	}

@@ -76,18 +76,51 @@ Ext.define('myreadings.view.configpanel', {
 						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
 						if(!this.getDisabled()) {
 							var mycontroller = myreadings.app.getController('articlesControl');
-							//toute la base : type=all
-							mycontroller.showArticles({
-									pathbase: value,
-									type: "all",
-									debut: 5
+							
+							myreadings.conf.current_userid="";
+							Ext.data.JsonP.request({
+								url: './tools.php',
+								callbackKey: 'callback',
+								params: {
+									action: "getuserid",
+									mylogin: myreadings.conf.username,
+									mypass: myreadings.conf.password,
+									base: Ext.getCmp('base').getRecord().data.text,
+									user: myreadings.conf.current_user
+								},
+								success: function(result, request) {
+									//Ext.Viewport.setMasked(false);
+									if(result.success==false) {
+										alert(result.message);
+									} else {
+										myreadings.conf.current_userid=result.resultat;
+									}
+									console.log("userid "+myreadings.conf.current_userid);
+									//Relance la consultation de la base - type=all (et lance saveuser)
+									myreadings.app.getController('articlesControl').showArticles({
+										pathbase: value,
+										type: "all",
+										debut: 5
+									});
+									
+								},
+								failure: function(result, request) {
+									//Ext.Viewport.setMasked(false);
+									//Relance la consultation de la base - type=all (et lance saveuser)
+									myreadings.app.getController('articlesControl').showArticles({
+										pathbase: value,
+										type: "all",
+										debut: 5
+									});
+									alert('Php Error for userid.');
+								}
 							});
+							
 							//Cache la liste dans searchview si elle est ouverte et vide le champs recherche
 							Ext.getCmp('searchview').setActiveItem(0);
 							Ext.getCmp('listviewSearchfield').setValue('');
 							mycontroller.isList=false;
 							
-							console.log("cache");
 							myreadings.currentbook.idbook=null;
 							mycontroller.showViewerBt();
 							
@@ -103,6 +136,56 @@ Ext.define('myreadings.view.configpanel', {
 				id:"profil",
 				padding: 10,
 				html:''
+			},
+			{
+				xtype: 'selectfield',
+				label: "User", //this.txtSelectbase,
+				name:'listuser',
+				id:'listuser',
+				itemId:'listuser',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.conf.current_user=value;
+							myreadings.conf.current_userid="";
+							Ext.data.JsonP.request({
+								url: './tools.php',
+								callbackKey: 'callback',
+								params: {
+									action: "getuserid",
+									mylogin: myreadings.conf.username,
+									mypass: myreadings.conf.password,
+									base: myreadings.conf.txtbase,
+									user: myreadings.conf.current_user
+								},
+								success: function(result, request) {
+									//Ext.Viewport.setMasked(false);
+									if(result.success==false) {
+										alert(result.message);
+									} else {
+										myreadings.conf.current_userid=result.resultat;
+									}
+									//Relance la consultation de la base (et lance saveuser)
+									myreadings.app.getController('articlesControl').showArticles({
+										debut: 6
+									});
+									
+								},
+								failure: function(result, request) {
+									//Ext.Viewport.setMasked(false);
+									//Relance la consultation de la base (et lance saveuser)
+									myreadings.app.getController('articlesControl').showArticles({
+										debut: 6
+									});
+									alert('Php Error for userid.');
+								}
+							});	
+						}
+					}
+				}
 			}
 			]
 		},

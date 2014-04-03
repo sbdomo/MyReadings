@@ -122,9 +122,7 @@
 	"admin.php",
 	"admintools.php",
 	"cache.json",
-	"cache.php",
 	"comicsreader.php",
-	"configtemplate.php",
 	"cover.php",
 	"epubfs.php",
 	"epubreader.php",
@@ -137,8 +135,10 @@
 	"saveconfig.php",
 	"testexist.php",
 	"tests.php",
+	"tools.php",
 	"cache/writetest.html",
-	"thumb/writetest.html"
+	"thumb/writetest.html",
+	"config/configtemplate.php"
     ],
 
     /**

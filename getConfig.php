@@ -9,7 +9,7 @@ else      $mylogin="";
 if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 
-require_once('./config.php');
+require_once('./config/config.php');
 
 $locale = file_get_contents("./resources/locale/local_".$language.".json");
 
@@ -35,6 +35,8 @@ $result['fetchmode']=$fetchmode;
 $result['epubview']=$epubview;
 $result['cbzview']=$cbzview;
 $result['cbrview']=$cbrview;
+
+$result['users']=$users;
 
 $json=json_encode($result);
 $json='{"config":'.$json.',"success":true,"locale":'.$locale.'}';

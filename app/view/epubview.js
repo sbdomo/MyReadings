@@ -155,6 +155,13 @@ Ext.define('myreadings.view.epubview', {
 			itemId: "toc",
 			iconCls: 'list',
 			iconMask: true
+			},
+			{
+			xtype: 'button',
+			align: 'right',
+			itemId: 'bookmark',
+			iconCls: 'cart',
+			iconMask: true
 			}
 			]
 	    },
@@ -291,6 +298,13 @@ Ext.define('myreadings.view.epubview', {
 			xtype: "button",
 			itemId: "toc",
 			iconCls: 'list',
+			iconMask: true
+			},
+			{
+			xtype: 'button',
+			align: 'right',
+			itemId: 'bookmark',
+			iconCls: 'cart',
 			iconMask: true
 			},
 			{

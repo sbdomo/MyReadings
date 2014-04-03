@@ -3,12 +3,38 @@ header('Content-Type: application/javascript; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 
-require_once('confadmin.php');
+require_once('./config/confadmin.php');
 
 if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 	$success="false";
 	$result="login error";
 } else {
+//Creation de conf.db si nécessaire
+$basename="./config/conf.db";
+if(!file_exists($basename)) {
+		/**************************************
+	      * Create database                     *
+	      **************************************/
+	      // Create (connect to) SQLite database in file
+	      $file_db = new PDO('sqlite:'.$basename);
+	      // Set errormode to exceptions
+	      $file_db->setAttribute(PDO::ATTR_ERRMODE, 
+                            PDO::ERRMODE_EXCEPTION);
+	      
+	      /**************************************
+	      * Create tables                       *
+	      **************************************/
+	      $file_db->exec("CREATE TABLE book_progress(
+		      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+		      book_id INTEGER NOT NULL,
+		      base_id TEXT NOT NULL,
+		      componentId TEXT,
+		      percent REAL,
+		      user_id INTEGER NOT NULL,
+		      date_last_read INTEGER
+		      );");
+}
+
 $phptxt="<?php"."\r\n".'$language="'.$_GET['language'].'";'."\r\n";
 $phptxt.='$protect='.$_GET['protect'].';'."\r\n";
 $phptxt.='$login="'.$_GET['login'].'";'."\r\n";
@@ -43,9 +69,20 @@ if(strval($_GET['nblim']>1)) {
 }
 $phptxt.=');'."\r\n";
 
+$phptxt.='$users=array('."\r\n";
+if(strval($_GET['nbuser']>1)) {
+	$nbuser=strval($_GET['nbuser'])-1;
+	for ($x=1; $x<=$nbuser; $x++) {
+		if($_GET['userval'.$x]!="")
+		$phptxt.='"'.$_GET['userval'.$x].'",'."\r\n";
+	}
+}
+$phptxt.=');'."\r\n";
+
+
 $phptxt.="?>";
 
-file_put_contents("./config.php", $phptxt);
+file_put_contents("./config/config.php", $phptxt);
 
 $result="OK";
 $success="true";

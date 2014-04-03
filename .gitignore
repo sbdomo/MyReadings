@@ -5,6 +5,7 @@
 tmp/
 config.php
 confadmin.php
+conf.db
 resources/sass/.sass-cache
 build/
 archive/

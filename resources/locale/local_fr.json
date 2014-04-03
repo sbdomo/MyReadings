@@ -63,7 +63,7 @@
 	"txtDrag": "Glisser pour changer la page",
 	"txtDragThreshold": "Taille du glissement",
 	"txtChange": "Cliquer pour change de page ",
-	"txtChangeWidth": "Zone du clic",
+	"txtChangeWidth": "Zone du clic"
 }
 },
 "controller":{
@@ -81,11 +81,17 @@
 	"txtProfil": "Profil",
 	"ipad": "Ipad/ Ipad Mini",
 	"gtab": "Galaxy Tab",
-	"iphone": "iPhone"
+	"iphone": "iPhone",
+	"reading": "Lecture en cours, page",
+	"notread": "Livre non lu",
+	"read": "Livre lu",
+	"markread": "Marquer comme lu",
+	"marknotread": "Marquer comme non lu"
 },
 "lang":
 {
 	"fra": "français",
-	"eng": "anglais"
+	"eng": "anglais",
+	"spa": "espagnol"
 }
 }

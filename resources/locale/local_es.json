@@ -1,0 +1,97 @@
+{"views":
+{
+"searchpanel":{
+	"txtTitle":"Formulario de busqueda",
+	"txtFieldsetFindText": "Busqueda de texto :",
+	"txtSearchfieldFind": "Texto a buscar...",
+	"txtFindTextType": "Campo donde quiere buscar",
+	"txtFindTextTypeTitle": "Buscar por titulo",
+	"txtFindTextTypeAuthor": "Buscar por nombre del autor",
+	"txtFindTextTypeSerie": "Buscar por serie",
+	"txtFindTextTypeTag": "Buscar por tag",
+	"txtFindTextToStart": "Al principio",
+	"txtFindTextButton": "Buscar",
+	"txtFieldsetList": "o buscar en una lista:",
+	"txtFieldsetListButton": "Mostrar la lista",
+},
+"ArticlesList":{
+	"txtOrderRecent":" Ultimos libros incluidos",
+	"txtOrderPubdate": " Ultimos libros publicados",
+	"txtOrderTitle": " Ordenar por titulo",
+	"txtOrderSerie": " Ordenar por serie",
+},
+"article":{
+	"txtBy": "por",
+	"txtTags":"Tags:",
+	"txtSeries":"Serie:",
+	"txtPubdate":"Fecha de publicacion:",
+	"txtLang":"Lenguaje(s):",
+	"msgError":"Problema durante la busqueda.",
+	"readcbz":"Leer Cbz",
+	"readepub":"Leer ePub"
+},
+"Articles":{
+	"txtBy": "por"
+},
+"listview":{
+	"txtAuthor":" Autores",
+	"txtSerie":" Series",
+	"txtTag":" Tags",
+	"txtSearch":" Buscar",
+	"txtLoadMore":"Mas...",
+	"txtnoMoreRecords":"Fin de la lista",
+	"txtEmpty":"Lista vacia"
+},
+"configpanel":{
+	"txtSelectbase": "Nombre de la biblioteca",
+	"txtTitleLogin": "Conexion",
+	"txtLogin": "Usuario",
+	"txtPass": "Clave",
+	"txtLoginButton": "Identificarse"
+},
+"comicSettings":{
+	"txtTitle": "Configuracion visor de comics",
+	"txtcomic_at_launch": "Abrir el comic actual al inicio",
+	"txtpage_fit_mode": "Modo de ajuste",
+	"txtFitWidth": "Ajustar el ancho",
+	"txtFullPage": "Pagina completa",
+	"txtZoom": "Pulsar para zoom",
+	"txtOff": "Apagado",
+	"txtSingleTap": "Clic simple",
+	"txtDoubleTap": "Doble clic",
+	"txtToggleBar": "Controles de navegacion",
+	"txtDrag": "Arrastrar para pasar pagina",
+	"txtDragThreshold": "Arrastrar girar pagina",
+	"txtChange": "Clic en lateral para pasar pagina",
+	"txtChangeWidth": "Ancho de area paso pagina",
+}
+},
+"controller":{
+	"notlogin":"Desconectar",
+	"error":"Error",
+	"mustloginandpass":"Necesitas un usuario y clave.",
+	"errorlogin":"Login incorrecto.",
+	"msg":"Mensaje",
+	"notloginconfirm":"¿Quieres salir?",
+	"yes":"si",
+	"no":"no",
+	"ok":"OK",
+	"cancel":"Cancelar",
+	"openingcomic":"Abriendo comic...",
+	"txtProfil": "Perfil",
+	"ipad": "Ipad/ Ipad Mini",
+	"gtab": "Galaxy Tab",
+	"iphone": "iPhone",
+	"reading": "Lectura corriente, página",
+	"notread": "Libro no leído",
+	"read": "Libro leído",
+	"markread": "Señalarse como leído",
+	"marknotread": "Señalarse como no leído"
+},
+"lang":
+{
+	"fra": "french",
+	"eng": "english",
+	"spa": "spanish"
+}
+}
