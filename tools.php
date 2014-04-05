@@ -75,19 +75,22 @@ if($action=="cache") {
 		
 		// Create (connect to) SQLite database in file
 		$file_db = new PDO('sqlite:'.$baseconf);
-		// Set errormode to exceptions
-		$file_db->setAttribute(PDO::ATTR_ERRMODE, 
-                            PDO::ERRMODE_EXCEPTION);
-		$query = "SELECT COUNT(*) FROM book_progress WHERE book_id = ".$id." AND base_id = '".addslashes($base)."' AND user_id = ".$userid." LIMIT 1;";
-		$resultquery = $file_db->query($query);
-		if ($resultquery->fetchColumn()==1) {
-			$query = "UPDATE book_progress SET date_last_read = CURRENT_TIMESTAMP, componentId = '".addslashes($componentId)."', percent = ".$percent." WHERE book_id = ".$id." AND base_id = '".addslashes($base)."' AND user_id = ".$userid;
-			$file_db->exec($query);
+		$file_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+		$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
+		$query = "SELECT COUNT(*) FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? LIMIT 1;";
+		$stmt = $file_db->prepare($query);
+		$stmt->execute(array($id, $base, $userid));
+		//$resultquery = $file_db->query($query);
+		if ($stmt->fetchColumn()==1) {
+			$query = "UPDATE book_progress SET date_last_read = CURRENT_TIMESTAMP, componentId = ?, percent = ? WHERE book_id = ? AND base_id = ? AND user_id = ?";
+			$stmt = $file_db->prepare($query);
+			$stmt->execute(array($componentId, $percent, $id, $base, $userid));
 			$success = "true";
 			$result="Bookmark updated.";
 		} else {
-			$query = "INSERT INTO book_progress(book_id, base_id, user_id, date_last_read, componentId, percent) VALUES (".$id.", '".addslashes($base)."', ".$userid.", CURRENT_TIMESTAMP, '".addslashes($componentId)."', ".$percent.")";
-			$file_db->exec($query);
+			$query = "INSERT INTO book_progress(book_id, base_id, user_id, date_last_read, componentId, percent) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)";
+			$stmt = $file_db->prepare($query);
+			$stmt->execute(array($id, $base, $userid, $componentId, $percent));
 			$success = "true";
 			$result="Bookmark created.";
 		}
@@ -148,16 +151,17 @@ if($action=="cache") {
 		if(!file_exists($baseconf)) erreur("No config. database");
 		// Create (connect to) SQLite database in file
 		$file_db = new PDO('sqlite:'.$baseconf);
-		// Set errormode to exceptions
-		$file_db->setAttribute(PDO::ATTR_ERRMODE,
-                            PDO::ERRMODE_EXCEPTION);
-		$query = "SELECT * FROM book_progress WHERE book_id = ".$id." AND base_id = '".addslashes($base)."' AND user_id = ".$userid." LIMIT 1;";
-		$resultquery = $file_db->query($query);
-		$book=$resultquery->fetch(PDO::FETCH_ASSOC);
+		$file_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+		$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
+		$query = "SELECT * FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? LIMIT 1;";
+		$stmt = $file_db->prepare($query);
+		$stmt->execute(array($id, $base, $userid));
+		
+		$book=$stmt->fetch();
 		//print_r($book);
 		$result= array(
 			"percent" => $book['percent'],
-			"componentId" => stripslashes($book['componentId'])
+			"componentId" => $book['componentId']
 			);
 		$file_db = null;
 		$success = "true";
@@ -179,9 +183,11 @@ if($action=="cache") {
 		$pdo = new PDO('sqlite:'.$basename);
 		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-		$query = "SELECT id from custom_columns WHERE name = '".$user."'";
-		//$query = "SELECT * FROM custom_columns";
-		$resultquery = $pdo->query($query)->fetch();
+		$query = "SELECT id from custom_columns WHERE name = ?";
+		
+		$stmt = $pdo->prepare($query);
+		$stmt->execute(array($user));
+		$resultquery=$stmt->fetch();
 		//$custom=$resultquery->fetch();
 		if(!$resultquery) erreur("User not found");
 		
@@ -196,6 +202,7 @@ if($action=="cache") {
 		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
 		erreur($e->getMessage());
 	}
+//Non utilisé
 } else if($action=="getbookmark") {
 	//id du livre
 	if(isset($_GET['id'])) $id=$_GET['id'];
@@ -214,9 +221,11 @@ if($action=="cache") {
 		$pdo = new PDO('sqlite:'.$basename);
 		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-		$query = "SELECT id from custom_columns WHERE name = '".$user."'";
-		//$query = "SELECT * FROM custom_columns";
-		$resultquery = $pdo->query($query)->fetch();
+		$query = "SELECT id from custom_columns WHERE name = ?";
+		
+		$stmt = $pdo->prepare($query);
+		$stmt->execute(array($user));
+		$resultquery=$stmt->fetch();
 		//$custom=$resultquery->fetch();
 		if(!$resultquery) erreur("User not found");
 		

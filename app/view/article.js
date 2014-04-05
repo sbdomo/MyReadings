@@ -149,9 +149,14 @@ Ext.define('myreadings.view.article', {
     	var me = this;
 	me.setMasked({xtype: 'loadmask'});
 	Ext.getCmp('articletitle').setTitle(newData.title);
-	if(newData.bookmark==null||newData.bookmark=="0") Ext.getCmp('articletitle').down('#bookmark').setIconCls('truck');
-	else if(newData.bookmark=="-1") Ext.getCmp('articletitle').down('#bookmark').setIconCls('box');
-	else Ext.getCmp('articletitle').down('#bookmark').setIconCls('bank');
+	if(myreadings.conf.current_userid=="") {
+		Ext.getCmp('articletitle').down('#bookmark').hide();
+	} else {
+		Ext.getCmp('articletitle').down('#bookmark').show();
+		if(newData.bookmark==null||newData.bookmark=="0") Ext.getCmp('articletitle').down('#bookmark').setIconCls('truck');
+		else if(newData.bookmark=="-1") Ext.getCmp('articletitle').down('#bookmark').setIconCls('box');
+		else Ext.getCmp('articletitle').down('#bookmark').setIconCls('bank');
+	}
 	me.bookmark=newData.bookmark;
 	me.bookid=newData.id;
 	//console.log("id: " + newData.id + " title: " + newData.title);

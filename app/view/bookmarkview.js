@@ -2,8 +2,8 @@ Ext.define('myreadings.view.bookmarkview', {
 	extend: 'Ext.Panel',
 	xtype: 'bookmarkview',
 	config: {
-		width: 200,
-		height: 100,
+		width: 210,
+		height: 150,
 		// We give it a left and top property to make it floating by default
 		left: 0,
 		top: 0,
@@ -12,6 +12,12 @@ Ext.define('myreadings.view.bookmarkview', {
 		modal: true,
 		hideOnMaskTap: true,
 		items: [
+		{
+                    docked: 'top',
+                    xtype: 'toolbar',
+		    itemId:"titlepanel",
+                    title: 'bookmark'
+                },
 		{
 		itemId:"reading",
 		margin:10,

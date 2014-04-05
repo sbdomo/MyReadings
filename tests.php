@@ -32,12 +32,16 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			if (extension_loaded("zip")) {
 				$result.='<p>Zip extension loaded (use by cbz viewer)</p>';
 			} else {
-				$result.='<p class="red">Zip extension not loaded (you can\'t use viewer)</p>';
+				if($cbzview=="on") $result.='<p class="red">';
+				else $result.='<p class="yellow">';
+				$result.='Zip extension not loaded (you can\'t use viewer)</p>';
 			}
 			if (extension_loaded("rar")) {
 				$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
 			} else {
-				$result.='<p class="red">Rar extension not loaded (you can\'t use cbr viewer)</p>';
+				if($cbrview=="on") $result.='<p class="red">';
+				else $result.='<p class="yellow">';
+				$result.='Rar extension not loaded (you can\'t use cbr viewer)</p>';
 			}
 			if(fw("./cache")) {
 				$result.='<p>Directory cache is writable (use by cbz viewer)</p>';

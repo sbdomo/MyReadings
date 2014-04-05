@@ -756,7 +756,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.view.ImageViewer": [],
   "myreadings.view.article": [],
   "myreadings.view.bookmarkview": [],
-  "myreadings.view.comicSettings": [],
   "myreadings.view.comicSettingsPopup": [],
   "myreadings.view.comicview": [],
   "myreadings.view.configpanel": [],
@@ -1731,9 +1730,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.bookmarkview": [
     "widget.bookmarkview"
-  ],
-  "myreadings.view.comicSettings": [
-    "widget.comicSettings"
   ],
   "myreadings.view.comicSettingsPopup": [
     "widget.comicSettingsPopup"

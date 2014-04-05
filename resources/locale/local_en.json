@@ -47,11 +47,12 @@
 	"txtTitleLogin": "Connection",
 	"txtLogin": "Name",
 	"txtPass": "Password",
-	"txtLoginButton": "Log in"
+	"txtLoginButton": "Log in",
+	"txtViewer": "Viewer Settings",
+	"txtbook_at_launch": "Open current comic at app launch"
 },
-"comicSettings":{
+"comicSettingsPopup":{
 	"txtTitle": "Comic Viewer Settings",
-	"txtcomic_at_launch": "Open current comic at app launch",
 	"txtpage_fit_mode": "Page fit mode",
 	"txtFitWidth": "Fit width",
 	"txtFullPage": "Full page",
@@ -82,11 +83,12 @@
 	"ipad": "Ipad/ Ipad Mini",
 	"gtab": "Galaxy Tab",
 	"iphone": "iPhone",
-	"reading": "Reading, page",
+	"reading": "Reading",
 	"notread": "Book not read",
 	"read": "Book read",
-	"markread": "Mark as read",
-	"marknotread": "Mark as not read"
+	"markread": "Read",
+	"marknotread": "Not read",
+	"txtBookmark": "Bookmark"
 },
 "lang":
 {

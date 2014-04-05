@@ -91,7 +91,7 @@ Ext.define('myreadings.controller.comic', {
 		
 		//Si pas de users, pas de bookmark
 		if(myreadings.conf.current_user=="") me.getBookmark().hide();
-		console.log('initComic' + myreadings.currentbook.idbook)
+		else  me.getBookmark().show();
 		Ext.data.JsonP.request({
 			url: './comicsreader.php',
 			callbackKey: 'callback',
@@ -117,6 +117,10 @@ Ext.define('myreadings.controller.comic', {
 		});
 	},
 	openComic: function() {
+		//Si pas de users, pas de bookmark
+		if(myreadings.conf.current_user=="") this.getBookmark().hide();
+		else  this.getBookmark().show();
+		
 		if(!myreadings.currentbook.reading) {
 			myreadings.currentbook.reading=true;
 			myreadings.app.getController('articlesControl').saveuser();

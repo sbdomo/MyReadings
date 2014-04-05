@@ -157,11 +157,7 @@ Monocle.Events.listen(
 				readerOptions.place.percent=<?php echo $percent; ?>;
 				readerOptions.place.componentId="<?php echo $componentId; ?>";
 			<?php }
-		}?>
-		//readerOptions.place.percent=0.8875;
-		//readerOptions.place.componentId="book_0002.xhtml";
-		
-		console.log(placeSaver.savedPlace());
+		}?>		
 		//readerOptions.panels = Monocle.Panels.Marginal;
 		readerOptions.panels = Monocle.Panels.Magic;
 		readerOptions.stylesheet = "body { "+bodyreader+fontreader+"}";

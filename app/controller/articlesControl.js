@@ -20,7 +20,10 @@ Ext.define('myreadings.controller.articlesControl', {
 	    passwordCt: 'configpanel [name=pass]',
 	    loginfieldset: 'configpanel [name=loginfieldset]',
 	    btconfigpanelhide: 'configpanel [name=bthide]',
-	    comicSettings: 'configpanel [name=comicSettings]',
+	    
+	    //comicSettings: 'configpanel [name=comicSettings]',
+	    configViewer: 'configpanel #configViewer',
+	    open_book_at_launch: 'configpanel #open_book_at_launch',
 	    
 	    typelistfind: 'listview [name=typelist]',
 	    searchfieldfind: 'listview [name=listviewSearchfield]',
@@ -48,6 +51,7 @@ Ext.define('myreadings.controller.articlesControl', {
                 xtype: 'bookmarkview',
                 selector: 'bookmarkview'
             },
+	    titleBookmarkView: 'bookmarkview #titlepanel',
             txtBookmarkView: 'bookmarkview #reading',
             btBookmarkView: 'bookmarkview #btread'
         },
@@ -240,7 +244,8 @@ Ext.define('myreadings.controller.articlesControl', {
 			if(result.config.connect=="noprotect"||result.config.connect=="protectok") {
 				if(me.isInit==true) {
 					me.getBtconfigpanelhide().show();
-					me.getComicSettings().show();
+					//me.getComicSettings().show();
+					me.getConfigViewer().show();
 					me.getConfigpanel().hide();
 				}
 				
@@ -270,6 +275,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				//console.log("set profil dans config panel " + me.profil);
 				Ext.getCmp('profil').setHtml(me.localtxt.txtProfil+": "+me.localtxt[me.profil]);
+				
+				me.getOpen_book_at_launch().setValue(myreadings.settings.open_current_comic_at_launch);
+				me.getOpen_book_at_launch().enable();
 				
 				//Init user
 				//console.log(result.config.users);
@@ -382,7 +390,8 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.logged=false;
 					me.getBtconfigpanelhide().hide();
 					me.getConfigpanel().show();
-					me.getComicSettings().hide();
+					//me.getComicSettings().hide();
+					me.getConfigViewer().hide();
 					Ext.Msg.alert(me.localtxt.error,me.localtxt.mustloginandpass);
 					me.isInit=true;
 				} else {
@@ -411,7 +420,7 @@ Ext.define('myreadings.controller.articlesControl', {
 			this.type=data.type;
 			this.idlist=data.idlist;
 		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
-			console.log("changement de base calibre, ouvre tout: type=all");
+			//console.log("changement de base calibre, ouvre tout: type=all");
 			store.getProxy().setExtraParam('pathbase',data.pathbase);
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);			
@@ -489,7 +498,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    Ext.getCmp('searchview').show();
     },
     onConfigTap: function() {
-	    Ext.getCmp('configpanel').down('#comicSettings').onInit();
+	    //Ext.getCmp('configpanel').down('#comicSettings').onInit();
 	    Ext.getCmp('configpanel').show();
     },
     
@@ -656,9 +665,8 @@ Ext.define('myreadings.controller.articlesControl', {
 	    //myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
 	    myreadings.currentbook.path=path;
 	    myreadings.currentbook.book_type="epub";
-	    
 	    bookmark=parseInt(bookmark);
-	    if(bookmark==1) {
+	    if(bookmark==1&&myreadings.conf.current_userid!="") {
 		    Ext.Viewport.setMasked({xtype: 'loadmask'});
 		    Ext.data.JsonP.request({
 			    url: './tools.php',
@@ -675,8 +683,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
-				    	    console.log('Bookmark: '+result.resultat);
-					    myreadings.app.getController('epub').initEpub("new", result.resultat.componentId, result.resultat.percent);
+				    	    myreadings.app.getController('epub').initEpub("new", result.resultat.componentId, result.resultat.percent);
 				    }
 			    },
 			    failure: function(result, request) {
@@ -729,7 +736,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
-				    	    console.log('Bookmark: '+result.resultat);
+				    	    if(action=="bookmarkepub") mark=1;
 				    	    me.getArticleslist().getStore().findRecord('id',idbook).set("bookmark",mark);
 				    }
 			    },
@@ -743,6 +750,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    var view = (!this.getBookmarkView()) ? Ext.create('App.view.bookmarkview') : this.getBookmarkView();
 	    if (!view.getParent()) {
 		Ext.Viewport.add(view);
+		this.getTitleBookmarkView().setTitle(this.localtxt.txtBookmark);
 	    }
 	    //console.log(cur_bookmark);
 	    if(cur_bookmark==null||cur_bookmark=="0") {
@@ -752,7 +760,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    	    this.getTxtBookmarkView().setHtml(this.localtxt.read);
 	    	    this.getBtBookmarkView().setText(this.localtxt.marknotread);
 	    } else {
-	    	   this.getTxtBookmarkView().setHtml(this.localtxt.reading+" "+cur_bookmark);
+	    	   this.getTxtBookmarkView().setHtml(this.localtxt.reading);
 	    	   this.getBtBookmarkView().setText(this.localtxt.markread);
 	    }
 	    view.showBy(button);
@@ -760,7 +768,6 @@ Ext.define('myreadings.controller.articlesControl', {
     onBtBookmarkViewTap: function() {
     	    var bookid=this.getArticleView().bookid;
     	    var bookmark=this.getArticleView().bookmark;
-    	    console.log(bookid+ "/" + bookmark);
     	    //var bookmark=this.getArticleslist().getStore().findRecord('id',bookid).get("bookmark");
     	   if(bookmark=="-1") {
     	   	   this.saveusermark(bookid, "0", "", "bookmark");

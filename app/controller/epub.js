@@ -94,6 +94,11 @@ Ext.define('myreadings.controller.epub', {
 		}
 		myreadings.currentbook.reading=true;
 		this.getEpubview().setMasked(true);
+		
+		//Si pas de users, pas de bookmark
+		if(myreadings.conf.current_user=="") me.getBookmarkbutton().hide();
+		else  me.getBookmarkbutton().show();
+		
 		this.getEpubview().show();
 		myreadings.app.getController('articlesControl').saveuser();
 	},
@@ -173,7 +178,6 @@ Ext.define('myreadings.controller.epub', {
 	onBookmarkbutton: function() {
 		var y = Ext.getCmp('bookview').iframeElement;
 		var bookmark=y.dom.contentWindow.getbookmark();
-		console.log(bookmark);
 		if(bookmark.componentId&&bookmark.percent) {
 			myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, bookmark.percent, bookmark.componentId, "bookmarkepub");
 		}

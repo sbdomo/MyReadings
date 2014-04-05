@@ -29,7 +29,7 @@ Ext.define('myreadings.view.configpanel', {
 				iconMask: true,
 				handler: function(){
 					var form = this.getParent().getParent().getParent();
-					form.down('#comicSettings').onSave();
+					//form.down('#comicSettings').onSave();
 					form.hide();
 				}
 			}]
@@ -78,6 +78,7 @@ Ext.define('myreadings.view.configpanel', {
 							var mycontroller = myreadings.app.getController('articlesControl');
 							
 							myreadings.conf.current_userid="";
+							Ext.Viewport.setMasked({xtype: 'loadmask'});
 							Ext.data.JsonP.request({
 								url: './tools.php',
 								callbackKey: 'callback',
@@ -89,13 +90,13 @@ Ext.define('myreadings.view.configpanel', {
 									user: myreadings.conf.current_user
 								},
 								success: function(result, request) {
-									//Ext.Viewport.setMasked(false);
+									Ext.Viewport.setMasked(false);
 									if(result.success==false) {
 										alert(result.message);
 									} else {
 										myreadings.conf.current_userid=result.resultat;
 									}
-									console.log("userid "+myreadings.conf.current_userid);
+									//console.log("userid "+myreadings.conf.current_userid);
 									//Relance la consultation de la base - type=all (et lance saveuser)
 									myreadings.app.getController('articlesControl').showArticles({
 										pathbase: value,
@@ -105,7 +106,7 @@ Ext.define('myreadings.view.configpanel', {
 									
 								},
 								failure: function(result, request) {
-									//Ext.Viewport.setMasked(false);
+									Ext.Viewport.setMasked(false);
 									//Relance la consultation de la base - type=all (et lance saveuser)
 									myreadings.app.getController('articlesControl').showArticles({
 										pathbase: value,
@@ -126,7 +127,7 @@ Ext.define('myreadings.view.configpanel', {
 							
 							var form=this.getParent().getParent();
 							//sauvegarde les paramètres du comic viewer au cas où ils auraient été modifés avant le changement de base
-							form.down('#comicSettings').onSave();
+							//form.down('#comicSettings').onSave();
 							form.hide();
 						}
 					}
@@ -136,7 +137,14 @@ Ext.define('myreadings.view.configpanel', {
 				id:"profil",
 				padding: 10,
 				html:''
-			},
+			}
+			]
+		},
+		{
+			xtype: 'fieldset',
+			itemId: 'configViewer',
+			title: this.txtViewer,
+			items: [
 			{
 				xtype: 'selectfield',
 				label: "User", //this.txtSelectbase,
@@ -151,6 +159,7 @@ Ext.define('myreadings.view.configpanel', {
 						if(!this.getDisabled()) {
 							myreadings.conf.current_user=value;
 							myreadings.conf.current_userid="";
+							Ext.Viewport.setMasked({xtype: 'loadmask'});
 							Ext.data.JsonP.request({
 								url: './tools.php',
 								callbackKey: 'callback',
@@ -162,7 +171,7 @@ Ext.define('myreadings.view.configpanel', {
 									user: myreadings.conf.current_user
 								},
 								success: function(result, request) {
-									//Ext.Viewport.setMasked(false);
+									Ext.Viewport.setMasked(false);
 									if(result.success==false) {
 										alert(result.message);
 									} else {
@@ -175,7 +184,7 @@ Ext.define('myreadings.view.configpanel', {
 									
 								},
 								failure: function(result, request) {
-									//Ext.Viewport.setMasked(false);
+									Ext.Viewport.setMasked(false);
 									//Relance la consultation de la base (et lance saveuser)
 									myreadings.app.getController('articlesControl').showArticles({
 										debut: 6
@@ -186,17 +195,25 @@ Ext.define('myreadings.view.configpanel', {
 						}
 					}
 				}
+			},
+			{
+				xtype: 'togglefield',
+				label: this.txtbook_at_launch,
+				//labelWidth: '60%',
+				itemId: 'open_book_at_launch',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.settings.open_current_comic_at_launch=value;
+							myreadings.app.getController('articlesControl').saveuser();
+						}
+					}
+				}
 			}
 			]
-		},
-		{
-			xtype:'comicSettings',
-			name:'comicSettings',
-			itemId:'comicSettings',
-			height: 450,
-			scrollable: false
-			//layout: 'vbox'
-			//flex: 1
 		}
 		]
 		);
