@@ -20,6 +20,7 @@ $primary-text-color: #ce6f00;
 @include icon('bank');
 @include icon('truck');
 @include icon('box');
+@include icon('shuffle');
 
 .x-toolbar .x-segmentedbutton, .x-segmentedbutton {
 	.x-button {
@@ -60,6 +61,9 @@ $primary-text-color: #ce6f00;
             border-bottom: 0;
         }
     }
+    .fond2 {
+	background-image:url(../images/bg_bookr.png) !important;
+    }
 //Style du cadre d'un article (dans clsarticle)
 //par défaut
     .tablet {
@@ -85,6 +89,14 @@ $primary-text-color: #ce6f00;
         	position: relative;
         	top: 4px;
         	left: -7px;
+        }
+        .fbookmark {
+		background: transparent url(../images/bookmark.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
         }
 //Style du texte sous le livre
 	.name {

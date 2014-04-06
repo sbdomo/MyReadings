@@ -179,7 +179,7 @@ Ext.define('myreadings.controller.epub', {
 		var y = Ext.getCmp('bookview').iframeElement;
 		var bookmark=y.dom.contentWindow.getbookmark();
 		if(bookmark.componentId&&bookmark.percent) {
-			myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, bookmark.percent, bookmark.componentId, "bookmarkepub");
+			myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, myreadings.currentbook.book_type, bookmark.percent, bookmark.componentId, "bookmarkpage");
 		}
 	},
 	onInfoButton: function() {

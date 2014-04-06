@@ -46,7 +46,7 @@ if($action=="cache") {
 		$result="was ok";
 	}
 	$success=true;
-} else if($action=="bookmark"||$action=="bookmarkepub") {
+} else if($action=="bookmark"||$action=="bookmarkpage") {
 	//id du livre
 	if(isset($_GET['id'])) $id=$_GET['id'];
 	else      erreur("No id");
@@ -55,57 +55,60 @@ if($action=="cache") {
 	if(isset($_GET['base'])) $base=$_GET['base'];
 	else      erreur("No base");
 	
+	//type
+	if(isset($_GET['type'])) $type=$_GET['type'];
+	else erreur("No book type");
+	
 	//user
 	if(isset($_GET['userid'])) $userid=$_GET['userid'];
 	else erreur("No user");
 	
-	if($action=="bookmarkepub") {
-		//Chapitre (fichier) de l'epub
-		if(isset($_GET['componentId'])) $componentId=$_GET['componentId'];
-		else erreur("No bookmark");
-		//Pourcentage d'avancement dans le chapitre
-		if(isset($_GET['page'])) $percent=$_GET['page'];
-		else erreur("No bookmark");
-		
-		//Pour indiquer dans metadata.db que la lecture est en cours
-		$page = "1";
-		
-	    try{
+	//numéro de page ou percent (pour epub)
+	if(isset($_GET['page'])) $page=$_GET['page'];
+	else erreur("No page number");
+	
+	//Chapitre (fichier) de l'epub
+	if(isset($_GET['componentId'])) $componentId=$_GET['componentId'];
+	else $componentId="";
+	
+	try{
 		if(!file_exists($baseconf)) erreur("No config. database");
 		
 		// Create (connect to) SQLite database in file
 		$file_db = new PDO('sqlite:'.$baseconf);
 		$file_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-		$query = "SELECT COUNT(*) FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? LIMIT 1;";
-		$stmt = $file_db->prepare($query);
-		$stmt->execute(array($id, $base, $userid));
-		//$resultquery = $file_db->query($query);
-		if ($stmt->fetchColumn()==1) {
-			$query = "UPDATE book_progress SET date_last_read = CURRENT_TIMESTAMP, componentId = ?, percent = ? WHERE book_id = ? AND base_id = ? AND user_id = ?";
+	
+		if($action=="bookmarkpage") {
+			$query = "SELECT COUNT(*) FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? AND type = ? LIMIT 1;";
 			$stmt = $file_db->prepare($query);
-			$stmt->execute(array($componentId, $percent, $id, $base, $userid));
-			$success = "true";
-			$result="Bookmark updated.";
+			$stmt->execute(array($id, $base, $userid, $type));
+			if ($stmt->fetchColumn()==1) {
+				$query = "UPDATE book_progress SET date_last_read = CURRENT_TIMESTAMP, componentId = ?, percent = ? WHERE book_id = ? AND base_id = ? AND user_id = ? AND type = ?";
+				$stmt = $file_db->prepare($query);
+				$stmt->execute(array($componentId, $page, $id, $base, $userid, $type));
+			} else {
+				$query = "INSERT INTO book_progress(book_id, base_id, user_id, type, date_last_read, componentId, percent) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?)";
+				$stmt = $file_db->prepare($query);
+				$stmt->execute(array($id, $base, $userid, $type, $componentId, $page));
+			}
+			
+			//1 pour indiquer que la lecture est encours
+			$page=1;
 		} else {
-			$query = "INSERT INTO book_progress(book_id, base_id, user_id, date_last_read, componentId, percent) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)";
+			$query = "DELETE FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ?;";
 			$stmt = $file_db->prepare($query);
-			$stmt->execute(array($id, $base, $userid, $componentId, $percent));
-			$success = "true";
-			$result="Bookmark created.";
+			$stmt->execute(array($id, $base, $userid));
 		}
+	
+	
 		// Close file db connection
 		$file_db = null;
-	    } catch(Exception $e) {
+	} catch(Exception $e) {
 		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
 		erreur($e->getMessage());
-	    }
-		
-	} else {
-		//numéro de page
-		if(isset($_GET['page'])) $page=$_GET['page'];
-		else erreur("No page number");
 	}
+
 	
 	$basename=$calibre[$base].'metadata.db';
 	try{
@@ -117,6 +120,7 @@ if($action=="cache") {
 		
 		$query = "SELECT COUNT(*) FROM ".$custom_column." WHERE book=".$id." LIMIT 1;";
 		$resultquery = $pdo->query($query);
+		//custom column = 1 pour indiquer que c'est en cours de lecture
 		if ($resultquery->fetchColumn()==1) {
 			$query = "UPDATE ".$custom_column." SET value = ".$page." WHERE book = ".$id;
 			$pdo->exec($query);
@@ -135,7 +139,7 @@ if($action=="cache") {
 		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
 		erreur($e->getMessage());
 	}
-} else if($action=="getbookmarkepub") {
+} else if($action=="getpage") {
 	//id du livre
 	if(isset($_GET['id'])) $id=$_GET['id'];
 	else      erreur("No id");
@@ -143,6 +147,10 @@ if($action=="cache") {
 	//nom de la base
 	if(isset($_GET['base'])) $base=$_GET['base'];
 	else      erreur("No base");
+	
+	//type
+	if(isset($_GET['type'])) $type=$_GET['type'];
+	else erreur("No book type");
 	
 	//user
 	if(isset($_GET['userid'])) $userid=$_GET['userid'];
@@ -153,9 +161,9 @@ if($action=="cache") {
 		$file_db = new PDO('sqlite:'.$baseconf);
 		$file_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-		$query = "SELECT * FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? LIMIT 1;";
+		$query = "SELECT * FROM book_progress WHERE book_id = ? AND base_id = ? AND user_id = ? AND type = ? LIMIT 1;";
 		$stmt = $file_db->prepare($query);
-		$stmt->execute(array($id, $base, $userid));
+		$stmt->execute(array($id, $base, $userid, $type));
 		
 		$book=$stmt->fetch();
 		//print_r($book);
@@ -203,7 +211,7 @@ if($action=="cache") {
 		erreur($e->getMessage());
 	}
 //Non utilisé
-} else if($action=="getbookmark") {
+} else if($action=="getbookmarkcalibre") {
 	//id du livre
 	if(isset($_GET['id'])) $id=$_GET['id'];
 	else      erreur("No id");

@@ -630,14 +630,43 @@ Ext.define('myreadings.controller.articlesControl', {
 	    myreadings.currentbook.name=book.books[0].title;
 	    //myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
 	    myreadings.currentbook.path=path;
-	    bookmark=parseInt(bookmark);
-	    //console.log("bookmark:"+bookmark);
-	    if(bookmark>0) myreadings.currentbook.current_page_nr=bookmark-1;
-	    else myreadings.currentbook.current_page_nr=0;
 	    myreadings.currentbook.book_type="comic";
-	    //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
-	    myreadings.app.getController('comic').initComic();
-	    comicView.show();
+	    
+	    if(bookmark=="1"&&myreadings.conf.current_userid!="") {
+		    Ext.Viewport.setMasked({xtype: 'loadmask'});
+		    Ext.data.JsonP.request({
+			    url: './tools.php',
+			    callbackKey: 'callback',
+			    params: {
+				    action: "getpage",
+				    mylogin: myreadings.conf.username,
+				    mypass: myreadings.conf.password,
+				    id: myreadings.currentbook.idbook,
+				    base: myreadings.conf.txtbase,
+				    type: myreadings.currentbook.book_type,
+				    userid: myreadings.conf.current_userid
+			    },
+			    success: function(result, request) {
+				    Ext.Viewport.setMasked(false);
+				    if(result.success==false) alert(result.message);
+				    else {
+				    	 myreadings.currentbook.current_page_nr=parseInt(result.resultat.percent)-1;
+				    	 //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
+				    	 myreadings.app.getController('comic').initComic();
+				    	 comicView.show();
+				    }
+			    },
+			    failure: function(result, request) {
+				    Ext.Viewport.setMasked(false);
+				    alert('Php Error for bookmark.');
+			    }
+		    });
+	    } else {
+		    myreadings.currentbook.current_page_nr=0;
+		    //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
+		    myreadings.app.getController('comic').initComic();
+		    comicView.show();
+	    }
 	    this.showViewerBt();
     },
     //Réouvre cbz à la page en cours: myreadings.currentbook.current_page_nr
@@ -665,18 +694,18 @@ Ext.define('myreadings.controller.articlesControl', {
 	    //myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
 	    myreadings.currentbook.path=path;
 	    myreadings.currentbook.book_type="epub";
-	    bookmark=parseInt(bookmark);
-	    if(bookmark==1&&myreadings.conf.current_userid!="") {
+	    if(bookmark=="1"&&myreadings.conf.current_userid!="") {
 		    Ext.Viewport.setMasked({xtype: 'loadmask'});
 		    Ext.data.JsonP.request({
 			    url: './tools.php',
 			    callbackKey: 'callback',
 			    params: {
-				    action: "getbookmarkepub",
+				    action: "getpage",
 				    mylogin: myreadings.conf.username,
 				    mypass: myreadings.conf.password,
 				    id: myreadings.currentbook.idbook,
 				    base: myreadings.conf.txtbase,
+				    type: myreadings.currentbook.book_type,
 				    userid: myreadings.conf.current_userid
 			    },
 			    success: function(result, request) {
@@ -714,9 +743,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    }
     },
     savebookmark: function() {
-    	    this.saveusermark(myreadings.currentbook.idbook, myreadings.currentbook.current_page_nr+1, "", "bookmark");
+    	    this.saveusermark(myreadings.currentbook.idbook, myreadings.currentbook.book_type, myreadings.currentbook.current_page_nr+1, "", "bookmarkpage");
     },
-    saveusermark: function(idbook, mark, componentId, action) {
+    saveusermark: function(idbook, type, mark, componentId, action) {
 	    Ext.Viewport.setMasked({xtype: 'loadmask'});
 	    var me=this;
 	    Ext.data.JsonP.request({
@@ -729,6 +758,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				    id: idbook,
 				    base: myreadings.conf.txtbase,
 				    userid: myreadings.conf.current_userid,
+				    type: type,
 				    page: mark,
 				    componentId: componentId
 			    },
@@ -736,8 +766,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
-				    	    if(action=="bookmarkepub") mark=1;
+				    	    if(action=="bookmarkpage") mark=1;
 				    	    me.getArticleslist().getStore().findRecord('id',idbook).set("bookmark",mark);
+				    	    me.getArticleslist().refreshItems();
 				    }
 			    },
 			    failure: function(result, request) {
@@ -770,9 +801,9 @@ Ext.define('myreadings.controller.articlesControl', {
     	    var bookmark=this.getArticleView().bookmark;
     	    //var bookmark=this.getArticleslist().getStore().findRecord('id',bookid).get("bookmark");
     	   if(bookmark=="-1") {
-    	   	   this.saveusermark(bookid, "0", "", "bookmark");
+    	   	   this.saveusermark(bookid, "", "0", "", "bookmark");
     	   } else {
-    	   	   this.saveusermark(bookid, -1, "", "bookmark");
+    	   	   this.saveusermark(bookid, "", -1, "", "bookmark");
     	   }
     	   this.getBookmarkView().hide();
     	   this.getArticleView().hide();

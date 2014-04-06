@@ -36,9 +36,10 @@ Ext.define('myreadings.view.Articles', {
     	//version iPad - iPad mini
     	//Configuration de l'affichage d'un livre
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
-    			'<div class="fond">'+
+    			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
-			'</div>'+
+    				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
+    			'</div>'+
 			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
@@ -85,8 +86,9 @@ Ext.define('myreadings.view.Articles', {
 	
 	//avec retour à la ligne pour title et seriesName (avec tapclass), sans pubDate, sans txtBy
 	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
-    			'<div class="fond">'+
+    			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
 			'</div>'+
 			'<div class="name"><span class="tapclass">{data.title}</span></div>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
@@ -95,8 +97,9 @@ Ext.define('myreadings.view.Articles', {
                     '</div></div>';
 		    //sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
-    			'<div class="fond">'+
+    			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
 			'</div>'+
 			'<div class="name">{data.title}</div>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
@@ -131,8 +134,9 @@ Ext.define('myreadings.view.Articles', {
 	
 	//version galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.
 	var mytplgtab= '<div class="clsarticle" ref="{data.id}"><div class="gtab">'+
-    			'<div class="fond">'+
+    			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
+   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
 			'</div>'+
 			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+

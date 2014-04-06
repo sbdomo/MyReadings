@@ -28,9 +28,10 @@ if(!file_exists($basename)) {
 		      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
 		      book_id INTEGER NOT NULL,
 		      base_id TEXT NOT NULL,
+		      type TEXT NOT NULL, 
+		      user_id INTEGER NOT NULL,
 		      componentId TEXT,
 		      percent REAL,
-		      user_id INTEGER NOT NULL,
 		      date_last_read INTEGER
 		      );");
 }

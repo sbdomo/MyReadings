@@ -73,35 +73,40 @@ if($userid!="") {
 	$COLUMNS=$COLUMNS.", (SELECT group_concat(value,', ') FROM custom_column_".$userid." WHERE custom_column_".$userid.".book=books.id) bookmark";
 }
 
+//Tous les livres
 $SQL_ALL="SELECT ".$COLUMNS."
 	FROM books ORDER BY ".$order." LIMIT ";
-	
+
+/*$SQL_ALL="SELECT ".$COLUMNS."
+	FROM books "."GROUP BY seriesName "."ORDER BY ".$order." LIMIT ";*/
+
+//texte dans titre du livre	
 $SQL_BY_TITLE="SELECT ".$COLUMNS."
-	FROM books where books.title LIKE ? ORDER BY ".$order." LIMIT ";
-	
+	FROM books where books.title LIKE ? ORDER BY ".$order." LIMIT ";	
+//texte dans étiquette (tags)
 $SQL_BY_TAGNAME="SELECT DISTINCT ".$COLUMNS."
 	FROM books, books_tags_link, tags
 	where books_tags_link.book = books.id and tags.id = books_tags_link.tag and
 	tags.name LIKE ? ORDER BY ".$order." LIMIT ";
-	
+//texte dans auteur	
 $SQL_BY_AUTHORNAME="SELECT DISTINCT ".$COLUMNS."
 	FROM books, books_authors_link, authors
 	where books_authors_link.book = books.id and authors.id = books_authors_link.author and
 	authors.name LIKE ? ORDER BY ".$order." LIMIT ";
-	
+//texte dans serie	
 $SQL_BY_SERIENAME="SELECT DISTINCT ".$COLUMNS."
 	FROM books, books_series_link, series
 	where books_series_link.book = books.id and series.id = books_series_link.series and
 	series.name LIKE ? ORDER BY ".$order." LIMIT ";
-	
+//un auteur	
 $SQL_BY_AUTHOR ="SELECT ".$COLUMNS."
 	FROM books_authors_link LEFT JOIN books ON books_authors_link.book = books.id
 	where books_authors_link.author = ? ORDER BY ".$order." LIMIT ";
-	
+//une série
 $SQL_BY_SERIE ="SELECT ".$COLUMNS."
 	FROM books_series_link LEFT JOIN books ON books_series_link.book = books.id
 	where books_series_link.series = ? ORDER BY ".$order." LIMIT ";
-	
+//Une étiquette	
 $SQL_BY_TAG ="SELECT ".$COLUMNS."
 	FROM books_tags_link LEFT JOIN books ON books_tags_link.book = books.id
 	where books_tags_link.tag = ? ORDER BY ".$order." LIMIT ";

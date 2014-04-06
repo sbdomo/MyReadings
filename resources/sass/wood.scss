@@ -18,6 +18,7 @@ $toolbar-gradient: 'glossy';
 @include icon('bank');
 @include icon('truck');
 @include icon('box');
+@include icon('shuffle');
 
 @import 'sencha-touch/default/src/Class';
 @import 'sencha-touch/default/src/Button';
@@ -102,6 +103,9 @@ body,
             border-bottom: 0;
         }
     }
+    .fond2 {
+	background-image:url(../images/bg_bookr.png) !important;
+    }
 //Style du cadre d'un article (dans clsarticle)
 //par défaut
     .tablet {
@@ -127,6 +131,14 @@ body,
         	position: relative;
         	top: 4px;
         	left: -7px;
+        }
+        .fbookmark {
+		background: transparent url(../images/bookmark.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
         }
 //Style du texte sous le livre
 	.name {
