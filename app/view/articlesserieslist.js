@@ -1,13 +1,15 @@
-Ext.define('myreadings.view.ArticlesList', {
+Ext.define('myreadings.view.articlesserieslist', {
     extend: 'Ext.carousel.Infinite',
-    xtype: 'articleslist',
+    xtype: 'articlesserieslist',
     requires: ['myreadings.view.Articles'],
     config: {
-        title:'My Readings',
-        direction: 'horizontal',
+        //title:'My Readings Two',
+        hidden: true,
+    	direction: 'horizontal',
         innerItemConfig: {
             xclass: 'myreadings.view.Articles'
         },
+
         count: 'auto',
         offsetLimit: 50,
         store: null,
@@ -26,40 +28,30 @@ Ext.define('myreadings.view.ArticlesList', {
 	//console.log("ArticlesList init");
 	this.setItems(
         [
-        {
+	{
     	    xtype: 'titlebar',
-    	    name: 'maintitlebar',
-    	    id:'maintitlebar',
+    	    itemId: 'titlebarserie',
     	    docked: 'top',
-    	    title: 'My Readings',
+    	    title: 'My readings',
     	    items: [
-    	    {
-    	    	    iconCls: 'shuffle',
-    	    	    itemId: 'btOrder',
-    	    	    iconMask: true
+	    {
+    	    	    ui: 'decline',
+	    	    align: 'left',
+	    	    iconCls: 'delete',
+	    	    iconMask: true,
+	    	    handler: function(){
+	    	    	    var form = this.getParent().getParent().getParent();
+	    	    	    form.hide();
+	    	    }
     	    },
-    	    {
-    	    	    iconCls: 'search',
-    	    	    name: 'searchbutton',
-    	    	    id:'searchbutton',
-    	    	    iconMask: true
-    	    },
-    	    {
+	    {
     	    	    iconCls: 'eye',
     	    	    itemId: 'viewer',
-    	    	    //name: 'viewer',
-    	    	    //id:'viewer',
     	    	    iconMask: true
-    	    },
-    	    {
-    	    	   iconCls: 'settings',
-    	    	   name: 'configbutton',
-    	    	   id:'configbutton',
-    	    	   iconMask: true
     	    }
     	    ]
-        }
-        ]
+	}
+	]
 	);
         Ext.Viewport.on('orientationchange', this.onOrientationChange, this);
         this.element.on({

@@ -1,4 +1,4 @@
-Ext.define('myreadings.model.article', {
+Ext.define('myreadings.model.article2', {
     extend: 'Ext.data.Model',
 
     config: {
@@ -12,9 +12,7 @@ Ext.define('myreadings.model.article', {
 	    "tagsName",
 	    "seriesName",
             "seriesIndex",
-	    "bookmark",
-	    "nbgp",
-	    "serieid"
+	    "bookmark"
         ],
 	//'comment', 'extension', 'filename', "languagesName",
 	

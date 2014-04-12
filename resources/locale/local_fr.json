@@ -14,11 +14,16 @@
 	"txtFieldsetList": "ou recherche dans une liste:",
 	"txtFieldsetListButton": "Afficher la liste",
 },
-"ArticlesList":{
+"orderview":{
+	"txtTitle": "Trier",
 	"txtOrderRecent":" Derniers ajoutés",
 	"txtOrderPubdate": " Derniers publiés",
 	"txtOrderTitle": " Par titre",
 	"txtOrderSerie": " Par série",
+	"txtAll": "Tous",
+	"txtNotRead": "Non Lus",
+	"txtRead": "Lus",
+	"txtSerie": "Groupé par série"
 },
 "article":{
 	"txtBy": "de",

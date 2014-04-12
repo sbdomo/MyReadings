@@ -95,10 +95,12 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users) {
 		if($users) {
 			$erroruser="";
 			foreach ($users as $key => $value) {
-				$queryuser = "SELECT id from custom_columns WHERE name = '".$value."'";
+				$queryuser = "SELECT id, datatype from custom_columns WHERE name = '".$value."'";
 				$resultquery = $pdo->query($queryuser)->fetch();
 				if(!$resultquery) {
 					$erroruser.=" ".$value." not found.";
+				} else if($resultquery['datatype']!='int') {
+					$erroruser.=" ".$value." is not integer.";
 				}
 			}
 			if($erroruser!="") $result.='<p class="red">User error:'.$erroruser.'</p>';

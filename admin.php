@@ -125,6 +125,7 @@ function removeuser(me){
 
 $(function() {
         var i = $('#calibrelibrary1 li').size();
+	$.ajaxSetup({ cache: false });
         $('#addcalibre1').on('click', function() {
 			listItem = '<li><fieldset class="ui-grid-a">'+
 			'<div class="ui-block-a">'+
@@ -397,6 +398,10 @@ foreach ($users as $key => $value) {
 
 	</ul>
 	<input type="button" id="adduser" class="btn" value="Add user" />
+	<p>For each user, you can save a bookmark of a book or indicate that the book has been read. 
+For that, you must create a custom column in calibre for each user. The datatype must be "integer". 
+For example, you create a custom column with label user1 and name "Toto" and then, here, you add Toto. 
+If you want use that, I recommend you to add, in the first one, a "guest" user who will be the account used by default.</p>
 </div>
 
 

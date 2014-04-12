@@ -38,12 +38,16 @@ Ext.define('myreadings.view.Articles', {
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
     			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
-    				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
+    				'<div class="fbookmark<tpl if="data.bookmark==\'1\'">1</tpl>"> </div>'+
+				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
     			'</div>'+
-			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
+			'<tpl if="data.nbgp==null||data.nbgp==1">'+
+				'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
+			'</tpl>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
-                        '<tpl if="data.seriesName"><div class="txtpetititalique">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">txtpetititalique<tpl else>txtitalique</tpl>">{data.seriesName}'+
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
                     '</div></div>';
 	//Mise en page des livres
         //mode portrait: 2 lignes et 4 livres par ligne
@@ -88,22 +92,30 @@ Ext.define('myreadings.view.Articles', {
 	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
-   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
+   				'<div class="fbookmark<tpl if="data.bookmark==\'1\'">1</tpl>"> </div>'+
+				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
-			'<div class="name"><span class="tapclass">{data.title}</span></div>'+
+			'<tpl if="data.nbgp==null||data.nbgp==1">'+
+				'<div class="name"><span class="tapclass">{data.title}</span></div>'+
+			'</tpl>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
-                        '<tpl if="data.seriesName"><div class="txtpetititalique"><span class="tapclass">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl><span class="tapclass"></div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">txtpetititalique<tpl else>txtitalique</tpl>"><span class="tapclass">{data.seriesName}'+
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl><span class="tapclass"></div></tpl>'+
                     '</div></div>';
-		    //sans le retour à la ligne, sans tagsName
+	//sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
-   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
+   				'<div class="fbookmark<tpl if="data.bookmark==\'1\'">1</tpl>"> </div>'+
+				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
-			'<div class="name">{data.title}</div>'+
+			'<tpl if="data.nbgp==null||data.nbgp==1">'+
+				'<div class="name">{data.title}</div>'+
+			'</tpl>'+
                         '<div class="txt"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
-                        '<tpl if="data.seriesName"><div class="txtpetititalique">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">txtpetititalique<tpl else>txtitalique</tpl>">{data.seriesName}'+
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
                     '</div></div>';
 
 	    
@@ -136,12 +148,16 @@ Ext.define('myreadings.view.Articles', {
 	var mytplgtab= '<div class="clsarticle" ref="{data.id}"><div class="gtab">'+
     			'<div class="fond <tpl if="data.bookmark==\'-1\'">fond2</tpl>">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
-   				'<tpl if="data.bookmark==\'1\'"><div class="fbookmark"> </div></tpl>'+
+   				'<div class="fbookmark<tpl if="data.bookmark==\'1\'">1</tpl>"> </div>'+
+				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
-			'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
+			'<tpl if="data.nbgp==null||data.nbgp==1">'+
+				'<div class="name">{data.title}<tpl if="data.pubDate&&data.pubDate!=\'0101\'"> ({data.pubDate})</tpl></div>'+
+			'</tpl>'+
                         '<div class="txt"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="txtpetit">{data.tagsName}</div></tpl>'+
-                        '<tpl if="data.seriesName"><div class="txtpetititalique">{data.seriesName}<tpl if="data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+                        '<tpl if="data.seriesName"><div class="<div class="<tpl if="data.nbgp==null||data.nbgp==1">txtpetititalique<tpl else>txtitalique</tpl>">{data.seriesName}'+
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
                     '</div></div>';
 	var tplgtab = '<tpl if="landscape">'+
                 '<div class="row landscape">'+

@@ -748,6 +748,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.controller.comic": [],
   "myreadings.controller.epub": [],
   "myreadings.model.article": [],
+  "myreadings.model.article2": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
   "myreadings.store.liststore": [],
@@ -755,12 +756,14 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.view.ArticlesList": [],
   "myreadings.view.ImageViewer": [],
   "myreadings.view.article": [],
+  "myreadings.view.articlesserieslist": [],
   "myreadings.view.bookmarkview": [],
   "myreadings.view.comicSettingsPopup": [],
   "myreadings.view.comicview": [],
   "myreadings.view.configpanel": [],
   "myreadings.view.epubview": [],
   "myreadings.view.listview": [],
+  "myreadings.view.orderview": [],
   "myreadings.view.searchpanel": [],
   "myreadings.view.searchview": []
 });
@@ -1713,6 +1716,7 @@ Ext.ClassManager.addNameAliasMappings({
   "myreadings.controller.comic": [],
   "myreadings.controller.epub": [],
   "myreadings.model.article": [],
+  "myreadings.model.article2": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
   "myreadings.store.liststore": [],
@@ -1727,6 +1731,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.article": [
     "widget.article"
+  ],
+  "myreadings.view.articlesserieslist": [
+    "widget.articlesserieslist"
   ],
   "myreadings.view.bookmarkview": [
     "widget.bookmarkview"
@@ -1745,6 +1752,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.listview": [
     "widget.listview"
+  ],
+  "myreadings.view.orderview": [
+    "widget.orderview"
   ],
   "myreadings.view.searchpanel": [
     "widget.searchpanel"

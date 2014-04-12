@@ -9,8 +9,10 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'find', type: 'string', defaultValue:""}, //texte à rechercher
 			{name: 'start', type: 'string', defaultValue:"0"}, //recherche le texte de find au début si start!=0
 			{name: 'order', type: 'string', defaultValue:"recent"}, //ordre de tri ex: pubdate
+			{name: 'gpseries', type: 'int', defaultValue: 0}, //pour indiquer s'il faut groupé les livres par série
 			{name: 'idlist', type: 'string', defaultValue:""}, //pour une recherche, par exemple id de l'auteur
 			{name: 'currentuser', type: 'string', defaultValue:""}, //utilisateur en cours (pour les bookmarks des livres)
+			{name: 'showifread', type: 'string', defaultValue:"all"}, //pour indiquer s'il faut montré tout les livres, les lus ou non lus
 			
 			//settings comic viewer
 			{name: 'zoom_on_tap', type: 'int', defaultValue: 1},

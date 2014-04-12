@@ -5,6 +5,7 @@ Ext.define('myreadings.controller.articlesControl', {
     	models:['myreadings.model.article'],
         refs: {
 	    articleslist: 'articleslist',
+	    articlesserieslist: 'articlesserieslist',
 	    searchview: 'searchview',
             searchpanel: 'searchpanel',
 	    configpanel: 'configpanel',
@@ -12,9 +13,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    searchBt: 'articleslist [name=searchbutton]',
 	    configBt: 'articleslist [name=configbutton]',
 	    titlebar: 'articleslist [name=maintitlebar]',
-	    orderfield: 'articleslist [name=order]',
-	    viewerBt: 'articleslist [name=viewer]',
-	    
+	    viewerBt: 'articleslist #viewer',
+	    viewerBt2: 'articlesserieslist #viewer',
+	    titlebarserie: 'articlesserieslist #titlebarserie',
 	    loginBt: 'configpanel [name=loginbutton]',
 	    usernameCt: 'configpanel [name=login]',
 	    passwordCt: 'configpanel [name=pass]',
@@ -53,11 +54,25 @@ Ext.define('myreadings.controller.articlesControl', {
             },
 	    titleBookmarkView: 'bookmarkview #titlepanel',
             txtBookmarkView: 'bookmarkview #reading',
-            btBookmarkView: 'bookmarkview #btread'
+            btBookmarkView: 'bookmarkview #btread',
+            
+            orderview: {
+                autoCreate: true,
+                xtype: 'orderview',
+                selector: 'orderview'
+            },
+            //orderfield: 'articleslist [name=order]',
+	    orderfield: 'orderview #order',
+	    seriegroup: 'orderview #seriegroup',
+	    showIfRead: 'orderview #showIfRead',
+	    btOrder: 'articleslist #btOrder'
         },
         control: {
             articleslist: {
                 itemtap: 'onArticleTap'
+            },
+            articlesserieslist: {
+                itemtap: 'onArticleSerieTap'
             },
 	    searchBt: {
 		    tap: 'onSearchTap'
@@ -71,7 +86,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    viewerBt: {
 		    tap: 'openviewer'
 	    },
-	    
+	    viewerBt2: {
+		    tap: 'openviewer'
+	    },
 	    typelistfind: {
 		    change: 'onChangeListView'
 	    },
@@ -80,6 +97,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    btsearchfind: {
 		    tap: 'onChangeListView'
+	    },
+	    btOrder: {
+		    tap: 'onBtOrderTap'
 	    },
 	    btBookmarkView: {
 		    tap: 'onBtBookmarkViewTap'
@@ -109,6 +129,9 @@ Ext.define('myreadings.controller.articlesControl', {
 		myreadings.conf = {};
 		myreadings.conf.current_userid="";
 		
+		myreadings.conf.offset=0;
+		myreadings.conf.offset2=0;
+		
 		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			scope: this,
 			success: function(cachedLoggedInUser) {
@@ -118,7 +141,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				myreadings.conf.pathbase=cachedLoggedInUser.get('pathbase');
 				myreadings.conf.current_user=cachedLoggedInUser.get('currentuser');
+				myreadings.conf.showifread=cachedLoggedInUser.get('showifread');
 				me.order=cachedLoggedInUser.get('order');
+				me.gpseries=cachedLoggedInUser.get('gpseries');
 				
 				me.type=cachedLoggedInUser.get('type');
 				me.find=cachedLoggedInUser.get('find');
@@ -156,7 +181,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.conf.password="";
 				myreadings.conf.pathbase="";
 				myreadings.conf.current_user="";
+				myreadings.conf.showifread="all";
 				me.order="recent";
+				me.gpseries=0;
 				me.type="";
 				me.find="";
 				me.start="0";
@@ -237,8 +264,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.articleView = Ext.create('myreadings.view.article');
 				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
+				Ext.Viewport.add(Ext.create('myreadings.view.articlesserieslist'));
 				Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
 				Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
+				Ext.create('myreadings.view.orderview');
 			}
 			
 			if(result.config.connect=="noprotect"||result.config.connect=="protectok") {
@@ -298,6 +327,10 @@ Ext.define('myreadings.controller.articlesControl', {
 					Ext.getCmp('listuser').enable();
 					
 					myreadings.conf.current_user=Ext.getCmp('listuser').getValue();
+					
+					me.getShowIfRead().setValue(myreadings.conf.showifread);
+					me.getShowIfRead().enable();
+					
 				} else {
 					myreadings.conf.current_user="";
 					Ext.getCmp('listuser').hide();
@@ -309,6 +342,9 @@ Ext.define('myreadings.controller.articlesControl', {
 					if(orderfield[myorder].value==me.order) me.getOrderfield().setValue(me.order);
 				}
 				me.getOrderfield().enable();
+				
+				me.getSeriegroup().setValue(me.gpseries);
+				me.getSeriegroup().enable();
 				
 				//S'il y a un user, il faut récupérer son id (qui peut changer suivant la base utilisée)
 				if(myreadings.conf.current_user!="") {
@@ -346,12 +382,12 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				if(me.profil=="iphone") {
 					me.getTitlebar().setTitle('');
-					Ext.getCmp('order').setFlex(1);
+					//Ext.getCmp('order').setFlex(1);
 					me.getTypelistfind().setFlex(1);
 					me.articleView.setWidth('100%');
 					me.articleView.setHeight('100%');
 				} else {
-					Ext.getCmp('order').setWidth(230);
+					//Ext.getCmp('order').setWidth(230);
 					me.getTypelistfind().setWidth(150);
 					me.articleView.setWidth('92%');
 					me.articleView.setHeight('92%');
@@ -403,8 +439,8 @@ Ext.define('myreadings.controller.articlesControl', {
             }
         });
     },
-    
     showArticles: function(data) {
+ 	myreadings.conf.offset=0;
  	var store = Ext.create("Ext.data.Store", {
     	    model: "myreadings.model.article",
     	    pageSize: 100,
@@ -429,6 +465,12 @@ Ext.define('myreadings.controller.articlesControl', {
 			this.type=data.type;
 		} else if(data.debut==6) {//changement de user	
 			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+		} else if(data.debut==7) {//groupé pas serie ou pas
+			this.gpseries=data.gpseries
+			store.getProxy().setExtraParam('gpseries', this.gpseries);
+		} else if(data.debut==8) {//pour choisir tous, non lus, lus
+			myreadings.conf.showifread=data.showifread
+			store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
 		} else {//lancement depuis searchpanel
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('find', data.find);
@@ -444,13 +486,18 @@ Ext.define('myreadings.controller.articlesControl', {
 		store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
 		store.getProxy().setExtraParam('mypass', myreadings.conf.password);
 		store.getProxy().setExtraParam('order', this.order);
+		store.getProxy().setExtraParam('gpseries', this.gpseries);
 		store.getProxy().setExtraParam('type', this.type);
 		store.getProxy().setExtraParam('find', this.find);
 		store.getProxy().setExtraParam('start', this.start);
 		store.getProxy().setExtraParam('idlist', this.idlist);
 		store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+		store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
 	}
+	
+	store.getProxy().setExtraParam('offset', myreadings.conf.offset);
 	store.load();
+	//console.log(store.getProxy().getExtraParams());
 	var articlesView= this.getArticleslist();
 
 	//empty the store before adding the new one
@@ -467,6 +514,64 @@ Ext.define('myreadings.controller.articlesControl', {
     },
     
     onArticleTap: function(view, record) {
+    	    if(this.gpseries=="1"&&record.data.nbgp!=1) {
+    	    	    this.showArticlesSeries(record.data)
+		    this.getTitlebarserie().setTitle(record.data.seriesName);
+    	    	    this.getArticlesserieslist().show();
+    	    } else {
+    	    	    //console.log('onArticleTap');
+    	    	    var articleView = this.getArticleView();
+    	    	    articleView.setData(record.data);
+    	    	    
+    	    	    if (!articleView.getParent()) {
+    	    	    	    Ext.Viewport.add(articleView);
+    	    	    }
+		    articleView.show();
+    	    }
+    },
+    
+    
+    
+    showArticlesSeries: function(data) {
+    	myreadings.conf.offset2=0;
+ 	var store = Ext.create("Ext.data.Store", {
+    	    model: "myreadings.model.article2",
+    	    pageSize: 100,
+    	    clearOnPageLoad: false
+        });
+        //console.log(data);
+        	
+	//Initialise le proxy
+	store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+	store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
+	store.getProxy().setExtraParam('mypass', myreadings.conf.password);
+	store.getProxy().setExtraParam('order', this.order);
+	store.getProxy().setExtraParam('type', this.type);
+	store.getProxy().setExtraParam('find', this.find);
+	store.getProxy().setExtraParam('start', this.start);
+	store.getProxy().setExtraParam('idlist', this.idlist);
+	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+	store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
+	
+	//cherche par seriesName
+	store.getProxy().setExtraParam('gpseries', -1);
+	store.getProxy().setExtraParam('findserie', data.serieid);
+	//store.getProxy().setExtraParam('findserie', data.seriesName);
+	
+	store.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+	store.load();
+	var articlesView= this.getArticlesserieslist();
+
+	//empty the store before adding the new one
+	var  articlesStore = articlesView.getStore();
+	if (articlesStore) {
+            articlesStore.removeAll();
+        }
+
+	articlesView.setStore(store);
+	
+    },
+    onArticleSerieTap: function(view, record) {
         	//console.log('onArticleTap');
         var articleView = this.getArticleView();
 
@@ -572,7 +677,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				pass: myreadings.conf.password,
 				pathbase: myreadings.conf.pathbase,
 				currentuser: myreadings.conf.current_user,
+				showifread: myreadings.conf.showifread,
 				order: this.order,
+				gpseries: this.gpseries,
 				type: this.type,
 				find: this.find,
 				start: this.start,
@@ -738,8 +845,10 @@ Ext.define('myreadings.controller.articlesControl', {
     showViewerBt: function() {
 	    if(myreadings.currentbook.idbook==null) {
 		    this.getViewerBt().hide();
+		    this.getViewerBt2().hide();
 	    } else {
 		    this.getViewerBt().show();
+		    this.getViewerBt2().show();
 	    }
     },
     savebookmark: function() {
@@ -766,9 +875,66 @@ Ext.define('myreadings.controller.articlesControl', {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
+				    	    var curbookmark;
+				    	    var record=me.getArticleslist().getStore().findRecord('id',idbook);
 				    	    if(action=="bookmarkpage") mark=1;
-				    	    me.getArticleslist().getStore().findRecord('id',idbook).set("bookmark",mark);
-				    	    me.getArticleslist().refreshItems();
+				    	    if(myreadings.conf.showifread!="all") {
+				    	    	    //Il y a un cas non traité: tous les livres d'un groupe sont modifiés (par exemple lu dans une liste groupé par série de non lus), l'offet devrait passer à +1
+				    	    	    //ce ne sera pas le cas...
+				    	    	    if(record&&(record.get("nbgp")==null||record.get("nbgp")==1)) {
+				    	    	    	    console.log("choose effect");
+				    	    	    	curbookmark=record.get("bookmark");
+				    	    	        if(myreadings.conf.showifread!="notread") {
+				    	    	    	    if(mark==-1) {
+				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset+1;
+				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+				    	    	    	    } else if(curbookmark==-1) {
+				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset-1;
+				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+				    	    	    	    }
+				    	    	    	} else {//read
+				    	    	    	    if(mark==-1) {
+				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset-1;
+				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+				    	    	    	    } else if(curbookmark==-1) {
+				    	    	    	    	   myreadings.conf.offset=myreadings.conf.offset+1;
+				    	    	    	    	   me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset); 
+				    	    	    	    }
+				    	    	    	}
+				    	    	    }
+				    	    	    if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
+				    	    	    	curbookmark=me.getArticlesserieslist().getStore().findRecord('id',idbook).get("bookmark");
+				    	    	    	if(myreadings.conf.showifread!="notread") {
+				    	    	    	    if(mark==-1) {
+				    	    	    	    	    myreadings.conf.offse2t=myreadings.conf.offset2+1;
+				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
+				    	    	    	    } else if(curbookmark==-1) {
+				    	    	    	    	    myreadings.conf.offset2=myreadings.conf.offset2-1;
+				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
+				    	    	    	    }
+				    	    	    	} else {//read
+				    	    	    	    if(mark==-1) {
+				    	    	    	    	    myreadings.conf.offset2=myreadings.conf.offset2-1;
+				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
+				    	    	    	    } else if(curbookmark==-1) {
+				    	    	    	    	   myreadings.conf.offset2=myreadings.conf.offset2+1;
+				    	    	    	    	   me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2); 
+				    	    	    	    }
+				    	    	    	}
+				    	    	    }
+				    	    }
+				    	    
+				    	    console.log("offset:"+myreadings.conf.offset);
+				    	    
+				    	    if(record) {
+				    	    	    record.set("bookmark",mark);
+				    	    	    //me.getArticleslist().getStore().remove(me.getArticleslist().getStore().findRecord('id',idbook));
+				    	    	    me.getArticleslist().refreshItems();
+				    	    }
+					    if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
+						    me.getArticlesserieslist().getStore().findRecord('id',idbook).set("bookmark",mark);
+						    me.getArticlesserieslist().refreshItems();
+					    }
 				    }
 			    },
 			    failure: function(result, request) {
@@ -793,6 +959,13 @@ Ext.define('myreadings.controller.articlesControl', {
 	    } else {
 	    	   this.getTxtBookmarkView().setHtml(this.localtxt.reading);
 	    	   this.getBtBookmarkView().setText(this.localtxt.markread);
+	    }
+	    view.showBy(button);
+    },
+    onBtOrderTap: function(button) {
+    	    var view = this.getOrderview();
+    	    if (!view.getParent()) {
+		Ext.Viewport.add(view);
 	    }
 	    view.showBy(button);
     },

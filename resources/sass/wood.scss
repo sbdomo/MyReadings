@@ -133,12 +133,31 @@ body,
         	left: -7px;
         }
         .fbookmark {
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+        .fbookmark1 {
 		background: transparent url(../images/bookmark.png) top left no-repeat;
 		height: 69px;
 		width: 55px;
 		position: relative;
 		top: -213px;
         	left: 0px;
+        }
+        .nbgroup {
+            font-size: 12px;
+	    width: 30px;
+	    background-color: rgba(255, 255, 255, 0.8);
+	    position: relative;
+	    top: -278px;
+	    left: 4px;
+	    border-radius: 0.5em;
+	    border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
         }
 //Style du texte sous le livre
 	.name {
@@ -150,6 +169,13 @@ body,
         }
         .txt {
             font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .txtitalique {
+            font-size: 12px;
+            font-style: italic;
+            font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
         }
