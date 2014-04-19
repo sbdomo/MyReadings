@@ -19,6 +19,7 @@ if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$my
 }
 
 $baseconf="./config/conf.db";
+if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
 
 if($action=="cache") {
 	//Le chemin est en dur pour éviter le détournement de ClearCache
@@ -115,23 +116,32 @@ if($action=="cache") {
 		$pdo = new PDO('sqlite:'.$basename);
 		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-				
-		$custom_column="custom_column_".$userid;
 		
-		$query = "SELECT COUNT(*) FROM ".$custom_column." WHERE book=".$id." LIMIT 1;";
-		$resultquery = $pdo->query($query);
-		//custom column = 1 pour indiquer que c'est en cours de lecture
-		if ($resultquery->fetchColumn()==1) {
-			$query = "UPDATE ".$custom_column." SET value = ".$page." WHERE book = ".$id;
-			$pdo->exec($query);
-			$result="Bookmark updated.";
+		//Vérifie que le livre existe et récupère sa serieid
+		$query = "SELECT books.id as id, books_series_link.series AS serieid FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id where books.id = ?;";
+		$stmt = $pdo->prepare($query);
+		$stmt->execute(array($id));
+		$resultquery=$stmt->fetch();
+		if($resultquery) {
+			$result=$resultquery;
+			$custom_column="custom_column_".$userid;
+			$query = "SELECT COUNT(*) FROM ".$custom_column." WHERE book=".$id." LIMIT 1;";
+			$resultquery = $pdo->query($query);
+			//custom column = 1 pour indiquer que c'est en cours de lecture
+			if ($resultquery->fetchColumn()==1) {
+				$query = "UPDATE ".$custom_column." SET value = ".$page." WHERE book = ".$id;
+				$pdo->exec($query);
+				//$result="Bookmark updated.";
+			} else {
+				$query = "INSERT INTO ".$custom_column."(book, value) VALUES (".$id.", ".$page.")";
+				$pdo->exec($query);
+				//$result="Bookmark created.";
+			}
+			$success = "true";
 		} else {
-			$query = "INSERT INTO ".$custom_column."(book, value) VALUES (".$id.", ".$page.")";
-			$pdo->exec($query);
-			$result="Bookmark created.";
+			$success = "false";
+			$result="Book not found";
 		}
-		$success = "true";
-		
 		// Close file db connection
 		$pdo = null;
 		

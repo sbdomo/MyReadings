@@ -30,18 +30,18 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 				$result.='<p class="yellow">You have a open_basedir restriction. If you can\'t access to your library, try to add your library path in open_basedir.</p>';
 			}
 			if (extension_loaded("zip")) {
-				$result.='<p>Zip extension loaded (use by cbz viewer)</p>';
+				$result.='<p>PHP Zip extension loaded (use by cbz viewer)</p>';
 			} else {
 				if($cbzview=="on") $result.='<p class="red">';
 				else $result.='<p class="yellow">';
-				$result.='Zip extension not loaded (you can\'t use viewer)</p>';
+				$result.='PHP Zip extension not loaded (you can\'t use viewer)</p>';
 			}
 			if (extension_loaded("rar")) {
-				$result.='<p>Rar extension loaded (use by cbr viewer)</p>';
+				$result.='<p>PHP Rar extension loaded (use by cbr viewer)</p>';
 			} else {
 				if($cbrview=="on") $result.='<p class="red">';
 				else $result.='<p class="yellow">';
-				$result.='Rar extension not loaded (you can\'t use cbr viewer)</p>';
+				$result.='PHP Rar extension not loaded (you can\'t use cbr viewer)</p>';
 			}
 			if(fw("./cache")) {
 				$result.='<p>Directory cache is writable (use by cbz viewer)</p>';

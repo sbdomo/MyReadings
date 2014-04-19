@@ -8,6 +8,8 @@ Ext.define('myreadings.view.configpanel', {
 	txtLogin: "",
 	txtPass: "",
 	txtLoginButton: "",
+	forced: "",
+	forced_msg: "",
 	config: {
 		layout:'vbox',
 		hidden: true
@@ -140,8 +142,26 @@ Ext.define('myreadings.view.configpanel', {
 				}
 			},
 			{
+				xtype: 'togglefield',
+				label: this.forced,
+				hidden: true,
+				//labelWidth: '60%',
+				itemId: 'forced',
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//console.log(value);
+						if(value==1) {
+							myreadings.conf.forced="true";
+							Ext.Msg.alert(this.getParent().getParent().info,this.getParent().getParent().forced_msg);
+						} else myreadings.conf.forced="false";
+					}
+				}
+			},
+			{
 				id:"profil",
 				padding: 10,
+				//styleHtmlContent: true,
 				html:''
 			}
 			]
@@ -165,6 +185,11 @@ Ext.define('myreadings.view.configpanel', {
 						if(!this.getDisabled()) {
 							myreadings.conf.current_user=value;
 							myreadings.conf.current_userid="";
+							
+							//Cache la liste dans searchview si elle est ouverte
+							Ext.getCmp('searchview').setActiveItem(0);
+							myreadings.app.getController('articlesControl').isList=false;
+							
 							Ext.Viewport.setMasked({xtype: 'loadmask'});
 							Ext.data.JsonP.request({
 								url: './tools.php',

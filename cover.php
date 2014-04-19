@@ -20,6 +20,9 @@ else      $base="";
 if(isset($_GET['id'])) $id=$_GET['id'];
 else      $id="1";
 
+if(isset($_GET['forced'])) $forced=$_GET['forced'];
+else $forced="false";
+
 if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
 
 $cover=$calibre[$base].$path."/cover.jpg";
@@ -48,8 +51,20 @@ if($fetchmode=="resize") {
 	}
 } else if($fetchmode=="resize_and_cache") {
 	$outputfile=$thumb_path.$base."_".$id.".jpg";
-	if (!file_exists($outputfile)) {
+	if ($forced=="true"||!file_exists($outputfile)) {
 		$result = makeThumbnail($cover, true, NULL, $height, $outputfile);
+		//Refait la miniature, le retour est un json qui indique que c'est fait
+		if($forced=="true") {
+			if(!$result) $success=false;
+			else $success=true;
+			$json='{"success":'.$success.'}';
+			if (isset($_GET['callback'])) {
+				echo $_GET['callback'].'('.$json.');';
+			} else {
+				echo $json;
+			}
+			die;
+		}
 		if(!$result) $outputfile="./resources/images/no_image_available.jpg";
 	}
 	writehead();

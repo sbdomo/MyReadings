@@ -32,6 +32,7 @@ if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!
 	<link rel="stylesheet" href="./resources/jquery/jquery.mobile.structure-1.4.2.min.css" />
 	
 	<script src="./resources/jquery/jquery.js"></script>
+	<script src="./resources/jquery/jquery.validate.min.js"></script>
 	<script src="./resources/jquery/jquery.mobile-1.4.2.js"></script>
 	
 <style type="text/css">
@@ -45,6 +46,14 @@ if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!
 }
 .yellow {
 	background-color: #ff8c02;
+}
+
+label.error {
+	float: none;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
 }
 
 </style>
@@ -73,21 +82,46 @@ if(!file_exists($adminpass)) {
 
 }
 if($testconnect==false)	{?>
+<script type="text/javascript">
+$(function() {
+	
+	$.validator.addMethod("passmatch", function(value) {
+			return value == $("#admin_pw").val();
+	}, 'Confirmation password must match.');
+	
+	$("#adminpass").validate({
+		errorPlacement: function(error, element) {
+			error.insertAfter($(element).parent());
+		},
+		//submitHandler: function(form) {
+		//	console.log("Call Login Action");
+		//}
+	});
+});
+</script>
 <div data-role="collapsible" data-collapsed="false">
 	<h2><?php echo $title ?></h2>
-	<form data-ajax="false" action="./admin.php" method="get" enctype="multipart/form-data" name="adminpass" id="adminpass" >
+	<form data-ajax="false" action="./admin.php" method="get" enctype="multipart/form-data" name="adminpass" id="adminpass" class="validate">
 	<fieldset data-role="fieldcontain">
 		<label for="admin_login">Login</label>
-		<input type="text" value=""  id="admin_login" name="admin_login" />
+		<input type="text" value=""  id="admin_login" name="admin_login" class="required"/>
+	</fieldset>
+	<fieldset data-role="fieldcontain">
 		<label for="admin_pw">Password</label>
-		<input name="admin_pw" id="admin_pw" type="text" value=""/>
+		<input name="admin_pw" id="admin_pw" type="password" value="" class="required"/>
+	</fieldset>
+	<?php if ($action=="save") { ?>
+	<fieldset data-role="fieldcontain">
+		<label for="admin_pw2">Confirm Password</label>
+		<input name="admin_pw2" id="admin_pw2" type="password" value="" class="required passmatch"/>
+	</fieldset>
+	<?php } ?>
 		<input name="action_login"type="hidden" value="<?php echo $action ?>"/><br/>
 		<input data-inline="true" type="submit" name="Submit" value="Submit" />
 		<p><?php echo $message ?></p>
 	</fieldset>
 	</form>
 </div>
-
 <?php } else {
 //there is a login then test
 require_once($adminpass);
@@ -124,7 +158,7 @@ function removeuser(me){
 }
 
 $(function() {
-        var i = $('#calibrelibrary1 li').size();
+	var i = $('#calibrelibrary1 li').size();
 	$.ajaxSetup({ cache: false });
         $('#addcalibre1').on('click', function() {
 			listItem = '<li><fieldset class="ui-grid-a">'+
@@ -166,21 +200,49 @@ $(function() {
         		$('#userlist').listview('refresh').trigger('create');
         });
 	
-	$('#editconfig').submit(function(){
-		$.mobile.loading( "show");
-		$('#nbcal').val(i);
-		$('#nblim').val(i2);
-		$('#nbuser').val(i3);
-		$.get("./saveconfig.php", $('#editconfig').serialize(),
-		function(data){
-			if(data.success=="true") alert("Your configuration has been saved.");
-			else alert(data.resultat);
-		}, "json")
-		.error(function() {
-			alert("error");
-		});
-		$.mobile.loading( "hide" );
-		return false;
+	
+	$.validator.addMethod("passmatch1", function(value) {
+			return value == $("#pass").val();
+	}, 'Confirmation password must match.');
+	
+	$.validator.addMethod("passmatch2", function(value) {
+			return value == $("#pass2").val();
+	}, 'Confirmation password must match.');
+	
+	$("#editconfig").validate({
+		errorPlacement: function(error, element) {
+			error.insertAfter($(element).parent());
+		},
+		rules: {
+			login: {
+				required: { depends: function () { return $('#protect').val()=="true"; } }
+			},
+			pass: {
+				required: { depends: function () { return $('#protect').val()=="true"; } }
+			},
+			login2: {
+				required: { depends: function () { return $('#control').val()=="true"; } }
+			},
+			pass2: {
+				required: { depends: function () { return $('#control').val()=="true"; } }
+			}
+		},
+		submitHandler: function(form) {
+			$.mobile.loading( "show");
+			$('#nbcal').val(i);
+			$('#nblim').val(i2);
+			$('#nbuser').val(i3);
+			$.get("./saveconfig.php", $('#editconfig').serialize(),
+			function(data){
+				if(data.success=="true") alert("Your configuration has been saved.");
+				else alert(data.resultat);
+			}, "json")
+			.error(function() {
+				alert("error");
+			});
+			$.mobile.loading( "hide" );
+			//return false;
+		}
 	});
 	
 	$('#testform').submit(function(){
@@ -283,8 +345,14 @@ $(function() {
 	<fieldset data-role="fieldcontain">
 		<label for="login">Login</label>
 		<input type="text" value="<?php echo $login;?>"  id="login" name="login" />
+	</fieldset>
+	<fieldset data-role="fieldcontain">
 		<label for="pass">Password</label>
-		<input type="text" value="<?php echo $pass;?>" id="pass" name="pass" />
+		<input  type="password" value="<?php echo $pass;?>" id="pass" name="pass" />
+	</fieldset>
+	<fieldset data-role="fieldcontain">
+		<label for="passconf">Confirm Password</label>
+		<input  type="password" value="<?php echo $pass;?>" id="passconf" name="passconf" class="passmatch1"/>
 	</fieldset>
 
 	<ul class="ui-li" data-role="listview" id="calibrelibrary1" data-inset="true"  data-scroll="true">
@@ -333,8 +401,14 @@ Note the "/" at the end of the path is necessary.</p>
 	<fieldset data-role="fieldcontain">
 		<label for="login2">Login</label>
 		<input type="text" value="<?php echo $login2;?>"  id="login2" name="login2" />
+	</fieldset>
+	<fieldset data-role="fieldcontain">
 		<label for="pass2">Password</label>
-		<input type="text" value="<?php echo $pass2;?>" id="pass2" name="pass2"/>
+		<input  type="password" value="<?php echo $pass2;?>" id="pass2" name="pass2"/>
+	</fieldset>
+	<fieldset data-role="fieldcontain">
+		<label for="pass2conf">Confirm Password</label>
+		<input  type="password" value="<?php echo $pass2;?>" id="pass2conf" name="pass2conf" class="passmatch2"/>
 	</fieldset>
 
 	<ul class="ui-li" data-role="listview" id="calibrelibrary2" data-inset="true"  data-scroll="true">
@@ -375,7 +449,7 @@ foreach ($limited as $key => $value) {
         <input type="checkbox" name="cbrview" id="cbrview" <?php if($cbrview=="on") echo "checked";?>>
         <label for="cbrview">Cbr</label>
 	</fieldset>
-	<p>For cbz viewer, you must have zip extension and for cbr viewer, rar extension. You can verify that in compatibility test.</p>
+	<p>For cbz viewer, you must have PHP ZIP extension and for cbr viewer, PHP RAR extension. You can verify that in compatibility test.</p>
 	</fieldset>
 </div>
 
@@ -419,7 +493,7 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 <form action="#" method="get" enctype="multipart/form-data" name="testform" id="testform" >
 	<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
 	<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
-	<input type="submit" name="Submit" value="Run tests" data-theme="b" />
+	<input type="submit" name="Submit" value="Run compatibility tests" data-theme="b" />
 </form>
 <div id="testresult"></div>
 </div><!-- /runtest tab -->
@@ -447,6 +521,12 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 		<input name="action" type="hidden" value="deletethumb"/>
 		<input type="submit" name="Submit" value="Delete files in cache" data-theme="b" />
 		</form>
+	</div>
+	<div data-role="collapsible" data-collapsed="false">
+		<h2>Skins to test the aspect on tablet or smartphone</h2>
+		<a  target="_blank" href="./skin/ipad.html"><img src="./skin/ipadview1.jpg" /></a> <a  target="_blank" href="./skin/ipad_wood.html"><img src="./skin/ipadview2.jpg" /></a>
+		 <a  target="_blank" href="./skin/iphone.html"><img src="./skin/iphoneview.jpg" /></a>
+		 <a  target="_blank" href="./skin/galaxytab.html"><img src="./skin/gtabview.jpg" /></a>
 	</div>
 
 </div><!-- /tools tab -->

@@ -14,6 +14,8 @@ Ext.define('myreadings.model.article', {
             "seriesIndex",
 	    "bookmark",
 	    "nbgp",
+	    "reading",
+	    "read",
 	    "serieid"
         ],
 	//'comment', 'extension', 'filename', "languagesName",

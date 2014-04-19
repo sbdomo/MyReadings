@@ -5,7 +5,8 @@ Ext.define('myreadings.model.listmodel', {
         fields: [
             'id',
             'name',
-            'count'
+            'count',
+	    'read'
         ],
         idProperty: 'id'
     }

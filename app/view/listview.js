@@ -18,7 +18,7 @@ Ext.define("myreadings.view.listview",{
 	    style: 'background-image:none; background-color: white;',
 
 	    itemTpl: [
-            '{name} ({count})'
+            '{name} (<tpl if="read!=null&&read!=0">{[values.count-values.read]}/{count}<tpl else>{count}</tpl>)'
 	    ],
 	    listeners: {
 		    itemtap: function(view, index, target, record, event){

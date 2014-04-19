@@ -21,6 +21,10 @@ else      $min=0;
 if(isset($_GET['count'])) $count=$_GET['count'];
 else      $count=25;
 
+//Pour trier les livres lus/non lus
+if(isset($_GET['userid'])) $userid=$_GET['userid'];
+else $userid="";
+
 //Chemin de calibre
 if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
 else erreur("No pathbase");
@@ -34,14 +38,27 @@ else      $search="";
 //if(isset($_GET['start'])) $start=$_GET['start'];
 //else      $start=0;
 
+$nbbook_author="";
+$nbbook_serie="";
+$nbbook_tag="";
+if($userid!="") {
+	//$joinbookmark=" LEFT OUTER JOIN custom_column_".$userid." ON custom_column_".$userid.".book=books.id";
+	$nbbook=", (SELECT SUM(CASE WHEN custom_column_".$userid.".value=-1 then 1
+		ELSE 0 END) FROM custom_column_".$userid." WHERE custom_column_".$userid.".book IN (SELECT book FROM ";
+	$nbbook_author=$nbbook."books_authors_link WHERE author=authors.id)) read";
+	$nbbook_serie=$nbbook."books_series_link WHERE series=series.id)) read";
+	$nbbook_tag=$nbbook."books_tags_link WHERE tag=tags.id)) read";
+}
+
+
 //$SQL_AUTHOR = "SELECT * FROM [tag_browser_authors] LIMIT ";
-$SQL_AUTHOR="SELECT id, name, (SELECT COUNT(id) FROM books_authors_link WHERE author=authors.id) count FROM authors";
+$SQL_AUTHOR="SELECT id, name, (SELECT COUNT(id) FROM books_authors_link WHERE author=authors.id) count".$nbbook_author." FROM authors";
 $SQL_AUTHORCOUNT="SELECT count() AS count FROM authors";
 
-$SQL_SERIE="SELECT id, name, (SELECT COUNT(id) FROM books_series_link WHERE series=series.id) count FROM series";
+$SQL_SERIE="SELECT id, name, (SELECT COUNT(id) FROM books_series_link WHERE series=series.id) count".$nbbook_serie." FROM series";
 $SQL_SERIECOUNT="SELECT count() AS count FROM series";
 
-$SQL_TAG="SELECT id, name, (SELECT COUNT(id) FROM books_tags_link WHERE tag=tags.id) count FROM tags";
+$SQL_TAG="SELECT id, name, (SELECT COUNT(id) FROM books_tags_link WHERE tag=tags.id) count".$nbbook_tag." FROM tags";
 $SQL_TAGCOUNT="SELECT count() AS count FROM tags";
 
 $order=" ORDER BY sort";

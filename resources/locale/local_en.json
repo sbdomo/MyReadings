@@ -54,7 +54,10 @@
 	"txtPass": "Password",
 	"txtLoginButton": "Log in",
 	"txtViewer": "Viewer Settings",
-	"txtbook_at_launch": "Open current comic at app launch"
+	"txtbook_at_launch": "Open current comic at app launch",
+	"forced": "Recreate thumbnails",
+	"info": "Information",
+	"forced_msg": "On tap on a book, the thumbnail will be recreate. Deactivate this option to return to the normal mode."
 },
 "comicSettingsPopup":{
 	"txtTitle": "Comic Viewer Settings",

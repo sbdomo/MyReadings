@@ -54,7 +54,10 @@
 	"txtPass": "Mot de passe",
 	"txtLoginButton": "S'identifier",
 	"txtViewer": "Paramètres du lecteur",
-	"txtbook_at_launch": "Réouvrir le livre au lancement"
+	"txtbook_at_launch": "Réouvrir le livre au lancement",
+	"forced": "Refaire les pochettes",
+	"info": "Information",
+	"forced_msg": "Lors du tap sur un livre, la pochette sera recrée. Désactivez cette option pour revenir au mode normal."
 },
 "comicSettingsPopup":{
 	"txtTitle": "Paramètres du lecteur",

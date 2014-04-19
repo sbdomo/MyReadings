@@ -25,6 +25,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    //comicSettings: 'configpanel [name=comicSettings]',
 	    configViewer: 'configpanel #configViewer',
 	    open_book_at_launch: 'configpanel #open_book_at_launch',
+	    forcedThumb: 'configpanel #forced',
 	    
 	    typelistfind: 'listview [name=typelist]',
 	    searchfieldfind: 'listview [name=listviewSearchfield]',
@@ -72,7 +73,7 @@ Ext.define('myreadings.controller.articlesControl', {
                 itemtap: 'onArticleTap'
             },
             articlesserieslist: {
-                itemtap: 'onArticleSerieTap'
+                itemtap: 'onArticleTap'
             },
 	    searchBt: {
 		    tap: 'onSearchTap'
@@ -131,6 +132,7 @@ Ext.define('myreadings.controller.articlesControl', {
 		
 		myreadings.conf.offset=0;
 		myreadings.conf.offset2=0;
+		myreadings.conf.forced="false";
 		
 		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			scope: this,
@@ -307,6 +309,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.getOpen_book_at_launch().setValue(myreadings.settings.open_current_comic_at_launch);
 				me.getOpen_book_at_launch().enable();
+				
+				if(myreadings.conf.fetchmode=="resize_and_cache") me.getForcedThumb().show();
 				
 				//Init user
 				//console.log(result.config.users);
@@ -512,26 +516,52 @@ Ext.define('myreadings.controller.articlesControl', {
     	    //console.log('getArticleView');
         return this.articleView;
     },
-    
     onArticleTap: function(view, record) {
-    	    if(this.gpseries=="1"&&record.data.nbgp!=1) {
+    	    if(this.getArticlesserieslist().isHidden()&&this.gpseries=="1"&&record.data.nbgp!=1) {
     	    	    this.showArticlesSeries(record.data)
 		    this.getTitlebarserie().setTitle(record.data.seriesName);
     	    	    this.getArticlesserieslist().show();
     	    } else {
-    	    	    //console.log('onArticleTap');
-    	    	    var articleView = this.getArticleView();
-    	    	    articleView.setData(record.data);
-    	    	    
-    	    	    if (!articleView.getParent()) {
-    	    	    	    Ext.Viewport.add(articleView);
-    	    	    }
-		    articleView.show();
+		    if(myreadings.conf.forced=="true") {
+		    Ext.Viewport.setMasked({xtype: 'loadmask'});
+		    var me= this;
+		    Ext.data.JsonP.request({
+			    url: './cover.php',
+			    callbackKey: 'callback',
+			    params: {
+				    path: record.data.relativePath,
+				    id: record.data.id,
+				    forced: "true",
+				    base: myreadings.conf.txtbase,
+				    mylogin: myreadings.conf.username,
+				    mypass: myreadings.conf.password
+			    },
+			    success: function(result, request) {
+				    if(result.success==false) {
+					    Ext.Viewport.setMasked(false);
+					    alert('Create thumbnail: error');
+				    } else {
+				    	 if(!me.getArticlesserieslist().isHidden()) me.getArticlesserieslist().refreshItems();
+					 me.getArticleslist().refreshItems();
+					 Ext.Viewport.setMasked(false);
+				    }
+			    },
+			    failure: function(result, request) {
+				    Ext.Viewport.setMasked(false);
+				    alert('Create thumbnail: error');
+			    }
+		    });
+		    } else {
+			    var articleView = this.getArticleView();
+			    articleView.setData(record.data);
+			    
+			    if (!articleView.getParent()) {
+				    Ext.Viewport.add(articleView);
+			    }
+			    articleView.show();
+		    }
     	    }
     },
-    
-    
-    
     showArticlesSeries: function(data) {
     	myreadings.conf.offset2=0;
  	var store = Ext.create("Ext.data.Store", {
@@ -571,18 +601,6 @@ Ext.define('myreadings.controller.articlesControl', {
 	articlesView.setStore(store);
 	
     },
-    onArticleSerieTap: function(view, record) {
-        	//console.log('onArticleTap');
-        var articleView = this.getArticleView();
-
-        articleView.setData(record.data);
-
-        if (!articleView.getParent()) {
-            Ext.Viewport.add(articleView);
-        }
-
-        articleView.show();
-    },
     openArticle_CurrentBook: function() {
         var articleView = this.getArticleView();
 	
@@ -614,6 +632,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	store.getProxy().setExtraParam('mylogin',myreadings.conf.username);
         store.getProxy().setExtraParam('mypass',myreadings.conf.password);
 	store.getProxy().setExtraParam('list', list);
+	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
         store.getProxy().setExtraParam('search', search);
 	//Affiche le début de la liste
 	if(listview.getScrollable().getScroller()) listview.getScrollable().getScroller().scrollTo(0, 0);
@@ -858,89 +877,166 @@ Ext.define('myreadings.controller.articlesControl', {
 	    Ext.Viewport.setMasked({xtype: 'loadmask'});
 	    var me=this;
 	    Ext.data.JsonP.request({
-			    url: './tools.php',
-			    callbackKey: 'callback',
-			    params: {
-				    action: action,
-				    mylogin: myreadings.conf.username,
-				    mypass: myreadings.conf.password,
-				    id: idbook,
-				    base: myreadings.conf.txtbase,
-				    userid: myreadings.conf.current_userid,
-				    type: type,
-				    page: mark,
-				    componentId: componentId
-			    },
-			    success: function(result, request) {
-				    Ext.Viewport.setMasked(false);
-				    if(result.success==false) alert(result.message);
-				    else {
-				    	    var curbookmark;
-				    	    var record=me.getArticleslist().getStore().findRecord('id',idbook);
-				    	    if(action=="bookmarkpage") mark=1;
-				    	    if(myreadings.conf.showifread!="all") {
-				    	    	    //Il y a un cas non traité: tous les livres d'un groupe sont modifiés (par exemple lu dans une liste groupé par série de non lus), l'offet devrait passer à +1
-				    	    	    //ce ne sera pas le cas...
-				    	    	    if(record&&(record.get("nbgp")==null||record.get("nbgp")==1)) {
-				    	    	    	    console.log("choose effect");
-				    	    	    	curbookmark=record.get("bookmark");
-				    	    	        if(myreadings.conf.showifread!="notread") {
-				    	    	    	    if(mark==-1) {
-				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset+1;
-				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
-				    	    	    	    } else if(curbookmark==-1) {
-				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset-1;
-				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
-				    	    	    	    }
-				    	    	    	} else {//read
-				    	    	    	    if(mark==-1) {
-				    	    	    	    	    myreadings.conf.offset=myreadings.conf.offset-1;
-				    	    	    	    	    me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
-				    	    	    	    } else if(curbookmark==-1) {
-				    	    	    	    	   myreadings.conf.offset=myreadings.conf.offset+1;
-				    	    	    	    	   me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset); 
-				    	    	    	    }
-				    	    	    	}
-				    	    	    }
-				    	    	    if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
-				    	    	    	curbookmark=me.getArticlesserieslist().getStore().findRecord('id',idbook).get("bookmark");
-				    	    	    	if(myreadings.conf.showifread!="notread") {
-				    	    	    	    if(mark==-1) {
-				    	    	    	    	    myreadings.conf.offse2t=myreadings.conf.offset2+1;
-				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
-				    	    	    	    } else if(curbookmark==-1) {
-				    	    	    	    	    myreadings.conf.offset2=myreadings.conf.offset2-1;
-				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
-				    	    	    	    }
-				    	    	    	} else {//read
-				    	    	    	    if(mark==-1) {
-				    	    	    	    	    myreadings.conf.offset2=myreadings.conf.offset2-1;
-				    	    	    	    	    me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2);
-				    	    	    	    } else if(curbookmark==-1) {
-				    	    	    	    	   myreadings.conf.offset2=myreadings.conf.offset2+1;
-				    	    	    	    	   me.getArticlesserieslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset2); 
-				    	    	    	    }
-				    	    	    	}
-				    	    	    }
-				    	    }
-				    	    
-				    	    console.log("offset:"+myreadings.conf.offset);
-				    	    
-				    	    if(record) {
-				    	    	    record.set("bookmark",mark);
-				    	    	    //me.getArticleslist().getStore().remove(me.getArticleslist().getStore().findRecord('id',idbook));
-				    	    	    me.getArticleslist().refreshItems();
-				    	    }
-					    if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
-						    me.getArticlesserieslist().getStore().findRecord('id',idbook).set("bookmark",mark);
-						    me.getArticlesserieslist().refreshItems();
-					    }
-				    }
-			    },
-			    failure: function(result, request) {
-				    Ext.Viewport.setMasked(false);
-				    alert('Php Error for bookmark.');
-			    }
+		url: './tools.php',
+		callbackKey: 'callback',
+		params: {
+			action: action,
+			mylogin: myreadings.conf.username,
+			mypass: myreadings.conf.password,
+			id: idbook,
+			base: myreadings.conf.txtbase,
+			userid: myreadings.conf.current_userid,
+			type: type,
+			page: mark,
+			componentId: componentId
+		},
+		success: function(result, request) {
+			if(result.success==false) {
+				alert(result.message);
+				Ext.Viewport.setMasked(false);
+			} else {
+				var curbookmark;
+				//Si c'est un marque-page (un numéro de page),
+				//alors c'est 1 qui est la valeur du bookmark pour indiqué qu'il y a un marque page
+				if(action=="bookmarkpage") mark=1;
+				
+				//Traitement du store du groupe
+				if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
+					var store2=me.getArticlesserieslist().getStore();
+					curbookmark=store2.findRecord('id',idbook).get("bookmark");
+					store2.findRecord('id',idbook).set("bookmark",mark);
+					me.getArticlesserieslist().refreshItems();
+					//Explication dans la partie suivante...
+					if(myreadings.conf.showifread!="all") {
+						if(myreadings.conf.showifread!="notread") {
+							if(mark==-1) {
+								myreadings.conf.offse2t=myreadings.conf.offset2+1;
+								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+							} else if(curbookmark==-1) {
+								myreadings.conf.offset2=myreadings.conf.offset2-1;
+								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+							}
+						} else {//read
+							if(mark==-1) {
+								myreadings.conf.offset2=myreadings.conf.offset2-1;
+								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+							} else if(curbookmark==-1) {
+								myreadings.conf.offset2=myreadings.conf.offset2+1;
+								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+							}
+						}
+					}
+				}
+				
+				var record=me.getArticleslist().getStore().findRecord('id',idbook);
+				//Si le livre est dans la liste et n'est pas dans un groupe
+				if(record&&(record.get("nbgp")==null||record.get("nbgp")==1)) {
+					curbookmark=record.get("bookmark");
+					record.set("bookmark",mark);
+					me.getArticleslist().refreshItems();
+					//Gestion du offset (pour décaler la limite du min/max dans recordsjson: max=max-offset)
+					if(myreadings.conf.showifread!="all") {
+						//Cas de l'affichage des non lus
+						if(myreadings.conf.showifread!="notread") {
+							//Le nouveau bookmark indique lu, il ne l'était donc pas
+							if(mark==-1) {
+								//Il faut augmenter l'offset car il y aura un livre de moins dans la requête
+								myreadings.conf.offset=myreadings.conf.offset+1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+								//Remove pour l'enlever du store, non utilisé...
+								//me.getArticleslist().getStore().remove(record);
+							} else if(curbookmark==-1) {
+								//Il n'est plus indiqué comme lu mais il l'était: diminuer l'offset car le livre revient dans la liste
+								//S'il n'était pas lu (affectation d'un marque-page), pas de changment d'offset
+								myreadings.conf.offset=myreadings.conf.offset-1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+							}
+						} else {//Cas des lus
+							//Le nouveau bookmark indique lu, il sera de nouveau dans la liste
+							if(mark==-1) {
+								myreadings.conf.offset=myreadings.conf.offset-1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+							} else if(curbookmark==-1) {
+								//Il n'est plus lu mais il l'était : augmenter l'offset
+								//S'il n'était pas lu (affectation d'un marque-page), pas de changment d'offset
+								myreadings.conf.offset=myreadings.conf.offset+1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+							}
+						}
+					}
+					Ext.Viewport.setMasked(false);
+				} else {
+					var serieid="";
+					//S'il est dans un groupe pour une série, il faut chercher ce groupe
+					if(!record&&me.gpseries==1) {
+						serieid=result.resultat.serieid;
+						record=me.getArticleslist().getStore().findRecord('serieid',serieid);
+					}
+					//si le livre ou son groupe est trouvé
+					if(record) {
+						serieid=record.get("serieid");
+						//Récupère l'état du groupe
+						var params= me.getArticleslist().getStore().getProxy().getExtraParams();
+						Ext.data.JsonP.request({
+							url: './recordsjson.php',
+							callbackKey: 'callback',
+							params: {
+								mylogin: params.mylogin,
+								mypass: params.mypass,
+								pathbase: params.pathbase,
+								order: params.order,
+								gpseries: 2,
+								type: params.type,
+								find: params.find,
+								start: params.start,
+								idlist: params.idlist,
+								userid: params.userid,
+								showifread: params.showifread,
+								findserie: serieid,
+								offset: 0
+							},
+							success: function(result, request) {
+								if(result.books[0]) {
+									record.set("bookmark", result.books[0].bookmark);
+									record.set("hasCover", result.books[0].hasCover);
+									record.set("id", result.books[0].id);
+									record.set("relativePath", result.books[0].relativePath);
+									record.set("seriesIndex", result.books[0].seriesIndex);
+									record.set("pubDate", result.books[0].pubDate);
+									record.set("tagsName", result.books[0].tagsName);
+									record.set("title", result.books[0].title);
+									record.set("nbgp", result.books[0].nbgp);
+									record.set("read", result.books[0].read);
+									record.set("reading", result.books[0].reading);
+								} else {
+									//Should no exist
+									console.log("No result");
+									//Affecte 0 à ngp car le groupe reste affiché mais indique qu'il n'y a plus rien
+									record.set("nbgp", 0);
+									if(myreadings.conf.showifread=="notread") {
+										//Pour indiquer que c'est lu: ngp=read
+										record.set("read", 0);
+									} else {
+										//pour indiquer que c'est non lu ngp!=read
+										record.set("read", 1);
+									}
+								}
+								me.getArticleslist().refreshItems();
+								Ext.Viewport.setMasked(false);
+							},
+							failure: function(result, request) {
+								Ext.Viewport.setMasked(false);
+								alert('Php Error.');
+							}
+						});
+					}
+				}					    
+			}
+		},
+		failure: function(result, request) {
+			Ext.Viewport.setMasked(false);
+			alert('Php Error for bookmark.');
+		}
 	    });
     },
     onBookmarkbt: function(button, cur_bookmark) {
