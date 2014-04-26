@@ -21,7 +21,7 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'page_fit_mode', type: 'int', defaultValue: 1},
 			{name: 'page_change_area_width', type: 'int', defaultValue: 50},
 			{name: 'open_current_comic_at_launch', type: 'int', defaultValue: 1},
-			
+			{name: 'showresize', type: 'int', defaultValue: 0},
 			//setting epub viewer
 			{name: 'epub_mode', type: 'string', defaultValue: 'jour'},
 			{name: 'epub_font', type: 'string', defaultValue: 'arial'},

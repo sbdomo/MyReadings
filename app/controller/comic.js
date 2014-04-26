@@ -67,6 +67,7 @@ Ext.define('myreadings.controller.comic', {
 		me.cache = []; // cache of preloaded page info
 		me.waiting_for_page = -1; // page that must be displayed once loaded.
 		
+		me.showresizemsg=0;
 		
 		/* A voir
 		Ext.Viewport.on("orientationchange", function() { 
@@ -82,6 +83,7 @@ Ext.define('myreadings.controller.comic', {
 			titlebar = me.getComictitle(),
 			imageviewer = me.getImageviewer();
 		
+		me.showresizemsg=myreadings.settings.showresize;
 		me.cache.length = 0;
 		me.waiting_for_page = -1;
 		imageviewer.setLoadingMask(false);
@@ -125,6 +127,9 @@ Ext.define('myreadings.controller.comic', {
 			myreadings.currentbook.reading=true;
 			myreadings.app.getController('articlesControl').saveuser();
 		}
+		
+		this.showresizemsg=myreadings.settings.showresize;
+		
 		this.ShowPage(myreadings.currentbook.current_page_nr);
 	},
 	onShow: function() {
@@ -265,6 +270,10 @@ Ext.define('myreadings.controller.comic', {
 					if(result.success==true) {
 						me.cache[result.resultat.page] = result.resultat;
 						me.PreloadImage(result.resultat.page);
+						if(me.showresizemsg==1&&result.resultat.msg!=null&&result.resultat.msg!="") {
+							me.showresizemsg=0;
+							Ext.Msg.alert("Info", "Image "+result.resultat.page+":"+result.resultat.msg);
+						}
 					} else Ext.Msg.alert("Error", result.message);
 				},
 				failure: function(result, request) {
@@ -296,7 +305,7 @@ Ext.define('myreadings.controller.comic', {
 					    }
 				    },
 				    error: function( /*Ext.Img*/ image, /*Ext.EventObject*/ e, /*Object*/ eOpts ) {
-					    Ext.Msg.alert('Error while loading image ' + image.getSrc());
+					    alert('Error loading ' + image.getSrc());
 					    console.log('Error while loading image ' + image.getSrc());
 					    me.cache[pagenr].img.destroy();
 					    delete me.cache[pagenr].img;

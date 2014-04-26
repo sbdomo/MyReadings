@@ -55,6 +55,7 @@
 	"txtLoginButton": "S'identifier",
 	"txtViewer": "Paramètres du lecteur",
 	"txtbook_at_launch": "Réouvrir le livre au lancement",
+	"txtresize": "Message en cas de redimensionnement",
 	"forced": "Refaire les pochettes",
 	"info": "Information",
 	"forced_msg": "Lors du tap sur un livre, la pochette sera recrée. Désactivez cette option pour revenir au mode normal."

@@ -144,7 +144,10 @@ else {
 		$XSendfile=false;
 		$calibre=array();
 		$limited=array();
+		$resizecbz=false;
+		$maxsize=5242880;
 	}
+	if($maxsize==""||$maxsize==NULL) $maxsize=5242880;
 ?>
 <script type="text/javascript">
 function removecalibre(me){
@@ -439,8 +442,6 @@ foreach ($limited as $key => $value) {
 
 <div data-role="collapsible" data-collapsed="false">
 	<h2>Viewers</h2>
-	<fieldset data-role="fieldcontain">
-	
 	<fieldset data-role="controlgroup">
         <input type="checkbox" name="epubview" id="epubview" <?php if($epubview=="on") echo "checked";?>>
         <label for="epubview">Epub</label>
@@ -450,7 +451,22 @@ foreach ($limited as $key => $value) {
         <label for="cbrview">Cbr</label>
 	</fieldset>
 	<p>For cbz viewer, you must have PHP ZIP extension and for cbr viewer, PHP RAR extension. You can verify that in compatibility test.</p>
+	<fieldset data-role="fieldcontain">
+	<label for="resizecbz">Resize?</label>
+	<select name="resizecbz" id="resizecbz" data-role="slider">
+		<option value="false" <?php if(!$resizecbz) echo "selected";?> >
+			No
+		</option>
+		<option value="true" <?php if($resizecbz) echo "selected";?> >
+			Yes
+		</option>
+	</select>
 	</fieldset>
+	<fieldset data-role="fieldcontain">
+		<label for="maxsize">Size max.</label>
+		<input type="text" value="<?php echo $maxsize;?>" id="maxsize" name="maxsize" />
+	</fieldset>
+	<p>Some devices as those under iOS seem to have a limit of size for the images which can be shown. By activating this function, the images will be resized to 5 Mpx by default (the original book will not be changed). You can change this size.</p>
 </div>
 
 <div data-role="collapsible" data-collapsed="false">

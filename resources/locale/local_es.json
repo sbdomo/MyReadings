@@ -55,6 +55,7 @@
 	"txtLoginButton": "Identificarse",
 	"txtViewer": "Configuracion visor del libro",
 	"txtbook_at_launch": "Abrir el libro actual al inicio",
+	"txtresize": "Mensaje en caso de redimensionar",
 	"forced": "Rehacer las viñetas",
 	"info": "Información",
 	"forced_msg": "Un tap sobre un libro rehará la viñeta. Desactive esta opción para volver al modo normal."

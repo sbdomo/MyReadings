@@ -25,6 +25,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    //comicSettings: 'configpanel [name=comicSettings]',
 	    configViewer: 'configpanel #configViewer',
 	    open_book_at_launch: 'configpanel #open_book_at_launch',
+	    showresize: 'configpanel #showresize',
 	    forcedThumb: 'configpanel #forced',
 	    
 	    typelistfind: 'listview [name=typelist]',
@@ -160,6 +161,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.page_fit_mode=cachedLoggedInUser.get('page_fit_mode');
 				myreadings.settings.page_change_area_width=cachedLoggedInUser.get('page_change_area_width');
 				myreadings.settings.open_current_comic_at_launch=cachedLoggedInUser.get('open_current_comic_at_launch');
+				myreadings.settings.showresize=cachedLoggedInUser.get('showresize');
 				
 				myreadings.settings.epub_mode=cachedLoggedInUser.get('epub_mode');
 				myreadings.settings.epub_font=cachedLoggedInUser.get('epub_font');
@@ -206,6 +208,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.page_change_area_width=50;
 				//Open comic at launch
 				myreadings.settings.open_current_comic_at_launch=1;
+				//show message if comic page is resized
+				myreadings.settings.showresize=0;
 				
 				//epub
 				myreadings.settings.epub_mode="jour";
@@ -309,6 +313,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				me.getOpen_book_at_launch().setValue(myreadings.settings.open_current_comic_at_launch);
 				me.getOpen_book_at_launch().enable();
+				me.getShowresize().setValue(myreadings.settings.showresize);
+				me.getShowresize().enable();
 				
 				if(myreadings.conf.fetchmode=="resize_and_cache") me.getForcedThumb().show();
 				
@@ -658,7 +664,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_turn_drag_threshold: myreadings.settings.page_turn_drag_threshold,
 				page_fit_mode: myreadings.settings.page_fit_mode,
 				page_change_area_width: myreadings.settings.page_change_area_width,
-				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch
+				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
+				showresize: myreadings.settings.showresize
 			});
 			user.save();
 			this.init();
@@ -710,6 +717,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_fit_mode: myreadings.settings.page_fit_mode,
 				page_change_area_width: myreadings.settings.page_change_area_width,
 				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
+				showresize: myreadings.settings.showresize,
 				
 				epub_mode: myreadings.settings.epub_mode,
 				epub_font: myreadings.settings.epub_font,

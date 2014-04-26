@@ -36,15 +36,19 @@ Ext.define('myreadings.view.Articles', {
     	//version iPad - iPad mini
     	//Configuration de l'affichage d'un livre
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
-    			'<div class="fond'+
-				'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'-1\'"> fond2</tpl>'+
-				'<tpl else><tpl if="data.nbgp==data.read"> fond2</tpl>'+
-			'</tpl>">'+
+    			'<div class="fond">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
     				'<div class="fbookmark'+
-					'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'1\'">1</tpl>'+
-					'<tpl else><tpl if="data.reading!=\'0\'">1</tpl>'+
-				'</tpl>"> </div>'+
+					'<tpl if="data.nbgp==null||data.nbgp==1">'+
+						'<tpl if="data.bookmark==\'1\'">1'+
+						'<tpl elseif="data.bookmark==\'-1\'">2'+
+						'</tpl>'+
+					'<tpl else>'+
+						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl elseif="data.nbgp==data.read">2'+
+						'</tpl>'+
+					'</tpl>"> '+
+				'</div>'+
 				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
     			'</div>'+
 			'<tpl if="data.nbgp==null||data.nbgp==1">'+
@@ -96,15 +100,19 @@ Ext.define('myreadings.view.Articles', {
 	
 	//avec retour à la ligne pour title et seriesName (avec tapclass), sans pubDate, sans txtBy
 	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
-    			'<div class="fond'+
-				'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'-1\'"> fond2</tpl>'+
-				'<tpl else><tpl if="data.nbgp==data.read"> fond2</tpl>'+
-			'</tpl>">'+
+    			'<div class="fond">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
    				'<div class="fbookmark'+
-					'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'1\'">1</tpl>'+
-					'<tpl else><tpl if="data.reading!=\'0\'">1</tpl>'+
-				'</tpl>"> </div>'+
+					'<tpl if="data.nbgp==null||data.nbgp==1">'+
+						'<tpl if="data.bookmark==\'1\'">1'+
+						'<tpl elseif="data.bookmark==\'-1\'">2'+
+						'</tpl>'+
+					'<tpl else>'+
+						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl elseif="data.nbgp==data.read">2'+
+						'</tpl>'+
+					'</tpl>"> '+
+					'</div>'+
 				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
 			'<tpl if="data.nbgp==null||data.nbgp==1">'+
@@ -117,15 +125,19 @@ Ext.define('myreadings.view.Articles', {
                     '</div></div>';
 	//sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
-    			'<div class="fond'+
-				'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'-1\'"> fond2</tpl>'+
-				'<tpl else><tpl if="data.nbgp==data.read"> fond2</tpl>'+
-			'</tpl>">'+
+    			'<div class="fond">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
    				'<div class="fbookmark'+
-					'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'1\'">1</tpl>'+
-					'<tpl else><tpl if="data.reading!=\'0\'">1</tpl>'+
-				'</tpl>"> </div>'+
+					'<tpl if="data.nbgp==null||data.nbgp==1">'+
+						'<tpl if="data.bookmark==\'1\'">1'+
+						'<tpl elseif="data.bookmark==\'-1\'">2'+
+						'</tpl>'+
+					'<tpl else>'+
+						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl elseif="data.nbgp==data.read">2'+
+						'</tpl>'+
+					'</tpl>"> '+
+					'</div>'+
 				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
 			'<tpl if="data.nbgp==null||data.nbgp==1">'+
@@ -164,15 +176,19 @@ Ext.define('myreadings.view.Articles', {
 	
 	//version galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.
 	var mytplgtab= '<div class="clsarticle" ref="{data.id}"><div class="gtab">'+
-    			'<div class="fond'+
-				'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'-1\'"> fond2</tpl>'+
-				'<tpl else><tpl if="data.nbgp==data.read"> fond2</tpl>'+
-			'</tpl>">'+
+    			'<div class="fond">'+
     				'<img class="vignette" src="<tpl if="data.hasCover==\'1\'">{[this.pathCover(values.data.relativePath, values.data.id)]}<tpl else>./resources/images/white.jpg</tpl>"/>'+
    				'<div class="fbookmark'+
-					'<tpl if="data.nbgp==null||data.nbgp==1"><tpl if="data.bookmark==\'1\'">1</tpl>'+
-					'<tpl else><tpl if="data.reading!=\'0\'">1</tpl>'+
-				'</tpl>"> </div>'+
+					'<tpl if="data.nbgp==null||data.nbgp==1">'+
+						'<tpl if="data.bookmark==\'1\'">1'+
+						'<tpl elseif="data.bookmark==\'-1\'">2'+
+						'</tpl>'+
+					'<tpl else>'+
+						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl elseif="data.nbgp==data.read">2'+
+						'</tpl>'+
+					'</tpl>"> '+
+					'</div>'+
 				'<tpl if="data.nbgp&&data.nbgp!=1"><div class="nbgroup">{data.nbgp}</div></tpl>'+
 			'</div>'+
 			'<tpl if="data.nbgp==null||data.nbgp==1">'+

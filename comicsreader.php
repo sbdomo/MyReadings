@@ -39,22 +39,24 @@ $number_of_page=0;
 //indique le format si IsRarFile ou IsZipFile = true
 $fileformat="";
 
-//$defaut_maxwidth=2048;
-$defaut_maxwidth=8192;
+if($maxsize>0) {
+	$defaut_maxsize=$maxsize;
+} else $defaut_maxsize= 5242880; //5 MégaPixel : 5x1024x1024
+
+$resizemsg="";
 
 if($page=="number_of_pages") {
 	$result=GetNumberPages($path);
 } else {
 	$comic_id=$idbase."_".$id;
 	
-	//GetPage appel InternalGetPage (avec possiblité de mettre $max_width différent de la valeur par défaut)
-	//InternalGetPage: idem mais avec comme paramètre $filelist si elle existe déjà
+	//GetPage :
 	//Appel ParseComicArchive pour faire $filelist (liste du contenu du zip), affectation de $fileformat et de $number_of_page
 	//resize image
 	//la met en cache
 	
 	//ParseComicArchive : appel de IsRarFile et/ou IsZipFile puis ParseCBZ (liste du cbz) ou ParceCBR, $number_of_page
-	$result=GetPage($path, $page, NULL);
+	$result=GetPage($path, $page, $defaut_maxsize, $resizecbz);
 }
 
 $json=json_encode($result);
@@ -213,31 +215,16 @@ function ParseComicArchive($filename) {
 
 // Get page for display
 // Updates the read state of the comic
-function GetPage($filename, $page_id, $max_width) {
-    $result = InternalGetPage($filename, $page_id, $max_width, NULL);
-    return $result;
-}
+// If the page is not already present in cache:
+//   - extract the file from archive
+//   - resize image to max_width
+//   - store file in the cache
+//   Returns the url to extracted file, the width and height.
+function GetPage($filename, $page_id, $max_size, $doresize) {
 
-  /**
-   * InternalGetPage
-   * If the page is not already present in cache:
-   *   - extract the file from archive
-   *   - resize image to max_width
-   *   - store file in the cache
-   * Returns the url to extracted file, the width and height.
-   
-   
-   max_width is not the max width, is it the width of the device.
-   TODO: also take device height into account for landscape pages.
-   
-   */
-function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
-  {
-    global $number_of_page, $fileformat, $defaut_maxwidth, $comic_id, $cache;
+    global $number_of_page, $fileformat, $comic_id, $cache, $resizemsg;
     // TODO: check if $page_id is a number and 0 < page_id < comic.numpages
     
-    //Ne sert à rien : if (!$filelist)
-    //Liste des fichiers, affectation de $fileformat et de $number_of_page
     $filelist = ParseComicArchive($filename);
     
     if (gettype($filelist) == 'string') {
@@ -261,10 +248,9 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
         "error" => "INVALID_PAGE_NR"
         );
     }
-    
-    
+
     //$defaut_maxwidth=$this->settings["max_width"];
-    $max_width = $max_width ? $max_width : $defaut_maxwidth;
+    //$max_width = $max_width ? $max_width : $defaut_maxwidth;
     //$filename = $comic["filename"];
     // Extract the page from the comic archive to a temp file in the cache folder.
     
@@ -275,7 +261,6 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
     $page_path_parts = pathinfo($page_filename);
     $page_ext = strtolower($page_path_parts["extension"]);
     $cachepathname = $cache . "/" . $comic_id . "_" . $page_id . "." . $page_ext;
-    
     if (!file_exists($cachepathname))
     {
       //if (IsRarFile($filename))
@@ -341,14 +326,20 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
           "error" => "INVALID_FILE_FORMAT"
           );
       }
-
-      $size = resize($cachepathname, $max_width);
+      //Il pourrait être nécessaire de tester la taille du fichier avec $filesize=filesize($cachepathname);
+      if($doresize==true) {
+      	      //Lance fonction pour changer la taille si nécessaire
+      	      $size = resize($cachepathname, $max_size);
+      } else {
+      	      $size = getimagesize($cachepathname);
+      }
     }
     else
     {
       $size = getimagesize($cachepathname);
-      if ($size === false)
-      {
+   }
+   
+   if ($size === false) {
         //$this->Log(SL_ERROR, "InternalGetPage", "Unable to get image size of '$cachepathname'");
         return array(
             "page" => $page_id,
@@ -357,13 +348,14 @@ function InternalGetPage($filename, $page_id, $max_width, $filelist = NULL)
             "src" => "resources/images/no_image_available.jpg",
             "error" => "INVALID_FILE_FORMAT"
             );
-      }
-    }
-    
+   }
+   
+   //Tout est OK - array contient les infos sur l'image mise en cache.
     return array(
       "page" => $page_id,
       "width" => $size[0],
       "height" => $size[1],
+      "msg" => $resizemsg,
       "src" => $cache . "/" . $comic_id . "_" . $page_id . "." . $page_ext
     );
 }
@@ -388,40 +380,46 @@ function GetNumberPages($filename) {
  * @param $filename String The path where the image is located
  * @param $maxwidth String[optional] The maximum width the image is allowed to be
  */
-function resize($filename, $maxwidth = "1024", $maxheight = "768", $outputfunction = NULL)
+function resize($filename, $maxsize, $outputfunction = NULL)
 {
+	global $resizemsg;
 	$inputfunctions = array(
-    'image/jpeg'=>'imagecreatefromjpeg',
+		'image/jpeg'=>'imagecreatefromjpeg',
 		'image/png'=>'imagecreatefrompng',
 		'image/gif'=>'imagecreatefromgif'
-    );
+		);
 	
-  $outputfunctions = array(
-    'image/jpeg'=>'imagejpeg',
-    'image/png'=>'imagepng',
-    'image/gif'=>'imagegif'
-    );
+	$outputfunctions = array(
+		'image/jpeg'=>'imagejpeg',
+		'image/png'=>'imagepng',
+		'image/gif'=>'imagegif'
+		);
     
 	$imageinfo = getimagesize($filename);
+	
 	$currentheight = $imageinfo[1];
 	$currentwidth = $imageinfo[0];
-  
-	if ($currentwidth <= 0 || $currentwidth < $maxwidth)
-	{
+	
+	if($currentwidth <= 0||$currentheight<=0) {
+		return $imageinfo;
+	} elseif($currentwidth*$currentheight>$maxsize) {
+		$ratio= sqrt($maxsize/($currentwidth*$currentheight));
+		$newwidth = $ratio*$currentwidth;
+		$newheight= $ratio*$currentheight;
+	} else {
 		return $imageinfo;
 	}
-  
+	//Il faut changer la taille
+	$resizemsg="Resized ".$currentwidth."x".$currentheight;
+ 
 	$img = $inputfunctions[$imageinfo['mime']]($filename);
-  
-	$newwidth = $maxwidth;
-	$newheight = ($currentheight/$currentwidth)*$newwidth;
+	
 	$newimage = imagecreatetruecolor($newwidth,$newheight);
 	imagecopyresampled($newimage,$img,0,0,0,0,$newwidth,$newheight,$currentwidth,$currentheight);
-  
-  if (!$outputfunction)
-  {
-    $outputfunction = $outputfunctions[$imageinfo['mime']];
-  }
+	
+	if (!$outputfunction) {
+		$outputfunction = $outputfunctions[$imageinfo['mime']];
+	}
 	$outputfunction($newimage,$filename);
 	return getimagesize($filename);
 }

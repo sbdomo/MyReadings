@@ -230,7 +230,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.txtbook_at_launch,
-				//labelWidth: '60%',
+				labelWidth: '60%',
 				itemId: 'open_book_at_launch',
 				disabled: true,
 				listeners:
@@ -239,6 +239,23 @@ Ext.define('myreadings.view.configpanel', {
 						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
 						if(!this.getDisabled()) {
 							myreadings.settings.open_current_comic_at_launch=value;
+							myreadings.app.getController('articlesControl').saveuser();
+						}
+					}
+				}
+			},
+			{
+				xtype: 'togglefield',
+				label: this.txtresize,
+				labelWidth: '60%',
+				itemId: 'showresize',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.settings.showresize=value;
 							myreadings.app.getController('articlesControl').saveuser();
 						}
 					}

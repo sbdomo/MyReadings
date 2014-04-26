@@ -49,6 +49,8 @@ $phptxt.='$XSendfile='.$_GET['XSendfile'].';'."\r\n";
 $phptxt.='$epubview="'.$_GET['epubview'].'";'."\r\n";
 $phptxt.='$cbzview="'.$_GET['cbzview'].'";'."\r\n";
 $phptxt.='$cbrview="'.$_GET['cbrview'].'";'."\r\n";
+$phptxt.='$resizecbz='.$_GET['resizecbz'].';'."\r\n";
+$phptxt.='$maxsize='.$_GET['maxsize'].';'."\r\n";
 
 $phptxt.='$calibre=array('."\r\n";
 if(strval($_GET['nbcal'])>1) {
