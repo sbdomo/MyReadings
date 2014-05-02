@@ -72,6 +72,23 @@ if(strval($_GET['nblim']>1)) {
 }
 $phptxt.=');'."\r\n";
 
+$phptxt.='$customcolumn=array('."\r\n";
+if(strval($_GET['nbcal'])>1) {
+	$nbcust=strval($_GET['nbcal'])-1;
+	for ($x=1; $x<=$nbcust; $x++) {
+		if($_GET['calcustom'.$x]!="")
+		$phptxt.='"'.$_GET['calkey'.$x].'" => "'.$_GET['calcustom'.$x].'",'."\r\n";
+	}
+}
+if(strval($_GET['nblim']>1)) {
+	$nbcust=strval($_GET['nblim'])-1;
+	for ($x=1; $x<=$nbcust; $x++) {
+		if($_GET['limcustom'.$x]!="")
+		$phptxt.='"'.$_GET['limkey'.$x].'" => "'.$_GET['limcustom'.$x].'",'."\r\n";
+	}
+}
+$phptxt.=');'."\r\n";
+
 $phptxt.='$users=array('."\r\n";
 if(strval($_GET['nbuser']>1)) {
 	$nbuser=strval($_GET['nbuser'])-1;

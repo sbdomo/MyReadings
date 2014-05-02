@@ -173,7 +173,8 @@ Ext.define('myreadings.view.article', {
             callbackKey: 'callback',
             params: {
 		    id: newData.id,
-		    pathbase: myreadings.conf.pathbase,
+		    //pathbase: myreadings.conf.pathbase,
+		    txtbase: myreadings.conf.txtbase,
 		    mylogin: myreadings.conf.username,
 		    mypass: myreadings.conf.password
             },
@@ -226,6 +227,9 @@ Ext.define('myreadings.view.article', {
 					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
 					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
 					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<tpl for="customs">'+
+						'<span class="txt_fonce">{name}:</span> {value}<tpl if="num"> ({num})</tpl><br />'+
+					'</tpl>'+
 					'<br /><span class="comment">{comment}</span>'+
 				'</span><br /></div>'+
 				'</div>'+
@@ -243,6 +247,9 @@ Ext.define('myreadings.view.article', {
 					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
 					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
 					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<tpl for="customs">'+
+						'<span class="txt_fonce">{name}:</span> {value}<tpl if="num"> ({num})</tpl><br />'+
+					'</tpl>'+
 					'<br /><span class="commentiphone">{comment}</span>'+
 				'</span></div>'+
 				'</div>'+
@@ -261,6 +268,9 @@ Ext.define('myreadings.view.article', {
 					'<tpl if="seriesName"><span class="txt_fonce">'+this.txtSeries+'</span> {seriesName}<tpl if="seriesIndex"> ({seriesIndex})</tpl><br /></tpl>'+
 					'<tpl if="pubDate&&pubDate!=\'0101\'"> <span class="txt_fonce">'+this.txtPubdate+'</span> {pubDate}<br /></tpl>'+
 					'<tpl if="languagesName"> <span class="txt_fonce">'+this.txtLang+'</span> {languagesName:this.lang}<br /></tpl>'+
+					'<tpl for="customs">'+
+						'<span class="txt_fonce">{name}:</span> {value}<tpl if="num"> ({num})</tpl><br />'+
+					'</tpl>'+
 					'<br /><span class="comment">{comment}</span>'+
 				'</span><br /></div>'+
 				'</div>'+

@@ -164,11 +164,13 @@ $(function() {
 	var i = $('#calibrelibrary1 li').size();
 	$.ajaxSetup({ cache: false });
         $('#addcalibre1').on('click', function() {
-			listItem = '<li><fieldset class="ui-grid-a">'+
+			listItem = '<li><fieldset class="ui-grid-b">'+
 			'<div class="ui-block-a">'+
 			'<input type="text" value="" id="calval' + i +'" name="calval' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>'+
-			'</div><div class="ui-block-b"><div data-role="controlgroup" data-type="horizontal">'+
+			'</div><div class="ui-block-b">'+
 			'<input type="text" value="" id="calkey' + i +'" name="calkey' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
+			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
+			'<input type="text" value="" id="calcustom' + i +'" name="calcustom' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
 			'<a href="#" id="calremove' + i +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>'+
 			'</div></div>'
 			'</fieldset></li>';
@@ -179,11 +181,13 @@ $(function() {
 	
         var i2 = $('#calibrelibrary2 li').size();
         $('#addcalibre2').on('click', function() {
-			listItem = '<li><fieldset class="ui-grid-a">'+
+			listItem = '<li><fieldset class="ui-grid-b">'+
 			'<div class="ui-block-a">'+
 			'<input type="text" value="" id="limval' + i2 +'" name="limval' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>'+
-			'</div><div class="ui-block-b"><div data-role="controlgroup" data-type="horizontal">'+
+			'</div><div class="ui-block-b">'+
 			'<input type="text" value="" id="limkey' + i2 +'" name="limkey' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
+			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
+			'<input type="text" value="" id="limcustom' + i2 +'" name="limcustom' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
 			'<a href="#" id="limremove' + i2 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>'+
 			'</div></div>'
 			'</fieldset></li>';
@@ -359,7 +363,7 @@ $(function() {
 	</fieldset>
 
 	<ul class="ui-li" data-role="listview" id="calibrelibrary1" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Calibre libraries - Enter the path of your metadata file and the name that will appear in My Readings</li>
+	<li data-role="list-divider">Calibre libraries - Enter the path of your metadata file, the name that will appear in My Readings and, if you want, custom columns</li>
 <?php
 $nbcalibre1=0;
 if($calibre) {
@@ -367,13 +371,16 @@ foreach ($calibre as $key => $value) {
 	$nbcalibre1=$nbcalibre1+1;
 ?>
 	<li>
-		<fieldset class="ui-grid-a">
+		<fieldset class="ui-grid-b">
 			<div class="ui-block-a">
 				<input type="text" value="<?php echo $value;?>"  id="calval<?php echo $nbcalibre1;?>" name="calval<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>
 			</div>
 			<div class="ui-block-b">
+				<input type="text" value="<?php echo $key;?>"  id="calkey<?php echo $nbcalibre1;?>" name="calkey<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+			</div>
+			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
-					<input type="text" value="<?php echo $key;?>"  id="calkey<?php echo $nbcalibre1;?>" name="calkey<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="calcustom<?php echo $nbcalibre1;?>" name="calcustom<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
 					<a href="#" id="calremove<?php echo $nbcalibre1;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>
 				</div>
 			</div>
@@ -382,10 +389,11 @@ foreach ($calibre as $key => $value) {
 <?php }} ?>
 	</ul>
 	<input type="button" id="addcalibre1" class="btn" value="Add library" />
-</div>
-<p>Library path can be a full path (for exemple //volume1/calibre1/), you can't use direct access mode in that case.<br/>
+	<p><b>Library path</b> can be a full path (for exemple //volume1/calibre1/), you can't use direct access mode in that case.<br/>
 Or, if your library is in web directory, it can be a relative path (as ../calibre1/) and then you can use any access mode.<br/>
-Note the "/" at the end of the path is necessary.</p>
+Note the <b>"/" at the end</b> of the path <b>is necessary</b>.<br/>
+If you want to use <b>custom columns</b>, put the label of the custom columns you want with , as separator. Ex: custom1,custom2</p>
+</div>
 
 <div data-role="collapsible" data-collapsed="false">
 	<h2>Calibre libraries with parental control</h2>
@@ -423,13 +431,16 @@ foreach ($limited as $key => $value) {
 	$nbcalibre2=$nbcalibre2+1;
 ?>
 	<li>
-		<fieldset class="ui-grid-a">
+		<fieldset class="ui-grid-b">
 			<div class="ui-block-a">
 				<input type="text" value="<?php echo $value;?>"  id="limval<?php echo $nbcalibre2;?>" name="limval<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>
 			</div>
 			<div class="ui-block-b">
+				<input type="text" value="<?php echo $key;?>"  id="limkey<?php echo $nbcalibre2;?>" name="limkey<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+			</div>
+			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
-					<input type="text" value="<?php echo $key;?>"  id="limkey<?php echo $nbcalibre2;?>" name="limkey<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="limcustom<?php echo $nbcalibre2;?>" name="limcustom<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
 					<a href="#" id="limremove<?php echo $nbcalibre2;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>
 				</div>
 			</div>

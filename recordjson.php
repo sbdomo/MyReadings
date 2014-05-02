@@ -14,13 +14,26 @@ if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$my
 	erreur("login error");
 }
 
+if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
+
 $request="";
 if(isset($_GET['id'])) $id=$_GET['id'];
 else      $id="";
 
 //Chemin de calibre
-if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
-else erreur("No pathbase");
+//if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
+//else erreur("No pathbase");
+
+//biblio calibre
+if(isset($_GET['txtbase'])) $txtbase=$_GET['txtbase'];
+else erreur("No base");
+
+$path=$calibre[$txtbase];
+if(!$path) erreur("No base");
+
+//Custom columns
+$customs=$customcolumn[$txtbase];
+if($customs!=""&&$customs!=Null) $customarray= explode(",", $customs);
 
 $sql="SELECT books.id as id, books.title as title, books.path as relativePath, books.series_index as seriesIndex,
 	has_cover as hasCover, substr(books.pubdate,1,4) as pubDate,
@@ -34,6 +47,7 @@ $sql="SELECT books.id as id, books.title as title, books.path as relativePath, b
 //$sql2 = "select books.path as relativePath, data.format as extension, data.name as filename, data.uncompressed_size as size from data, books where books.id=data.book and book = ?";
 $sql2 = "select data.format as extension, data.name as filename, data.uncompressed_size as size from data where book = ?";
 
+$sql3 ="select * from custom_columns where label = ?";
 
 try{
     $pdo = new PDO('sqlite:'.$path.'metadata.db');
@@ -52,7 +66,75 @@ try{
     $stmt->execute($params);
     $phpvars['files'] = $stmt->fetchAll();
     
-    
+    //Traitement des custom columns
+    $customresult= array();
+    if($customarray) {
+    foreach($customarray as $custom ) {
+    	    $query=$sql3;
+    	    $stmt = $pdo->prepare($query);
+    	    $stmt->execute(array($custom));
+    	    $custominfo=$stmt->fetch();
+    	    if($custominfo) {
+    	    if($custominfo["datatype"]=="series") {
+    	    	    $query="select b.value, a.extra from books_custom_column_".$custominfo["id"]."_link as a
+    	    	    left join custom_column_".$custominfo["id"]." as b on b.id = a.value
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetch();
+    	    	    if($custresult) $customresult[]=array('name'=>$custominfo["name"], 'value'=>$custresult["value"], 'num'=>$custresult["extra"]);
+    	    } else if($custominfo["datatype"]=="enumeration") {
+    	    	    $query="select b.value from books_custom_column_".$custominfo["id"]."_link as a
+    	    	    left join custom_column_".$custominfo["id"]." as b on b.id = a.value
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetch();
+    	    	    if($custresult) $customresult[]=array('name'=>$custominfo["name"], 'value'=>$custresult["value"], 'num'=>"");
+    	    } else if($custominfo["datatype"]=="int") {
+    	    	    $query="select a.value from custom_column_".$custominfo["id"]." as a
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetch();
+    	    	    if($custresult) $customresult[]=array('name'=>$custominfo["name"], 'value'=>$custresult["value"], 'num'=>"");
+    	    } else if($custominfo["datatype"]=="bool") {
+    	    	    $query="select a.value from custom_column_".$custominfo["id"]." as a
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetch();
+    	    	    if($custresult) $customresult[]=array('name'=>$custominfo["name"], 'value'=>$custresult["value"], 'num'=>"");
+    	    } else if($custominfo["datatype"]=="text") {//Réponse multiple possible (comme les tags)
+    	    	    $query="select b.value from books_custom_column_".$custominfo["id"]."_link as a
+    	    	    left join custom_column_".$custominfo["id"]." as b on b.id = a.value
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetchAll();
+    	    	    if($custresult) {
+    	    	    	    $values="";
+    	    	    	    $i=0;
+    	    	    	    foreach ($custresult as $enr) {
+    	    	    	    	    if($i>0) $values=$values.", ";
+    	    	    	    	    $values=$values.$enr["value"];
+    	    	    	    	    $i=$i+1;
+    	    	    	    	    
+    	    	    	    }
+    	    	    	    $customresult[]=array('name'=>$custominfo["name"], 'value'=>$values, 'num'=>"");
+    	    	    }
+    	    } else if($custominfo["datatype"]=="float") {
+    	    	    $query="select a.value from custom_column_".$custominfo["id"]." as a
+    	    	    where a.book = ?";
+    	    	    $stmt = $pdo->prepare($query);
+    	    	    $stmt->execute($params);
+    	    	    $custresult=$stmt->fetch();
+    	    	    if($custresult) $customresult[]=array('name'=>$custominfo["name"], 'value'=>$custresult["value"], 'num'=>"");
+    	    }
+    	    
+    	    }
+    }}
+    $phpvars['books'][0]['customs']=$customresult;
     
     //$json= '{"books":'.json_encode($result)."}";
     $json = json_encode($phpvars);

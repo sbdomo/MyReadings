@@ -19,8 +19,8 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			$result.='<p>Connection Test:</p>';
 			$result.="<p>If all is OK, you must see a cover for each library.</p>";
 			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
-			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users);
-			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users);
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn);
 			if(fw("./thumb")) {
 				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
 			} else {
@@ -64,7 +64,7 @@ if (isset($_GET['callback'])) {
 	echo $json;
 }
 
-function testconnect($bases, $result, $fetchmode, $login, $pass, $users) {
+function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs) {
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
 	foreach ($bases as $key => $path) {
@@ -94,7 +94,7 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users) {
 		//Cherche les customs column pour les users
 		if($users) {
 			$erroruser="";
-			foreach ($users as $key => $value) {
+			foreach ($users as $value) {
 				$queryuser = "SELECT id, datatype from custom_columns WHERE name = '".$value."'";
 				$resultquery = $pdo->query($queryuser)->fetch();
 				if(!$resultquery) {
@@ -105,6 +105,22 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users) {
 			}
 			if($erroruser!="") $result.='<p class="red">User error:'.$erroruser.'</p>';
 			else $result.='<p>All users OK</p>';
+		}
+		//Cherche les custom column
+		if($customs&&$customs[$key]!=Null&&$customs[$key]!="") {
+			$customarray= explode(",", $customs[$key]);
+			$errorcustom="";
+			foreach ($customarray as $value) {
+				$query = "select * from custom_columns where label = '".$value."'";
+				$resultquery = $pdo->query($query)->fetch();
+				if(!$resultquery) {
+					$errorcustom.=" ".$value." not found.";
+				} else if($resultquery['datatype']!='series'&&$resultquery['datatype']!='enumeration'&&$resultquery['datatype']!='int'&&$resultquery['datatype']!='bool'&&$resultquery['datatype']!='text'&&$resultquery['datatype']!='float') {
+					$errorcustom.=" The type of ".$value." (".$resultquery['datatype'].") is not supported.";
+				}
+			}
+			if($errorcustom!="") $result.='<p class="yellow">Custom column error:'.$errorcustom.'</p>';
+			else $result.='<p>All custom columns are OK</p>';
 		}
 		} else $result.='<p class="red">'.$path."metadata.db not found.</p>";
 	} catch(Exception $e) {
