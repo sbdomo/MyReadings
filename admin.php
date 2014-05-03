@@ -232,6 +232,10 @@ $(function() {
 			},
 			pass2: {
 				required: { depends: function () { return $('#control').val()=="true"; } }
+			},
+			maxsize: {
+				required: { depends: function () { return $('#resizecbz').val()=="true"; } },
+				number: true
 			}
 		},
 		submitHandler: function(form) {
@@ -477,7 +481,7 @@ foreach ($limited as $key => $value) {
 		<label for="maxsize">Size max.</label>
 		<input type="text" value="<?php echo $maxsize;?>" id="maxsize" name="maxsize" />
 	</fieldset>
-	<p>Some devices as those under iOS seem to have a limit of size for the images which can be shown. By activating this function, the images will be resized to 5 Mpx by default (the original book will not be changed). You can change this size.</p>
+	<p>Some devices as those under iOS seem to have a limit of size for the images which can be shown. By activating this function, the images will be resized to 5242880 pixels (5x1024x1024= 5Mpx) by default. The original book will not be changed. You can change this size.</p>
 </div>
 
 <div data-role="collapsible" data-collapsed="false">

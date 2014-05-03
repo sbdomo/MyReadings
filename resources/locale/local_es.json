@@ -32,7 +32,7 @@
 	"txtPubdate":"Fecha de publicacion:",
 	"txtLang":"Lenguaje(s):",
 	"msgError":"Problema durante la busqueda.",
-	"readcbz":"Leer Cbz",
+	"read":"Leer",
 	"readepub":"Leer ePub"
 },
 "Articles":{

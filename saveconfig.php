@@ -37,20 +37,35 @@ if(!file_exists($basename)) {
 }
 
 $phptxt="<?php"."\r\n".'$language="'.$_GET['language'].'";'."\r\n";
-$phptxt.='$protect='.$_GET['protect'].';'."\r\n";
+
+$protect=$_GET['protect'];
+if($protect!=false&&$protect!=true) $protect=true;
+$phptxt.='$protect='.$protect.';'."\r\n";
 $phptxt.='$login="'.$_GET['login'].'";'."\r\n";
 $phptxt.='$pass="'.$_GET['pass'].'";'."\r\n";
-$phptxt.='$control='.$_GET['protect'].';'."\r\n";
+
+$control=$_GET['control'];
+if($control!=false&&$control!=true) $control=false;
+$phptxt.='$control='.$control.';'."\r\n";
 $phptxt.='$login2="'.$_GET['login2'].'";'."\r\n";
 $phptxt.='$pass2="'.$_GET['pass2'].'";'."\r\n";
 $phptxt.='$fetchmode="'.$_GET['fetchmode'].'";'."\r\n";
-$phptxt.='$XSendfile='.$_GET['XSendfile'].';'."\r\n";
+
+$XSendfile=$_GET['XSendfile'];
+if($XSendfile!=false&&$XSendfile!=true) $XSendfile=false;
+$phptxt.='$XSendfile='.$XSendfile.';'."\r\n";
 
 $phptxt.='$epubview="'.$_GET['epubview'].'";'."\r\n";
 $phptxt.='$cbzview="'.$_GET['cbzview'].'";'."\r\n";
 $phptxt.='$cbrview="'.$_GET['cbrview'].'";'."\r\n";
-$phptxt.='$resizecbz='.$_GET['resizecbz'].';'."\r\n";
-$phptxt.='$maxsize='.$_GET['maxsize'].';'."\r\n";
+
+$resizecbz=$_GET['resizecbz'];
+if($resizecbz!=false&&$resizecbz!=true) $resizecbz=false;
+$phptxt.='$resizecbz='.$resizecbz.';'."\r\n";
+
+$maxsize=$_GET['maxsize'];
+if(!$maxsize>0) $maxsize=5242880;
+$phptxt.='$maxsize='.$maxsize.';'."\r\n";
 
 $phptxt.='$calibre=array('."\r\n";
 if(strval($_GET['nbcal'])>1) {
