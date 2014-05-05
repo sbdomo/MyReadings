@@ -44,7 +44,7 @@ Ext.define('myreadings.view.Articles', {
 						'<tpl elseif="data.bookmark==\'-1\'">2'+
 						'</tpl>'+
 					'<tpl else>'+
-						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl if="data.reading!=null&&data.reading!=\'0\'">1'+
 						'<tpl elseif="data.nbgp==data.read">2'+
 						'</tpl>'+
 					'</tpl>"> '+
@@ -108,7 +108,7 @@ Ext.define('myreadings.view.Articles', {
 						'<tpl elseif="data.bookmark==\'-1\'">2'+
 						'</tpl>'+
 					'<tpl else>'+
-						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl if="data.reading!=null&&data.reading!=\'0\'">1'+
 						'<tpl elseif="data.nbgp==data.read">2'+
 						'</tpl>'+
 					'</tpl>"> '+
@@ -133,7 +133,7 @@ Ext.define('myreadings.view.Articles', {
 						'<tpl elseif="data.bookmark==\'-1\'">2'+
 						'</tpl>'+
 					'<tpl else>'+
-						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl if="data.reading!=null&&data.reading!=\'0\'">1'+
 						'<tpl elseif="data.nbgp==data.read">2'+
 						'</tpl>'+
 					'</tpl>"> '+
@@ -184,7 +184,7 @@ Ext.define('myreadings.view.Articles', {
 						'<tpl elseif="data.bookmark==\'-1\'">2'+
 						'</tpl>'+
 					'<tpl else>'+
-						'<tpl if="data.reading!=\'0\'">1'+
+						'<tpl if="data.reading!=null&&data.reading!=\'0\'">1'+
 						'<tpl elseif="data.nbgp==data.read">2'+
 						'</tpl>'+
 					'</tpl>"> '+
