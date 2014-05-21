@@ -97,7 +97,8 @@
 	"read": "Book read",
 	"markread": "Read",
 	"marknotread": "Not read",
-	"txtBookmark": "Bookmark"
+	"txtBookmark": "Bookmark",
+	"domarkread": "Indicate that the book is read?"
 },
 "lang":
 {

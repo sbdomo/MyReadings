@@ -1,5 +1,5 @@
 /*
-  This file was part of Badaap Comic Reader.
+  This file was part of Badaap Comic Reader and from Ext.ux.ImageViewer
 */  
   
 Ext.define('myreadings.view.ImageViewer',{
@@ -14,7 +14,8 @@ Ext.define('myreadings.view.ImageViewer',{
             minScale: 1, 
             maxScale: 4,
             
-            loadingMask: true,
+            loadingMask: false,
+	    loadingevent: true,
             previewSrc: false,
             resizeOnLoad:true,
             autoFitWidth: true,
@@ -22,17 +23,19 @@ Ext.define('myreadings.view.ImageViewer',{
             imageSrc: false,
             initOnActivate: false,
             cls: 'imageBox',
-            errorImage: false, //'/comic2/resources/no_image_available.jpg',
+            errorImage: false,
+	    emptyImage: false,
             scrollable: { 
               direction:'both', 
               directionLock: true,
               indicators: false
             },  
-            loadingMessage:'Loading...',
+            loadingMessage:'',
             html: '<figure><img/></figure>'
-
     },
     xtype: 'imageviewer',
+    duringDestroy: false,
+    
     initialize: function() {
         if(this.initOnActivate)
 	{
@@ -57,7 +60,7 @@ Ext.define('myreadings.view.ImageViewer',{
 	{
             me.setMasked({
                    xtype: 'loadmask',
-                   message:me.getLoadingMessage()
+                   message: me.getLoadingMessage()
             });
 	}
 
@@ -136,19 +139,61 @@ Ext.define('myreadings.view.ImageViewer',{
 
     loadImage: function(src) {  
         var me = this;
+	
+	// mask image viewer
+        /*if(me.getLoadingMask()) {
+            //me.setMasked(true);
+	    me.setMasked({
+                   xtype: 'loadmask',
+                   message:me.getLoadingMessage()
+            });
+	}*/
+	if(me.getLoadingevent()) me.fireEvent('imageLoading', me);
+	
+	me.setImageSrc(src);
         if (me.imgEl)
         {
+            // hide image during loading
+            me.imgEl.setStyle({ visibility: 'hidden' });
+	    
             me.imgEl.dom.src = src;
             me.imgEl.dom.onload = Ext.Function.bind(me.onLoad, me, me.imgEl, 0);
             me.imgEl.dom.onerror = Ext.Function.bind(me.onError, me, me.imgEl, 0);
         }
         else
 	{
-            me.setImageSrc(src);
+            //me.setImageSrc(src);
 	}
     },
     
-    //nouvelle version
+    unloadImage: function() {  
+        var me = this;
+    
+        // mask image viewer
+        if (me.getLoadingMask()) {
+            me.setMasked({
+                xtype: 'loadmask',
+                message:me.getLoadingMessage()
+            });
+        }
+	
+	me.setImageSrc('');
+	
+        if (me.imgEl) {
+            if (me.getEmptyImage()) {
+                  me.imgEl.dom.src = me.getEmptyImage();
+            } else {
+		    //Génère un erreur (onError et onImageError car il n'y a pas d'image à charger
+		    me.imgEl.dom.src = '';
+	    }
+            me.imgEl.setStyle({ visibility: 'hidden' });
+        } else {
+            //me.setImageSrc('');
+            //me.imgEl.setStyle({ visibility: 'hidden' });
+        }
+    },
+    
+    //nouvelle version Non utilisé ??
     replaceImage: function(oldImg, newImg) {
         oldImg.dom.parentNode.insertBefore(newImg.dom, oldImg.dom);
         
@@ -162,28 +207,7 @@ Ext.define('myreadings.view.ImageViewer',{
     },
     
     // replace the imgEl with another img DOM element.
-    // untested....
-    //oldversion
-    setImageold: function(el) {
-      var me = this;
-      if (me.imgEl)
-      {
-        me.imgEl.replace(el);
-        me.imgEl.dom.onload = Ext.Function.bind(me.onLoad, me, me.imgEl, 0);
-        me.imgEl.dom.onerror = function() {
-                me.fireEvent('error', me, el, e);
-                
-                if (me.getErrorImage())
-                  this.src = me.getErrorImage();
-            };
-        
-        me.fireEvent('load', me, me.imgEl, 0);
-      }
-      else
-        me.setImageSrc(el.dom.src);
-    },
-
-    //nouvelle version
+    // untested.... Non utilisé ?
     setImage: function(el) {
       var me = this;
       if (me.imgEl)
@@ -212,15 +236,18 @@ Ext.define('myreadings.view.ImageViewer',{
       }
     },
 
-    
+    //Non utilisé??
     onDragStart: function( /*Ext.event.Event*/ event, /*HTMLElement*/ node, /*Object*/ options, /*Object*/ eOpts ) 
     { 
       var me = this;
       console.log('onDragStart'); 
       me.fireEvent('dragstart', me); 
     },
+    //Non utilisé??
     onDrag: function() { console.log('onDrag'); this.fireEvent('drag', this); },
+    //Non utilisé??
     onDragEnd: function() { console.log('onDragEnd'); this.fireEvent('dragend', this); },
+    
     onTapHold: function() { console.log('onTapHold'); this.fireEvent('taphold', this); },
     
     onLoad: function(el, e) {
@@ -230,6 +257,7 @@ Ext.define('myreadings.view.ImageViewer',{
     
     onError: function(el, e) {
         var me = this;
+	console.log("ImageViewer: Error");
         me.fireEvent('error', me, el, e);
         if (me.getErrorImage())
 	{
@@ -239,11 +267,14 @@ Ext.define('myreadings.view.ImageViewer',{
 
     onImageError: function() {
       var me = this;
+      
+      me.setImageSrc('');
+      
       if (me.getLoadingMask())
       {
         me.setMasked(false);
       }
-
+        console.log("ImageViewer: Image error");
         me.fireEvent('imageError', me);
     },
     
@@ -263,12 +294,12 @@ Ext.define('myreadings.view.ImageViewer',{
                 backgroundImage: 'none'
             });
         }
-
+	
         if(me.getLoadingMask())
 	{
             me.setMasked(false);
 	}
-
+	//console.log("ImageViewer load:"+me.getItemId()+me.imgEl.dom.src);
         me.fireEvent('imageLoaded', me);
     },
     
@@ -279,7 +310,6 @@ Ext.define('myreadings.view.ImageViewer',{
             touches = ev.touches,
             element = me.element,
             scale = me.scale;
-
 
         // disable scrolling during pinch
         scroller.stopAnimation();
@@ -381,7 +411,6 @@ Ext.define('myreadings.view.ImageViewer',{
         me.adjustScroller();
     },
 
-
     onZoomIn: function(){
         var me = this,
             ev = {pageX : 0, pageY: 0},
@@ -413,7 +442,6 @@ Ext.define('myreadings.view.ImageViewer',{
                 myScale = me.baseScale;
 	}
 
-
         ev.pageX = me.viewportWidth / 2;
         ev.pageY = me.viewportHeight / 2;
         me.zoomImage(ev,myScale);
@@ -425,16 +453,16 @@ Ext.define('myreadings.view.ImageViewer',{
             scrollPosition = scroller.position,
             element = me.element,
         // zoom in toward tap position
-            oldScale = this.scale,
+            oldScale = me.scale,
             newScale = scale,
             originViewportX = ev ? (ev.pageX - element.getX()) : 0,
             originViewportY = ev ? (ev.pageY - element.getY()) : 0,
-            originScaledImgX = originViewportX + scrollPosition.x - this.translateX,
-            originScaledImgY = originViewportY + scrollPosition.y - this.translateY,
+            originScaledImgX = originViewportX + scrollPosition.x - me.translateX,
+            originScaledImgY = originViewportY + scrollPosition.y - me.translateY,
             originReScaledImgX = originScaledImgX * (newScale / oldScale),
             originReScaledImgY = originScaledImgY * (newScale / oldScale);
         
-        this.scale = newScale;
+        me.scale = newScale;
         setTimeout(function(){
             me.setTranslation(originViewportX - originReScaledImgX, originViewportY - originReScaledImgY);
 
@@ -584,6 +612,11 @@ Ext.define('myreadings.view.ImageViewer',{
     
     resetZoom:function(){
         var me = this;
+        
+        if (me.duringDestroy) {
+            return;
+        }
+
         //Resize to init size like ios
         me.scale = me.baseScale;
         
@@ -738,6 +771,27 @@ Ext.define('myreadings.view.ImageViewer',{
             y = me.scrollY;
         }
         scroller.scrollTo(x*-1,y*-1);
-    }
-    });
+    },
     
+    destroy: function() {
+        var me = this;
+        
+        me.duringDestroy = true;
+        
+        me.un('activate', me.initViewer, me);
+        me.un('painted', me.initViewer, me);
+        
+        Ext.destroy(me.getScrollable(), me.imgEl);
+        
+        me.callParent();
+    },
+    
+    hideImage: function() {
+    	    if (this.imgEl) this.imgEl.setStyle({ visibility: 'hidden' });
+    },
+    showImage: function() {
+    	    if (this.imgEl) this.imgEl.setStyle({ visibility: 'visible' });
+    }
+    
+    
+    });

@@ -58,7 +58,8 @@
 	"txtresize": "Message en cas de redimensionnement",
 	"forced": "Refaire les pochettes",
 	"info": "Information",
-	"forced_msg": "Lors du tap sur un livre, la pochette sera recrée. Désactivez cette option pour revenir au mode normal."
+	"forced_msg": "Lors du tap sur un livre, la pochette sera recrée. Désactivez cette option pour revenir au mode normal.",
+	"hidemenu": "Masquer le menu à l'ouverture"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Paramètres du lecteur",
@@ -97,7 +98,8 @@
 	"read": "Livre lu",
 	"markread": "Lu",
 	"marknotread": "Non lu",
-	"txtBookmark": "Marque-page"
+	"txtBookmark": "Marque-page",
+	"domarkread": "Indiquer que le livre est lu?"
 },
 "lang":
 {

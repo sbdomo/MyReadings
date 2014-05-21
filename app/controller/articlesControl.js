@@ -26,6 +26,7 @@ Ext.define('myreadings.controller.articlesControl', {
 	    configViewer: 'configpanel #configViewer',
 	    open_book_at_launch: 'configpanel #open_book_at_launch',
 	    showresize: 'configpanel #showresize',
+	    hidemenu: 'configpanel #hidemenu',
 	    forcedThumb: 'configpanel #forced',
 	    
 	    typelistfind: 'listview [name=typelist]',
@@ -162,6 +163,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.page_change_area_width=cachedLoggedInUser.get('page_change_area_width');
 				myreadings.settings.open_current_comic_at_launch=cachedLoggedInUser.get('open_current_comic_at_launch');
 				myreadings.settings.showresize=cachedLoggedInUser.get('showresize');
+				myreadings.settings.hidemenu=cachedLoggedInUser.get('hidemenu');
 				
 				myreadings.settings.epub_mode=cachedLoggedInUser.get('epub_mode');
 				myreadings.settings.epub_font=cachedLoggedInUser.get('epub_font');
@@ -210,6 +212,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.open_current_comic_at_launch=1;
 				//show message if comic page is resized
 				myreadings.settings.showresize=0;
+				//hide menu when comic is open
+				myreadings.settings.hidemenu=0;
 				
 				//epub
 				myreadings.settings.epub_mode="jour";
@@ -315,6 +319,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.getOpen_book_at_launch().enable();
 				me.getShowresize().setValue(myreadings.settings.showresize);
 				me.getShowresize().enable();
+				
+				me.getHidemenu().setValue(myreadings.settings.hidemenu);
+				me.getHidemenu().enable();
 				
 				if(myreadings.conf.fetchmode=="resize_and_cache") me.getForcedThumb().show();
 				
@@ -665,7 +672,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_fit_mode: myreadings.settings.page_fit_mode,
 				page_change_area_width: myreadings.settings.page_change_area_width,
 				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
-				showresize: myreadings.settings.showresize
+				showresize: myreadings.settings.showresize,
+				hidemenu: myreadings.settings.hidemenu
 			});
 			user.save();
 			this.init();
@@ -718,6 +726,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_change_area_width: myreadings.settings.page_change_area_width,
 				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
 				showresize: myreadings.settings.showresize,
+				hidemenu: myreadings.settings.hidemenu,
 				
 				epub_mode: myreadings.settings.epub_mode,
 				epub_font: myreadings.settings.epub_font,
@@ -881,6 +890,9 @@ Ext.define('myreadings.controller.articlesControl', {
     savebookmark: function() {
     	    this.saveusermark(myreadings.currentbook.idbook, myreadings.currentbook.book_type, myreadings.currentbook.current_page_nr+1, "", "bookmarkpage");
     },
+    //idbook: id calibre du livre, type: epub ou comic (book_type)
+    //mark: -1:lu, 0:non lu, numéro de page ou percent (pour epub)
+    //componentId:Chapitre (fichier) de l'epub, action: bookmark: lu ou non lu ou bookmarkpage: marque l'emplacement
     saveusermark: function(idbook, type, mark, componentId, action) {
 	    Ext.Viewport.setMasked({xtype: 'loadmask'});
 	    var me=this;

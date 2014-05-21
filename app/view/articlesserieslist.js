@@ -13,6 +13,7 @@ Ext.define('myreadings.view.articlesserieslist', {
         count: 'auto',
         offsetLimit: 50,
         store: null,
+	cls: 'seriescolor',
 
         animation: {
             duration: 650

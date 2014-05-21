@@ -260,6 +260,23 @@ Ext.define('myreadings.view.configpanel', {
 						}
 					}
 				}
+			},
+			{
+				xtype: 'togglefield',
+				label: this.hidemenu,
+				labelWidth: '60%',
+				itemId: 'hidemenu',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.settings.hidemenu=value;
+							myreadings.app.getController('articlesControl').saveuser();
+						}
+					}
+				}
 			}
 			]
 		}
