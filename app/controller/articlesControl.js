@@ -793,7 +793,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
-				    	 myreadings.currentbook.current_page_nr=parseInt(result.resultat.percent)-1;
+					 myreadings.currentbook.current_page_nr=parseInt(result.resultat.percent)-1;
 				    	 //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
 				    	 myreadings.app.getController('comic').initComic();
 				    	 comicView.show();

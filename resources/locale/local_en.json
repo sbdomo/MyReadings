@@ -98,7 +98,8 @@
 	"markread": "Read",
 	"marknotread": "Not read",
 	"txtBookmark": "Bookmark",
-	"domarkread": "Indicate that the book is read?"
+	"domarkread": "Indicate that the book is read?",
+	"shownext": "Show the next book of the series?"
 },
 "lang":
 {

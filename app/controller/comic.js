@@ -50,7 +50,6 @@ Ext.define('myreadings.controller.comic', {
 				tap: 'onCloseButton'
 			},
 			
-			
 			imageviewer1: {
 				imageLoaded: 'onImageLoaded',
 				imageLoading: 'onImageLoading1',
@@ -91,8 +90,13 @@ Ext.define('myreadings.controller.comic', {
 	//Lancé pour initialisé l'ouverture d'un livre
 	initComic: function() {
 		var me=this,
+			pagenr=myreadings.currentbook.current_page_nr;
 			titlebar = me.getComictitle();
-			//imageviewer = me.getImageviewer1();
+		
+		if(pagenr==null||pagenr < 0) {
+			alert("Error with current page number!");
+			myreadings.currentbook.current_page_nr=0;
+		}
 		
 		//Cache le menu si demandé
 		if(myreadings.settings.hidemenu==1) me.hideToolbars();
@@ -122,6 +126,10 @@ Ext.define('myreadings.controller.comic', {
 			success: function(result, request) {
 				if(result.success==true) {
 					myreadings.currentbook.number_of_pages=result.resultat.nbrpages;
+					if(pagenr >= myreadings.currentbook.number_of_pages) {
+						alert("Error current page number out of bounds!");
+						myreadings.currentbook.current_page_nr=myreadings.currentbook.number_of_pages;
+					}
 					myreadings.currentbook.reading=true;
 					me.ShowPage(myreadings.currentbook.current_page_nr, null);
 					myreadings.app.getController('articlesControl').saveuser();
@@ -133,6 +141,7 @@ Ext.define('myreadings.controller.comic', {
 		});
 	},
 	openComic: function() {
+		var pagenr=myreadings.currentbook.current_page_nr;
 		//Si pas de users, pas de bookmark
 		if(myreadings.conf.current_user=="") this.getBookmark().hide();
 		else  this.getBookmark().show();
@@ -146,6 +155,14 @@ Ext.define('myreadings.controller.comic', {
 		}
 		
 		this.showresizemsg=myreadings.settings.showresize;
+		if(pagenr==null||pagenr < 0) {
+			alert("Error with current page number!");
+			myreadings.currentbook.current_page_nr=0;
+		}
+		if(pagenr >= myreadings.currentbook.number_of_pages) {
+			alert("Error current page number out of bounds!");
+			myreadings.currentbook.current_page_nr=myreadings.currentbook.number_of_pages;
+		}
 		this.ShowPage(myreadings.currentbook.current_page_nr, null);
 	},
 	onShow: function() {
@@ -182,7 +199,7 @@ Ext.define('myreadings.controller.comic', {
 		
 		imageviewer.setResizeOnLoad(true);
 		imageviewer.setErrorImage('resources/images/no_image_available.jpg');
-		imageviewer.setEmptyImage('resources/images/empty.png');
+		//imageviewer.setEmptyImage('resources/images/empty.png');
 		
 		/*C'est déjà dans UpdateSettings
 		
@@ -444,15 +461,7 @@ Ext.define('myreadings.controller.comic', {
 			var oldnr=myreadings.currentbook.current_page_nr;
 			Ext.defer(function() { me.ShowPage(++myreadings.currentbook.current_page_nr, oldnr); }, 150);
 		} else {
-			// TODO: need a way to determine what is the next comic...
-			me.onCloseButton();
-			if(myreadings.conf.current_user!="") {
-				Ext.Msg.confirm(myreadings.app.getController('articlesControl').localtxt.msg, myreadings.app.getController('articlesControl').localtxt.domarkread, function(confirmed) {
-					if (confirmed == 'yes') {
-						myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, "", -1, "", "bookmark");
-					}
-				}, this);
-			}
+			me.onBookEnd();
 		}
 	},
 	onPreviousButton: function() {
@@ -613,5 +622,61 @@ Ext.define('myreadings.controller.comic', {
 	},
 	onInfoButton: function() {
 		myreadings.app.getController('articlesControl').openArticle_CurrentBook();
+	},
+	onBookEnd: function() {
+		var me = this;
+		Ext.data.JsonP.request({
+			url: './tools.php',
+			callbackKey: 'callback',
+			params: {
+				action: "getnextinseries",
+				userid: myreadings.conf.current_userid,
+				id: myreadings.currentbook.idbook,
+				base: myreadings.conf.txtbase,
+				mylogin: myreadings.conf.username,
+				mypass: myreadings.conf.password
+			},
+			success: function(result, request) {
+				if(result.success=="true") {
+					me.onCloseButton();
+					if(myreadings.conf.current_user!=""&&result.resultat.bookmark!="-1") {
+						Ext.Msg.confirm(myreadings.app.getController('articlesControl').localtxt.msg, myreadings.app.getController('articlesControl').localtxt.domarkread, function(confirmed) {
+							if (confirmed == 'yes') {
+								myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, "", -1, "", "bookmark");
+							}
+							if(result.resultat.books) Ext.defer(function() { me.showNextBook(result.resultat); }, 150);
+						}, this);
+					} else {
+						if(result.resultat.books) me.showNextBook(result.resultat);
+					}
+				} else {
+					me.onCloseButton();
+					Ext.Msg.alert("Error", result.message);
+				}
+			},
+			failure: function(result, request) {
+				me.onCloseButton();
+				alert("Book not found");
+			}
+		});
+	},
+	showNextBook: function(book) {
+		if(!book.books[0]||!book.files[0]) return;
+		var relativePath = book.books[0].relativePath,
+			path="";
+		for (var fileId in book.files) {
+			//console.log(resultat.files[fileId].extension);
+			if (book.files[fileId].extension=="CBZ"&&myreadings.conf.cbzview=="on") {
+				path=myreadings.conf.pathbase+ relativePath+ "/"+ book.files[fileId].filename+".cbz";
+			} else if (book.files[fileId].extension=="CBR"&&myreadings.conf.cbrview=="on") {
+				path=myreadings.conf.pathbase+ relativePath+"/"+ book.files[fileId].filename+".cbr";
+			}
+		}
+		if(path=="") return;
+		Ext.Msg.confirm(myreadings.app.getController('articlesControl').localtxt.msg, myreadings.app.getController('articlesControl').localtxt.shownext+" ("+ book.books[0].title+ ")", function(confirmed) {
+			if (confirmed == 'yes') {
+				myreadings.app.getController('articlesControl').comicviewer(book, path, book.books[0].bookmark);
+			}
+		}, this);
 	}
 });

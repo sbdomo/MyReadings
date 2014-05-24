@@ -19,11 +19,16 @@ Ext.define('myreadings.view.article', {
         //height: '92%',
         modal: true,
         hideOnMaskTap: true,
-	scrollable: true,
-        layout: {
+	scrollable: {
+		direction: 'vertical',
+		directionLock: true
+	},
+	//styleHtmlContent: true,
+	//scrollable: true,
+        /*layout: {
             type: 'vbox'
-        },
-        showAnimation: {
+        },*/
+        /*showAnimation: {
             type: 'pop'//,
             //duration: 250,
             //easing: 'ease-out'
@@ -32,7 +37,7 @@ Ext.define('myreadings.view.article', {
             type: 'popOut',
             duration: 250,
             easing: 'ease-in'
-        }
+        }*/
     },
     initialize: function() {
 	var me = this;
@@ -68,6 +73,7 @@ Ext.define('myreadings.view.article', {
 	},
 	{
 		id:'contenu',
+		xtype: 'panel',
 		cls: 'description',
 		tpl:  new Ext.XTemplate(
 		    this.tplinit(myreadings.app.getController('articlesControl').profil),
@@ -162,6 +168,7 @@ Ext.define('myreadings.view.article', {
 	//console.log("id: " + newData.id + " title: " + newData.title);
 	
 	Ext.getCmp('contenu').setData({});
+	//Ext.getCmp('contenu').hide();
 	Ext.getCmp('epubview').hide();
 	Ext.getCmp('cbzview').hide();
 	//var mycontrol=myreadings.app.getController('articlesControl');
@@ -187,6 +194,7 @@ Ext.define('myreadings.view.article', {
 			if (resultat) {
 				me.relativePath = resultat.books[0].relativePath;
 				Ext.getCmp('contenu').setData(resultat);
+				//Ext.getCmp('contenu').show();
 				//console.log(resultat);
 				if(!newData.viewer) {
 				for (var fileId in resultat.files) {

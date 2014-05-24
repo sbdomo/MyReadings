@@ -220,6 +220,70 @@ if($action=="cache") {
 		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
 		erreur($e->getMessage());
 	}
+} else if($action=="getnextinseries") {
+	//id du livre
+	if(isset($_GET['id'])) $id=$_GET['id'];
+	else      erreur("No id");
+	
+	//nom de la base
+	if(isset($_GET['base'])) $base=$_GET['base'];
+	else      erreur("No base");
+	
+	if(isset($_GET['userid'])) $userid=$_GET['userid'];
+	else $userid="";
+	
+	$basename=$calibre[$base].'metadata.db';
+	$bookmark="";
+	$isbookmark="";
+	try{
+		$pdo = new PDO('sqlite:'.$basename);
+		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
+		
+		if($userid!="") {
+			$bookmark=", custom_column_".$userid.".value as bookmark";
+			$isbookmark=" LEFT OUTER JOIN custom_column_".$userid." ON custom_column_".$userid.".book=books.id ";
+		}
+		
+		//Cherche l'id du livre qui vient en suivant dans la série
+		$query = "SELECT books.id as id, books.title as title, books_series_link.series AS serieid, books.series_index as seriesIndex".$bookmark."
+			FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id".$isbookmark."
+			where books.id = ?;";
+		$stmt = $pdo->prepare($query);
+		$stmt->execute(array($id));
+		$resultquery=$stmt->fetch();
+		if(!$resultquery) erreur("Book not found");
+		if($userid!="") $result["bookmark"]=$resultquery['bookmark'];
+		
+		
+		$query = "SELECT books.id as id, books.title as title, books.path as relativePath, books.series_index as seriesIndex".$bookmark."
+			FROM books_series_link LEFT JOIN books ON books.id=books_series_link.book".$isbookmark."
+			where books_series_link.series=? and books.series_index>? ORDER BY books.series_index limit 1;";
+		$query2 = "select data.format as extension, data.name as filename, data.uncompressed_size as size from data where book = ?";
+		$stmt = $pdo->prepare($query);
+		$stmt->execute(array($resultquery['serieid'],$resultquery['seriesIndex']));
+		$resultquery=$stmt->fetchAll();
+		//if(!$resultquery) erreur("Next book not found");
+		//$result=$resultquery['id'];
+		if($resultquery) {
+			$result["books"]=$resultquery;
+			$nextid=$resultquery[0]["id"];
+			$stmt = $pdo->prepare($query2);
+			$stmt->execute(array($nextid));
+			$resultquery=$stmt->fetchAll();
+			if($resultquery) $result["files"]=$resultquery;
+		}
+		
+		$success = "true";
+		// Close file db connection
+		$pdo = null;
+		
+	} catch(Exception $e) {
+		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
+		erreur($e->getMessage());
+	}
+	
+
 //Non utilisé
 } else if($action=="getbookmarkcalibre") {
 	//id du livre

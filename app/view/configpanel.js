@@ -11,7 +11,7 @@ Ext.define('myreadings.view.configpanel', {
 	forced: "",
 	forced_msg: "",
 	config: {
-		layout:'vbox',
+		//layout:'vbox',
 		hidden: true
 	},
 	initialize: function() {

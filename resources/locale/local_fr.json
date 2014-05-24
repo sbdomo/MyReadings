@@ -99,7 +99,8 @@
 	"markread": "Lu",
 	"marknotread": "Non lu",
 	"txtBookmark": "Marque-page",
-	"domarkread": "Indiquer que le livre est lu?"
+	"domarkread": "Indiquer que le livre est lu?",
+	"shownext": "Lire le livre suivant de la série?"
 },
 "lang":
 {

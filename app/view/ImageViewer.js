@@ -24,7 +24,7 @@ Ext.define('myreadings.view.ImageViewer',{
             initOnActivate: false,
             cls: 'imageBox',
             errorImage: false,
-	    emptyImage: false,
+	    emptyImage: 'resources/images/empty.png',
             scrollable: { 
               direction:'both', 
               directionLock: true,
@@ -76,7 +76,7 @@ Ext.define('myreadings.view.ImageViewer',{
             display: 'block',
             margin: 0
         });
-
+	
         me.imgEl.setStyle({
             '-webkit-user-drag': 'none',
             '-webkit-transform-origin': '0 0',
@@ -84,8 +84,8 @@ Ext.define('myreadings.view.ImageViewer',{
             'transform-origin': '0 0',
             'visibility': 'hidden'
         });
-
-        // show preview
+	
+	// show preview
         if(me.getPreviewSrc())
         {
             element.setStyle({
@@ -126,7 +126,7 @@ Ext.define('myreadings.view.ImageViewer',{
             //drag: me.onDrag,
             //dragend: me.onDragEnd,
             taphold: me.onTapHold
-        });  
+        });
         
         me.fireEvent('initDone', me);
         
@@ -134,10 +134,12 @@ Ext.define('myreadings.view.ImageViewer',{
         if(me.getImageSrc())
 	{
             me.loadImage(me.getImageSrc());
+	} else if(me.getEmptyImage()) {
+            me.loadImage(me.getEmptyImage());
 	}
     },
 
-    loadImage: function(src) {  
+    loadImage: function(src) {
         var me = this;
 	
 	// mask image viewer
@@ -792,6 +794,5 @@ Ext.define('myreadings.view.ImageViewer',{
     showImage: function() {
     	    if (this.imgEl) this.imgEl.setStyle({ visibility: 'visible' });
     }
-    
     
     });
