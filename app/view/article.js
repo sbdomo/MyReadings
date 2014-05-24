@@ -22,7 +22,7 @@ Ext.define('myreadings.view.article', {
 	scrollable: {
 		direction: 'vertical',
 		directionLock: true
-	},
+	}//,
 	//styleHtmlContent: true,
 	//scrollable: true,
         /*layout: {

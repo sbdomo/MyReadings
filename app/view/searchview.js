@@ -3,11 +3,11 @@ Ext.define('myreadings.view.searchview', {
 	xtype: 'searchview',
 	id: 'searchview',
 	config: {
-		hidden: true,
+		//hidden: true,
 		tabBar: {hidden: true},
-		fullscreen: true,
-		tabBarPosition: 'bottom',
-		autoDestroy: false,
+		//fullscreen: true,
+		//tabBarPosition: 'bottom',
+		//autoDestroy: false,
 		items:[
 		{
 			title: 'liste',

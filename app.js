@@ -20,7 +20,7 @@ Ext.application({
     models:['article','article2','listmodel','myreadingsUser'],
     stores:['liststore'],
     controllers: ['articlesControl', 'comic', 'epub'],
-    views: ['ArticlesList', 'articlesserieslist', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettingsPopup', 'epubview', 'bookmarkview', 'orderview'],
+    views: ['main', 'ArticlesList', 'articlesserieslist', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettingsPopup', 'epubview', 'bookmarkview', 'orderview'],
 
     icon: {
         '57': 'resources/icons/Icon.png',

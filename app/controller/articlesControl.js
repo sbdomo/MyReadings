@@ -4,6 +4,7 @@ Ext.define('myreadings.controller.articlesControl', {
     config: {
     	models:['myreadings.model.article'],
         refs: {
+	    main: 'main',
 	    articleslist: 'articleslist',
 	    articlesserieslist: 'articlesserieslist',
 	    searchview: 'searchview',
@@ -32,6 +33,8 @@ Ext.define('myreadings.controller.articlesControl', {
 	    typelistfind: 'listview [name=typelist]',
 	    searchfieldfind: 'listview [name=listviewSearchfield]',
 	    btsearchfind: 'listview [name=btsearch]',
+	    btlistviewhide: 'listview [name=bthide]',
+	    btsearchhide: 'searchpanel [name=bthide]',
 	    
             articleView: {
                 autoCreate: true,
@@ -106,6 +109,15 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    btBookmarkView: {
 		    tap: 'onBtBookmarkViewTap'
+	    },
+	    btconfigpanelhide: {
+		    tap: 'activateCarousel'
+	    },
+	    btsearchhide: {
+		    tap: 'activateCarousel'
+	    },
+	    btlistviewhide: {
+		    tap: 'activateCarousel'
 	    }
         },
 
@@ -272,11 +284,12 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				}
 				
+				Ext.Viewport.add(Ext.create('myreadings.view.main'));
 				me.articleView = Ext.create('myreadings.view.article');
-				Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
+				//Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
 				Ext.Viewport.add(Ext.create('myreadings.view.articlesserieslist'));
-				Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
-				Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
+				//Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
+				//Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
 				Ext.create('myreadings.view.orderview');
 			}
 			
@@ -285,7 +298,9 @@ Ext.define('myreadings.controller.articlesControl', {
 					me.getBtconfigpanelhide().show();
 					//me.getComicSettings().show();
 					me.getConfigViewer().show();
-					me.getConfigpanel().hide();
+					//me.getConfigpanel().hide();
+					me.getMain().setActiveItem(0);
+					
 				}
 				
 				myreadings.conf.fetchmode=result.config.fetchmode;
@@ -442,7 +457,8 @@ Ext.define('myreadings.controller.articlesControl', {
 				if(me.isInit!=true) {
 					me.logged=false;
 					me.getBtconfigpanelhide().hide();
-					me.getConfigpanel().show();
+					//me.getConfigpanel().show();
+					me.getMain().setActiveItem(1);
 					//me.getComicSettings().hide();
 					me.getConfigViewer().hide();
 					Ext.Msg.alert(me.localtxt.error,me.localtxt.mustloginandpass);
@@ -631,11 +647,16 @@ Ext.define('myreadings.controller.articlesControl', {
     },
     
     onSearchTap: function() {
-	    Ext.getCmp('searchview').show();
+	    //Ext.getCmp('searchview').show();
+	    this.getMain().setActiveItem(2);
     },
     onConfigTap: function() {
 	    //Ext.getCmp('configpanel').down('#comicSettings').onInit();
-	    Ext.getCmp('configpanel').show();
+	    this.getMain().setActiveItem(1);
+	    //Ext.getCmp('configpanel').show();
+    },
+    activateCarousel: function() {
+	    this.getMain().setActiveItem(0);
     },
     
     loadliststore: function(list, search) {

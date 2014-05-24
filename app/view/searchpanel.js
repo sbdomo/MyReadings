@@ -38,11 +38,12 @@ Ext.define('myreadings.view.searchpanel', {
     	    	    	   {
     	    	    	   	   ui: 'decline',
     	    	    	   	   align: 'left',
+    	    	    	   	   name: 'bthide',
     	    	    	   	   iconCls: 'delete',
-    	    	    	   	   iconMask: true,
-    	    	    	   	   handler: function(){
-    	    	    	   	   	   Ext.getCmp('searchview').hide();
-    	    	    	   	   }
+    	    	    	   	   iconMask: true//,
+    	    	    	   	   //handler: function(){
+    	    	    	   	   //	   Ext.getCmp('searchview').hide();
+    	    	    	   	   //}
     	    	    	   }
     	    	    ]
     	    },
@@ -94,8 +95,9 @@ Ext.define('myreadings.view.searchpanel', {
 			  	  handler: function(){
 			  	  	  var form = Ext.getCmp('searchpanel');
 			  	  	  var data = form.getValues();
-			  	  	  Ext.getCmp('searchview').hide();
+			  	  	  //Ext.getCmp('searchview').hide();
 			  	  	  myreadings.app.getController('articlesControl').showArticles(data);
+			  	  	  myreadings.app.getController('articlesControl').activateCarousel();
 			  	  }
 			  }
 		    ]},

@@ -763,6 +763,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.view.configpanel": [],
   "myreadings.view.epubview": [],
   "myreadings.view.listview": [],
+  "myreadings.view.main": [],
   "myreadings.view.orderview": [],
   "myreadings.view.searchpanel": [],
   "myreadings.view.searchview": []
@@ -1752,6 +1753,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.listview": [
     "widget.listview"
+  ],
+  "myreadings.view.main": [
+    "widget.main"
   ],
   "myreadings.view.orderview": [
     "widget.orderview"

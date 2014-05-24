@@ -1,5 +1,5 @@
 Ext.define('myreadings.view.orderview', {
-	extend: 'Ext.Panel',
+	extend: 'Ext.form.Panel',
 	xtype: 'orderview',
 	txtTitle: "",
 	txtOrderRecent: "",
@@ -69,7 +69,7 @@ Ext.define('myreadings.view.orderview', {
 			xtype: 'togglefield',
 			itemId: 'seriegroup',
 			label: this.txtSerie,
-			labelWidth: '70%',
+			labelWidth: '60%',
 			disabled: true, //Pour ne pas activer l'événement change lors de l'initialisation
 			listeners: 
 			{

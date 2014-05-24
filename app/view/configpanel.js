@@ -12,7 +12,7 @@ Ext.define('myreadings.view.configpanel', {
 	forced_msg: "",
 	config: {
 		//layout:'vbox',
-		hidden: true
+		//hidden: true
 	},
 	initialize: function() {
 		this.setItems(
@@ -28,12 +28,12 @@ Ext.define('myreadings.view.configpanel', {
 				name: 'bthide',
 				align: 'left',
 				iconCls: 'delete',
-				iconMask: true,
-				handler: function(){
+				iconMask: true//,
+				/*handler: function(){
 					var form = this.getParent().getParent().getParent();
 					//form.down('#comicSettings').onSave();
 					form.hide();
-				}
+				}*/
 			}]
 		},
 		{
@@ -133,10 +133,9 @@ Ext.define('myreadings.view.configpanel', {
 							myreadings.currentbook.idbook=null;
 							mycontroller.showViewerBt();
 							
-							var form=this.getParent().getParent();
-							//sauvegarde les paramètres du comic viewer au cas où ils auraient été modifés avant le changement de base
-							//form.down('#comicSettings').onSave();
-							form.hide();
+							//var form=this.getParent().getParent();
+							//form.hide();
+							myreadings.app.getController('articlesControl').activateCarousel();
 						}
 					}
 				}

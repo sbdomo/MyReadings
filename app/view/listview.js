@@ -22,12 +22,13 @@ Ext.define("myreadings.view.listview",{
 	    ],
 	    listeners: {
 		    itemtap: function(view, index, target, record, event){
-			    Ext.getCmp('searchview').hide();
+			    //Ext.getCmp('searchview').hide();
 			    myreadings.app.getController('articlesControl').showArticles({
 			    	type: this.getStore().getProxy().getExtraParams()['list'],
 				idlist: record.get('id'),
 				debut: 3
 			    });
+			    myreadings.app.getController('articlesControl').activateCarousel();
 		    }
 	    }
     },
@@ -45,10 +46,11 @@ Ext.define("myreadings.view.listview",{
 	    var decline = {
 		    ui: 'decline',
 		    iconCls: 'delete',
-		    iconMask: true,
-		    handler: function(){
-			    Ext.getCmp('searchview').hide();
-		    }
+		    name: 'bthide',
+		    iconMask: true//,
+		    //handler: function(){
+			//    Ext.getCmp('searchview').hide();
+		    //}
 	    };
 	    var retour = {
 		    iconCls: 'arrow_left',
