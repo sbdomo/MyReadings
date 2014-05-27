@@ -8,8 +8,14 @@ Ext.define('myreadings.view.configpanel', {
 	txtLogin: "",
 	txtPass: "",
 	txtLoginButton: "",
+	txtViewer: "",
+	txtbook_at_launch: "",
+	txtresize: "",
 	forced: "",
+	info: "",
 	forced_msg: "",
+	hidemenu: "",
+
 	config: {
 		//layout:'vbox',
 		//hidden: true
@@ -67,6 +73,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'selectfield',
 				label: this.txtSelectbase,
+				labelCls: 'wrap_label',
 				name:'base',
 				id:'base',
 				itemId:'base',
@@ -143,8 +150,9 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.forced,
+				labelCls: 'wrap_label',
 				hidden: true,
-				//labelWidth: '60%',
+				labelWidth: '60%',
 				itemId: 'forced',
 				listeners:
 				{
@@ -229,6 +237,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.txtbook_at_launch,
+				labelCls: 'wrap_label',
 				labelWidth: '60%',
 				itemId: 'open_book_at_launch',
 				disabled: true,
@@ -246,6 +255,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.txtresize,
+				labelCls: 'wrap_label',
 				labelWidth: '60%',
 				itemId: 'showresize',
 				disabled: true,
@@ -263,6 +273,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.hidemenu,
+				labelCls: 'wrap_label',
 				labelWidth: '60%',
 				itemId: 'hidemenu',
 				disabled: true,

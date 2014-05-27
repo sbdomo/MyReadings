@@ -76,6 +76,26 @@ body,
   background-image: linear-gradient(top, #7a2224, #8e282a 10%, #a32d30 65%, #a42e30);
 }
 
+.x-spinner .x-spinner-button{
+	margin-top:.25em;
+	margin-bottom:.25em;
+	width:2em;
+	padding:.23em 0 .27em;
+	font-weight:bold;
+	text-align:center;
+	border:1px solid #ddd !important;
+	-webkit-border-radius:1em;
+	-moz-border-radius:1em;
+	-ms-border-radius:1em;
+	-o-border-radius:1em;
+	height: 2em;
+	border-radius:1em
+}
+.wrap_label
+{
+white-space: normal !important;
+}
+
 @include sencha-toolbar-ui('flat', $base-color, 'flat');
 
 //articlescls: les articles de Article.js (pour le carousel)

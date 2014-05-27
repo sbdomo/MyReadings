@@ -128,6 +128,7 @@ Ext.define('myreadings.view.article', {
 		id:'epubview',
 		text: this.readepub,
 		xtype: 'button',
+		style:'overflow:visible;',
 		margin:20,
 		handler: function() {
 			var result=Ext.getCmp('contenu').getData();
@@ -139,6 +140,7 @@ Ext.define('myreadings.view.article', {
 		id:'cbzview',
 		text: "viewer",
 		xtype: 'button',
+		style:'overflow:visible;',
 		margin:20,
 		handler: function() {
 			var result=Ext.getCmp('contenu').getData();
