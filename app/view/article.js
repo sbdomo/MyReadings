@@ -1,6 +1,6 @@
 Ext.define('myreadings.view.article', {
-    //extend: 'Ext.Sheet',
-    extend: 'Ext.Panel',
+    extend: 'Ext.Sheet',
+    //extend: 'Ext.Panel',
     
     xtype: 'article',
     txtBy: "de",

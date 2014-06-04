@@ -50,6 +50,9 @@ Ext.define('myreadings.view.orderview', {
     	    	    }, {
     	    	    	text: this.txtOrderSerie,
     	    	    	value: 'serie'
+    	    	    }, {
+    	    	    	text: this.txtOrderAuthor,
+    	    	    	value: 'author'
     	    	    }
     	    	    ],
     	    	    listeners:

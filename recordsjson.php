@@ -81,6 +81,10 @@ case "serie":
         $order="seriesName,  seriesIndex";
 break;
 
+case "author":
+        $order="books.author_sort,  books.sort";
+break;
+
 default: //recent
         $order="books.timestamp DESC,  books.sort";
 }

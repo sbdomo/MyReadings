@@ -136,6 +136,7 @@
 	"testexist.php",
 	"tests.php",
 	"tools.php",
+	"version.txt",
 	"cache/writetest.html",
 	"thumb/writetest.html",
 	"config/configtemplate.php"
