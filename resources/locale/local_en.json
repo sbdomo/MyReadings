@@ -59,7 +59,15 @@
 	"txtresize": "Message in case of resizing",
 	"forced": "Recreate thumbnails",
 	"info": "Information",
-	"forced_msg": "On tap on a book, the thumbnail will be recreate. Deactivate this option to return to the normal mode."
+	"forced_msg": "On tap on a book, the thumbnail will be recreate. Deactivate this option to return to the normal mode.",
+	"hidemenu": "Mask the menu at the opening",
+	"chg_nbbook": "Change the number of shown books",
+	"showcust": "Show a custom column",
+	"portrait": "Portrait mode",
+	"landscape": "Landscape mode",
+	"nbline": "Number of line",
+	"nbbyline": "Number of book by line",
+	"txtchgbookButton": "Update"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Comic Viewer Settings",

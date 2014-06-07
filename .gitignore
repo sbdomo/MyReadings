@@ -11,5 +11,7 @@ build/
 archive/
 Thumbs.db
 todo.txt
-cache/
-thumb/
+cache/*
+!cache/writetest.html
+thumb/*
+!thumb/writetest.html

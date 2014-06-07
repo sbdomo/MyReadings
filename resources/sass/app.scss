@@ -32,11 +32,12 @@ $primary-text-color: #ce6f00;
 		}
 	}
 }
+/*
 .wrap_label
 {
 white-space: normal !important;
 }
-
+*/
 
 
 //articlescls: les articles de Article.js (pour le carousel)
@@ -64,104 +65,12 @@ white-space: normal !important;
             border-bottom: 0;
         }
     }
+    /*
     .fond2 {
 	background-image:url(../images/bg_bookr.png) !important;
     }
+    */
 //Style du cadre d'un article (dans clsarticle)
-//par défaut
-    .tablet {
-        color: black;
-        width: 100%;
-        text-align: center;
-        white-space: nowrap;       
-//Pour la couverture
-	.fond {
-        	margin-top: 15px;
-        	margin-left: auto;
-        	margin-right: auto;
-        	height: 225px;
-        	width: 157px;
-        	text-align:center;
-        	background-repeat: no-repeat;
-        	background-position: center center;
-        	background-image:url(../images/bg_book.png);
-        }
-        .vignette {
-        	width: 142px;
-        	height: 211px;
-        	position: relative;
-        	top: 4px;
-        	left: -7px;
-        }
-        .fbookmark {
-		height: 69px;
-		width: 55px;
-		position: relative;
-		top: -213px;
-        	left: 0px;
-        }
-        .fbookmark1 {
-		background: transparent url(../images/bookmark.png) top left no-repeat;
-		height: 69px;
-		width: 55px;
-		position: relative;
-		top: -213px;
-        	left: 0px;
-        }
-        .fbookmark2 {
-		background: transparent url(../images/bookmarkread.png) top left no-repeat;
-		height: 69px;
-		width: 55px;
-		position: relative;
-		top: -213px;
-        	left: 0px;
-        }
-        .nbgroup {
-            font-size: 12px;
-	    width: 30px;
-	    background-color: rgba(255, 255, 255, 0.9);
-	    position: relative;
-	    color: #ec7f00;
-	    top: -278px;
-	    left: 4px;
-	    border-radius: 0.5em;
-	    border-radius: 0.5em;
-	    -webkit-border-radius: 0.5em;
-	    -webkit-border-radius: 0.5em;
-        }
-//Style du texte sous le livre
-	.name {
-            padding: 3px 10px 5px 10px;
-            font-size: 16px;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .txt {
-            font-size: 12px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .txtitalique {
-            font-size: 12px;
-            font-style: italic;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .txtpetit {
-            font-size: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .txtpetititalique {
-            font-size: 10px;
-            font-style: italic;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
-
     .landscape .clsarticle {
         width: 25%;
 

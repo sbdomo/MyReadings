@@ -1,9 +1,9 @@
 <?php
-if(isset($_GET['admin_login'])) $admin_login=$_GET['admin_login'];
+if(isset($_POST['admin_login'])) $admin_login=$_POST['admin_login'];
 else      $admin_login="";
-if(isset($_GET['admin_pw'])) $admin_pw=$_GET['admin_pw'];
+if(isset($_POST['admin_pw'])) $admin_pw=$_POST['admin_pw'];
 else      $admin_pw="";
-if(isset($_GET['action_login'])) $action_login=$_GET['action_login'];
+if(isset($_POST['action_login'])) $action_login=$_POST['action_login'];
 else      $action_login="";
 
 $adminpass="./config/confadmin.php";
@@ -101,7 +101,7 @@ $(function() {
 </script>
 <div data-role="collapsible" data-collapsed="false">
 	<h2><?php echo $title ?></h2>
-	<form data-ajax="false" action="./admin.php" method="get" enctype="multipart/form-data" name="adminpass" id="adminpass" class="validate">
+	<form data-ajax="false" action="./admin.php" method="post" enctype="multipart/form-data" name="adminpass" id="adminpass" class="validate">
 	<fieldset data-role="fieldcontain">
 		<label for="admin_login">Login</label>
 		<input type="text" value=""  id="admin_login" name="admin_login" class="required"/>

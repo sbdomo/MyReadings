@@ -60,7 +60,14 @@
 	"forced": "Refaire les pochettes",
 	"info": "Information",
 	"forced_msg": "Lors du tap sur un livre, la pochette sera recrée. Désactivez cette option pour revenir au mode normal.",
-	"hidemenu": "Masquer le menu à l'ouverture"
+	"hidemenu": "Masquer le menu à l'ouverture",
+	"chg_nbbook": "Changer le nombre de livres affichés",
+	"showcust": "Afficher une colonne personnalisée",
+	"portrait": "Mode portrait",
+	"landscape": "Mode paysage",
+	"nbline": "Nombre de ligne",
+	"nbbyline": "Nombre de livre par ligne",
+	"txtchgbookButton": "Mettre à jour"	
 },
 "comicSettingsPopup":{
 	"txtTitle": "Paramètres du lecteur",

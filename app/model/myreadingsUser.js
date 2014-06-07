@@ -14,6 +14,13 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'currentuser', type: 'string', defaultValue:""}, //utilisateur en cours (pour les bookmarks des livres)
 			{name: 'showifread', type: 'string', defaultValue:"all"}, //pour indiquer s'il faut montré tout les livres, les lus ou non lus
 			
+			{name: 'chg_nbbook', type: 'int', defaultValue: 0},
+			{name: 'showcust', type: 'int', defaultValue: 0},
+			{name: 'landline', type: 'int', defaultValue: 1},
+			{name: 'landbyline', type: 'int', defaultValue: 1},
+			{name: 'portline', type: 'int', defaultValue: 1},
+			{name: 'portbyline', type: 'int', defaultValue: 1},
+			
 			//settings comic viewer
 			{name: 'zoom_on_tap', type: 'int', defaultValue: 1},
 			{name: 'toggle_paging_bar', type: 'int', defaultValue: 2},

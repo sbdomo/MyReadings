@@ -76,7 +76,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 		{
 			xtype: 'selectfield',
 			label: this.txtpage_fit_mode,
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			labelWidth: '55%',
 			name: 'page_fit_mode',
 			value: 1,
@@ -94,7 +94,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 		{
 			xtype: 'selectfield',
 			label: this.txtZoom,
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			labelWidth: '55%',
 			name: 'zoom_on_tap',
 			value: 2,
@@ -116,7 +116,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 		{
 			xtype: 'selectfield',
 			label: this.txtToggleBar,
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			labelWidth: '55%',
 			name: 'toggle_paging_bar',
 			value: 2,
@@ -139,7 +139,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 			xtype: 'togglefield',
 			name: 'use_page_turn_drag',
 			label: this.txtDrag,
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			labelWidth: '55%',
 			listeners: 
 			{
@@ -158,7 +158,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 			xtype: 'spinnerfield',
 			label: this.txtDragThreshold,
 			labelWidth: '48%',
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			name: 'page_turn_drag_threshold',
 			itemId: 'page_turn_drag_threshold',
 			minValue: 20,
@@ -170,7 +170,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 			xtype: 'togglefield',
 			name: 'use_page_change_area',
 			label: this.txtChange,
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			labelWidth: '55%',
 			listeners: 
 			{
@@ -189,7 +189,7 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 			xtype: 'spinnerfield',
 			label: this.txtChangeWidth,
 			labelWidth: '48%',
-			labelCls: 'wrap_label',
+			labelWrap: true,
 			name: 'page_change_area_width',
 			itemId: 'page_change_area_width',
 			minValue: 20,

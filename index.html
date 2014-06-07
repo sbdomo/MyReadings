@@ -50,13 +50,117 @@
                 opacity: 0.8
             }
         }
-.gtab	{
+	
+/*Profil par défaut*/
+/*Style du cadre d'un livre dans le carousel (dans clsarticle)*/
+.tablet {
+        color: black;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+}
+/*Pour la couverture*/
+.tablet .fond {
+        	margin-top: 15px;
+        	margin-left: auto;
+        	margin-right: auto;
+        	height: 225px;
+        	width: 157px;
+        	text-align:center;
+        	background-repeat: no-repeat;
+        	background-position: center center;
+        	background-image:url(./resources/images/bg_book.png);
+        }
+.tablet .vignette {
+        	width: 142px;
+        	height: 211px;
+        	position: relative;
+        	top: 4px;
+        	left: -7px;
+        }
+.tablet .fbookmark {
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.tablet .fbookmark1 {
+		background: transparent url(./resources/images/bookmark.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.tablet .fbookmark2 {
+		background: transparent url(./resources/images/bookmarkread.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.tablet .nbgroup {
+            font-size: 12px;
+	    width: 30px;
+	    background-color: rgba(255, 255, 255, 0.9);
+	    position: relative;
+	    color: #ec7f00;
+	    top: -278px;
+	    left: 4px;
+	    border-radius: 0.5em;
+	    border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+        }
+/*Style du texte sous le livre*/
+.tablet .title {
+            padding: 3px 10px 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.tablet .author {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.tablet .tags {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.tablet .series {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.tablet .seriesbig {
+            font-size: 14px;
+            font-style: italic;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.tablet .custom {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+/*Profil galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.*/
+/*gtab1 pour le mode paysage et gtab2 pour le mode portrait*/
+.gtab1	{
 	color: black;
         width: 100%;
         text-align: center;
         white-space: nowrap;
 }
-.gtab .fond {
+.gtab1 .fond {
         	margin-top: 10px;
         	margin-left: auto;
         	margin-right: auto;
@@ -68,21 +172,21 @@
 		background-size: cover;
 		background-image:url(./resources/images/bg_book.png);
         }
-.gtab .vignette {
+.gtab1 .vignette {
         	width: 108px;
         	height: 161px;
         	position: relative;
         	top: 2px;
         	left: -6px;
         }
-.gtab .fbookmark {
+.gtab1 .fbookmark {
 		height: 53px;
 		width: 42px;
 		position: relative;
 		top: -164px;
         	left: 0px;
 }
-.gtab .fbookmark1 {
+.gtab1 .fbookmark1 {
 		background: transparent url(./resources/images/bookmarkgtab.png) top left no-repeat;
 		height: 53px;
 		width: 42px;
@@ -90,7 +194,7 @@
 		top: -164px;
         	left: 0px;
 }
-.gtab .fbookmark2 {
+.gtab1 .fbookmark2 {
 		background: transparent url(./resources/images/bookmarkgtabread.png) top left no-repeat;
 		height: 53px;
 		width: 42px;
@@ -98,7 +202,7 @@
 		top: -164px;
         	left: 0px;
 }
-.gtab .nbgroup {
+.gtab1 .nbgroup {
             font-size: 10px;
 	    width: 30px;
 	    background-color: rgba(255, 255, 255, 0.9);
@@ -111,43 +215,144 @@
 	    -webkit-border-radius: 0.5em;
 	    -webkit-border-radius: 0.5em;
 }
-/*idem ipad*/
-.gtab .name {
+/*Style du texte sous le livre*/
+.gtab1 .title {
             padding: 3px 10px 5px 10px;
             font-size: 16px;
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-.gtab .txt {
+.gtab1 .author {
             font-size: 12px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-.gtab .txtitalique {
-            font-size: 12px;
+.gtab1 .tags {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab1 .series {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab1 .seriesbig {
+            font-size: 14px;
             font-style: italic;
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-.gtab .txtpetit {
-            font-size: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-.gtab .txtpetititalique {
+.gtab1 .custom {
             font-size: 10px;
             font-style: italic;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-	
-	
-	
-	
-	
-	
+/*Mode portrait - identique ipad */
+.gtab2 {
+        color: black;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+}
+/*Pour la couverture*/
+.gtab2 .fond {
+        	margin-top: 15px;
+        	margin-left: auto;
+        	margin-right: auto;
+        	height: 225px;
+        	width: 157px;
+        	text-align:center;
+        	background-repeat: no-repeat;
+        	background-position: center center;
+        	background-image:url(./resources/images/bg_book.png);
+        }
+.gtab2 .vignette {
+        	width: 142px;
+        	height: 211px;
+        	position: relative;
+        	top: 4px;
+        	left: -7px;
+        }
+.gtab2 .fbookmark {
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.gtab2 .fbookmark1 {
+		background: transparent url(./resources/images/bookmark.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.gtab2 .fbookmark2 {
+		background: transparent url(./resources/images/bookmarkread.png) top left no-repeat;
+		height: 69px;
+		width: 55px;
+		position: relative;
+		top: -213px;
+        	left: 0px;
+        }
+.gtab2 .nbgroup {
+            font-size: 12px;
+	    width: 30px;
+	    background-color: rgba(255, 255, 255, 0.9);
+	    position: relative;
+	    color: #ec7f00;
+	    top: -278px;
+	    left: 4px;
+	    border-radius: 0.5em;
+	    border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+        }
+/*Style du texte sous le livre*/
+.gtab2 .title {
+            padding: 3px 10px 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab2 .author {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab2 .tags {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab2 .series {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab2 .seriesbig {
+            font-size: 14px;
+            font-style: italic;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.gtab2 .custom {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+/*Profil iphone */
 .iphone	{
 	width: 100%;
         text-align: center;
@@ -195,13 +400,6 @@
 		top: -139px;
         	left: 0px;
 }
-.iphone .name {
-            padding: 2px 5px 2px 5px;
-            font-size: 10px;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 .iphone .nbgroup {
             font-size: 8px;
 	    /*height: 43px;*/
@@ -216,36 +414,53 @@
 	    -webkit-border-radius: 0.5em;
 	    -webkit-border-radius: 0.5em;
 }
-
+/*Style du texte sous le livre*/
+.iphone .title {
+            padding: 2px 5px 2px 5px;
+            font-size: 10px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 /*style qui déclenche le tap pour permettre d'ajoute un style perso dans le template*/
+/*permet de ne pas rendre actif l'overflow en mode payasage*/
 .iphone .tapclass {
 	white-space: normal;
 	overflow: visible;
 }
-.iphone .txt {
+.iphone .author {
             font-size: 10px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-.iphone .txtitalique {
+.iphone .tags {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.iphone .series {
+            font-size: 10px;
+            font-style: italic;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+.iphone .seriesbig {
             font-size: 10px;
             font-style: italic;
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-.iphone .txtpetit {
-            font-size: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-.iphone .txtpetititalique {
+.iphone .custom {
             font-size: 10px;
             font-style: italic;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        
+/*Fin style carousel*/
+
+
+
 .titreiphone {
 	font-size : 10px;
 	color : #431313;

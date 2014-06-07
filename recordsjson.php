@@ -29,8 +29,10 @@ if(isset($_GET['count'])) $count=$_GET['count'];
 else $count=100;
 
 //Chemin de calibre
-if(isset($_GET['pathbase'])) $path=$_GET['pathbase'];
-else erreur("No pathbase");
+if(isset($_GET['txtbase'])) $txtbase=$_GET['txtbase'];
+else erreur("No base");
+$path=$calibre[$txtbase];
+if(!$path) erreur("No base");
 
 if(isset($_GET['userid'])) $userid=$_GET['userid'];
 else $userid="";
@@ -111,7 +113,54 @@ if($gpseries=="1") {
 	$countgrp="";
 }
 
-$COLUMNS=$countgrp."books.id as id, books.title as title, books.path as relativePath, books.series_index as seriesIndex, 
+//Initialisation connection
+try{
+    $pdo = new PDO('sqlite:'.$path.'metadata.db');
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
+} catch(Exception $e) {
+    erreur($e->getMessage());
+}
+//Gestion des custom column
+$custom1="";
+$custom1Table="";
+$customlabel="";
+$customs=$customcolumn[$txtbase];
+if($customs!=""&&$customs!=Null) {
+	$customarray= explode(",", $customs);
+	$customlabel=$customarray[0];
+}
+if($customlabel!="") {
+	$stmt = $pdo->prepare("select * from custom_columns where label = ?");
+	$stmt->execute(array($customlabel));
+	$custominfo=$stmt->fetch();
+	if($custominfo) {
+	$custom1Id=$custominfo["id"];
+	if($custominfo["datatype"]=="series") {
+		$custom1="b.value as cust1value, a.extra as cust1extra, ";
+		$custom1Table="LEFT OUTER JOIN books_custom_column_".$custom1Id."_link as a ON a.book=books.id
+	    LEFT OUTER JOIN custom_column_".$custom1Id." as b ON a.value=b.id ";
+	} else if($custominfo["datatype"]=="enumeration") {
+		$custom1="b.value as cust1value, ";
+		$custom1Table="LEFT OUTER JOIN books_custom_column_".$custom1Id."_link as a ON a.book=books.id
+	    LEFT OUTER JOIN custom_column_".$custom1Id." as b ON a.value=b.id ";
+	} else if($custominfo["datatype"]=="int") {
+		$custom1="a.value as cust1value, ";
+		$custom1Table="LEFT OUTER JOIN custom_column_".$custom1Id." as a ON a.book=books.id ";
+	} else if($custominfo["datatype"]=="bool") {
+		$custom1="a.value as cust1value, ";
+		$custom1Table="LEFT OUTER JOIN custom_column_".$custom1Id." as a ON a.book=books.id ";
+	} else if($custominfo["datatype"]=="text") {//Réponse multiple possible (comme les tags)
+		$custom1="(SELECT group_concat(value,', ') FROM custom_column_".$custom1Id." as b WHERE b.id IN (SELECT value from books_custom_column_".$custom1Id."_link WHERE book=books.id)) cust1value, ";
+		
+	} else if($custominfo["datatype"]=="float") {
+		$custom1="a.value as cust1value, ";
+		$custom1Table="LEFT OUTER JOIN custom_column_".$custom1Id." as a ON a.book=books.id ";
+	}
+	}
+}
+
+$COLUMNS=$countgrp.$custom1."books.id as id, books.title as title, books.path as relativePath, books.series_index as seriesIndex, 
 	has_cover as hasCover, substr(books.pubdate,1,4) as pubDate,
 	series.name AS seriesName,
 	(SELECT group_concat(name,', ') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book=books.id)) tagsName,
@@ -143,43 +192,43 @@ if($userid!="") {
 //$SQL_BY_TITLE est utilisé
 //texte dans titre du livre
 $SQL_BY_TITLE="SELECT DISTINCT ".$COLUMNS."
-	FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books.title LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans étiquette (tags)
 $SQL_BY_TAGNAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark.",
 	    books_tags_link, tags
 	where books_tags_link.book = books.id and tags.id = books_tags_link.tag and
 	tags.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans auteur
 $SQL_BY_AUTHORNAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark.",
 	    books_authors_link, authors
 	where books_authors_link.book = books.id and authors.id = books_authors_link.author and
 	authors.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans serie
 $SQL_BY_SERIENAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where series.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //un auteur
 $SQL_BY_AUTHOR="SELECT DISTINCT ".$COLUMNS."
 	FROM books_authors_link LEFT JOIN books ON books_authors_link.book = books.id
-	    LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	    ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_authors_link.author = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //une série
 $SQL_BY_SERIE="SELECT DISTINCT ".$COLUMNS."
-	FROM books LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_series_link.series = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //Une étiquette
 $SQL_BY_TAG="SELECT DISTINCT ".$COLUMNS."
 	FROM books_tags_link LEFT JOIN books ON books_tags_link.book = books.id
-	    LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	    ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_tags_link.tag = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 
@@ -234,10 +283,6 @@ default: //all - comme title mais sans texte à chercher
 }
 
 try{
-    $pdo = new PDO('sqlite:'.$path.'metadata.db');
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // ERRMODE_WARNING | ERRMODE_EXCEPTION | ERRMODE_SILENT
-    
     $stmt = $pdo->prepare($query.$min.",".$count);
     $stmt->execute($params);
     $result["books"] = $stmt->fetchAll();

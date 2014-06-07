@@ -59,7 +59,15 @@
 	"txtresize": "Mensaje en caso de redimensionar",
 	"forced": "Rehacer las viñetas",
 	"info": "Información",
-	"forced_msg": "Un tap sobre un libro rehará la viñeta. Desactive esta opción para volver al modo normal."
+	"forced_msg": "Un tap sobre un libro rehará la viñeta. Desactive esta opción para volver al modo normal.",
+	"hidemenu": "Enmascarar el menú a la apertura",
+	"chg_nbbook": "Cambiar el número de libros fijados",
+	"showcust": "Muestre una columna de encargo",
+	"portrait": "Modo retrato",
+	"landscape": "Modo paisaje",
+	"nbline": "Número de línea",
+	"nbbyline": "Número de libro por línea",
+	"txtchgbookButton": "Actualizar"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Configuracion visor de comics",

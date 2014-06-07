@@ -15,6 +15,13 @@ Ext.define('myreadings.view.configpanel', {
 	info: "",
 	forced_msg: "",
 	hidemenu: "",
+	chg_nbbook: "",
+	showcust: "",
+	portrait: "",
+	landscape: "",
+	nbline: "",
+	nbbyline: "",
+	txtchgbookButton: "",
 
 	config: {
 		//layout:'vbox',
@@ -73,7 +80,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'selectfield',
 				label: this.txtSelectbase,
-				labelCls: 'wrap_label',
+				labelWrap: true,
 				name:'base',
 				id:'base',
 				itemId:'base',
@@ -150,7 +157,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.forced,
-				labelCls: 'wrap_label',
+				labelWrap: true,
 				hidden: true,
 				labelWidth: '60%',
 				itemId: 'forced',
@@ -164,12 +171,95 @@ Ext.define('myreadings.view.configpanel', {
 						} else myreadings.conf.forced="false";
 					}
 				}
+			}
+			
+			]
+		},
+		{
+			xtype: 'fieldset',
+			id:"profil",
+			itemId: "profil",
+			hidden: true,
+			title: "Profil",
+			items:[
+			{
+				xtype: 'togglefield',
+				label: this.chg_nbbook,
+				labelWrap: true,
+				labelWidth: '60%',
+				itemId: 'chg_nbbook',
+				disabled: true
 			},
 			{
-				id:"profil",
-				padding: 10,
-				//styleHtmlContent: true,
-				html:''
+				xtype: 'togglefield',
+				label: this.showcust,
+				labelWrap: true,
+				labelWidth: '60%',
+				itemId: 'showcust'//,
+				//disabled: true
+			},
+			{
+			xtype: 'fieldset',
+			itemId: "configland",
+			hidden: true,
+			title: this.landscape,
+			items:[
+			{
+				xtype: 'spinnerfield',
+				labelWrap: true,
+				labelWidth: '45%',
+				label: this.nbline,
+				minValue: 1,
+				maxValue: 8,
+				stepValue: 1,
+				itemId: 'landline'
+			},
+			{
+				xtype: 'spinnerfield',
+				label: this.nbbyline,
+				labelWrap: true,
+				labelWidth: '45%',
+				minValue: 1,
+				maxValue: 10,
+				stepValue: 1,
+				itemId: 'landbyline'
+			}
+			]
+			},
+			{
+			xtype: 'fieldset',
+			itemId: "configport",
+			hidden: true,
+			title: this.portrait,
+			items:[
+			{
+				xtype: 'spinnerfield',
+				labelWrap: true,
+				labelWidth: '45%',
+				label: this.nbline,
+				minValue: 1,
+				maxValue: 8,
+				stepValue: 1,
+				itemId: 'portline'
+			},
+			{
+				xtype: 'spinnerfield',
+				label: this.nbbyline,
+				labelWrap: true,
+				labelWidth: '45%',
+				minValue: 1,
+				maxValue: 10,
+				stepValue: 1,
+				itemId: 'portbyline'
+			}
+			]
+			},
+			{
+				xtype: 'button',
+				margin: '10 40 10 40',
+				text: this.txtchgbookButton,
+				itemId: 'chgcarouselbutton',
+				ui: 'confirm'
 			}
 			]
 		},
@@ -237,7 +327,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.txtbook_at_launch,
-				labelCls: 'wrap_label',
+				labelWrap: true,
 				labelWidth: '60%',
 				itemId: 'open_book_at_launch',
 				disabled: true,
@@ -255,7 +345,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.txtresize,
-				labelCls: 'wrap_label',
+				labelWrap: true,
 				labelWidth: '60%',
 				itemId: 'showresize',
 				disabled: true,
@@ -273,7 +363,7 @@ Ext.define('myreadings.view.configpanel', {
 			{
 				xtype: 'togglefield',
 				label: this.hidemenu,
-				labelCls: 'wrap_label',
+				labelWrap: true,
 				labelWidth: '60%',
 				itemId: 'hidemenu',
 				disabled: true,

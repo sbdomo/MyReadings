@@ -12,7 +12,9 @@ Ext.define('myreadings.model.article2', {
 	    "tagsName",
 	    "seriesName",
             "seriesIndex",
-	    "bookmark"
+	    "bookmark",
+	    "cust1value",
+	    "cust1extra"
         ],
 	//'comment', 'extension', 'filename', "languagesName",
 	

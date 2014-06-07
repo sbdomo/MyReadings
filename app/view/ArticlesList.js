@@ -73,7 +73,7 @@ Ext.define('myreadings.view.ArticlesList', {
             store = this.getStore(),
             idarticle;
             //console.log("id:"+element.id);
-        if(element.hasCls('nbgroup')||element.hasCls('fbookmark1')||element.hasCls('fbookmark')||element.hasCls('vignette')||element.hasCls('fond')||element.hasCls('name')||element.hasCls('txtpetit')||element.hasCls('tapclass')) {
+        if(element.hasCls('nbgroup')||element.hasCls('fbookmark1')||element.hasCls('fbookmark')||element.hasCls('vignette')||element.hasCls('fond')||element.hasCls('title')||element.hasCls('author')||element.hasCls('tags')||element.hasCls('series')||element.hasCls('seriesbig')||element.hasCls('custom')||element.hasCls('tapclass')) {
         	if (!element.hasCls('clsarticle')) {
         		element = Ext.get(e.target).parent('.clsarticle');
         	}

@@ -29,6 +29,16 @@ Ext.define('myreadings.controller.articlesControl', {
 	    showresize: 'configpanel #showresize',
 	    hidemenu: 'configpanel #hidemenu',
 	    forcedThumb: 'configpanel #forced',
+	    profil: 'configpanel #profil',
+	    chg_nbbook: 'configpanel #chg_nbbook',
+	    showcust: 'configpanel #showcust',
+	    configport: 'configpanel #configport',
+	    configland: 'configpanel #configland',
+	    landline: 'configpanel #landline',
+	    landbyline: 'configpanel #landbyline',
+	    portline: 'configpanel #portline',
+	    portbyline: 'configpanel #portbyline',
+	    chgcarouselbutton: 'configpanel #chgcarouselbutton',
 	    
 	    typelistfind: 'listview [name=typelist]',
 	    searchfieldfind: 'listview [name=listviewSearchfield]',
@@ -118,6 +128,12 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    btlistviewhide: {
 		    tap: 'activateCarousel'
+	    },
+	    chg_nbbook: {
+		    change: 'onChangeChg_nbbook'
+	    },
+	    chgcarouselbutton: {
+		    tap: 'onChgcarouselbuttonTap'
 	    }
         },
 
@@ -168,6 +184,13 @@ Ext.define('myreadings.controller.articlesControl', {
 				//me.list=cachedLoggedInUser.get('list');
 				//me.search=cachedLoggedInUser.get('search');
 				
+				myreadings.settings.chg_nbbook=cachedLoggedInUser.get('chg_nbbook');
+				myreadings.settings.showcust=cachedLoggedInUser.get('showcust');
+				myreadings.settings.landline=cachedLoggedInUser.get('landline');
+				myreadings.settings.landbyline=cachedLoggedInUser.get('landbyline');
+				myreadings.settings.portline=cachedLoggedInUser.get('portline');
+				myreadings.settings.portbyline=cachedLoggedInUser.get('portbyline');
+				
 				myreadings.settings.zoom_on_tap=cachedLoggedInUser.get('zoom_on_tap');
 				myreadings.settings.toggle_paging_bar=cachedLoggedInUser.get('toggle_paging_bar');
 				myreadings.settings.page_turn_drag_threshold=cachedLoggedInUser.get('page_turn_drag_threshold');
@@ -208,6 +231,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.idlist="";
 				//me.list="author";
 				//me.search="";
+				
+				myreadings.settings.chg_nbbook=0;
+				myreadings.settings.showcust=0;
 				
 				//*************SETTINGS*****************
 				//Zoom: 1:SingleTap, 2:DoubleTap
@@ -284,6 +310,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				}
 				
+				if(myreadings.settings.chg_nbbook!=1) me.defaultProfil();
 				Ext.Viewport.add(Ext.create('myreadings.view.main'));
 				me.articleView = Ext.create('myreadings.view.article');
 				//Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
@@ -328,8 +355,19 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
 				
 				//console.log("set profil dans config panel " + me.profil);
-				Ext.getCmp('profil').setHtml(me.localtxt.txtProfil+": "+me.localtxt[me.profil]);
-				
+				me.getProfil().setTitle(me.localtxt.txtProfil+": "+me.localtxt[me.profil]);
+				me.getChg_nbbook().setValue(myreadings.settings.chg_nbbook);
+				me.getShowcust().setValue(myreadings.settings.showcust);
+				me.getLandline().setValue(myreadings.settings.landline);
+				me.getLandbyline().setValue(myreadings.settings.landbyline);
+				me.getPortline().setValue(myreadings.settings.portline);
+				me.getPortbyline().setValue(myreadings.settings.portbyline);
+				me.getChg_nbbook().enable();
+				me.getProfil().show();
+				if(myreadings.settings.chg_nbbook==1) {
+					me.getConfigport().show();
+					me.getConfigland().show();
+				}
 				me.getOpen_book_at_launch().setValue(myreadings.settings.open_current_comic_at_launch);
 				me.getOpen_book_at_launch().enable();
 				me.getShowresize().setValue(myreadings.settings.showresize);
@@ -490,11 +528,13 @@ Ext.define('myreadings.controller.articlesControl', {
 			this.idlist=data.idlist;
 		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
 			//console.log("changement de base calibre, ouvre tout: type=all");
-			store.getProxy().setExtraParam('pathbase',data.pathbase);
+			//store.getProxy().setExtraParam('pathbase',data.pathbase);
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);			
 			myreadings.conf.pathbase=data.pathbase;
 			myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
+			store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
+			
 			this.type=data.type;
 		} else if(data.debut==6) {//changement de user	
 			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
@@ -515,7 +555,9 @@ Ext.define('myreadings.controller.articlesControl', {
 		this.saveuser(); //pour sauver la base par défaut
         } else {
 		//lors du premier lancement, pas de data car requête par défaut
-		store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+		//store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+		store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
+		
 		store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
 		store.getProxy().setExtraParam('mypass', myreadings.conf.password);
 		store.getProxy().setExtraParam('order', this.order);
@@ -601,7 +643,8 @@ Ext.define('myreadings.controller.articlesControl', {
         //console.log(data);
         	
 	//Initialise le proxy
-	store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+	//store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
+	store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
 	store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
 	store.getProxy().setExtraParam('mypass', myreadings.conf.password);
 	store.getProxy().setExtraParam('order', this.order);
@@ -694,7 +737,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				page_change_area_width: myreadings.settings.page_change_area_width,
 				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
 				showresize: myreadings.settings.showresize,
-				hidemenu: myreadings.settings.hidemenu
+				hidemenu: myreadings.settings.hidemenu,
+				chg_nbbook: myreadings.settings.chg_nbbook,
+				showcust: myreadings.settings.showcust
 			});
 			user.save();
 			this.init();
@@ -739,6 +784,13 @@ Ext.define('myreadings.controller.articlesControl', {
 				find: this.find,
 				start: this.start,
 				idlist: this.idlist,
+				
+				chg_nbbook: myreadings.settings.chg_nbbook,
+				showcust: myreadings.settings.showcust,
+				landline:myreadings.settings.landline,
+				landbyline: myreadings.settings.landbyline,
+				portline: myreadings.settings.portline,
+				portbyline: myreadings.settings.portbyline,
 				
 				zoom_on_tap: myreadings.settings.zoom_on_tap,
 				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
@@ -1024,7 +1076,8 @@ Ext.define('myreadings.controller.articlesControl', {
 							params: {
 								mylogin: params.mylogin,
 								mypass: params.mypass,
-								pathbase: params.pathbase,
+								//pathbase: params.pathbase,
+								txtbase: params.txtbase,
 								order: params.order,
 								gpseries: 2,
 								type: params.type,
@@ -1117,6 +1170,59 @@ Ext.define('myreadings.controller.articlesControl', {
     	   }
     	   this.getBookmarkView().hide();
     	   this.getArticleView().hide();
+    },
+    defaultProfil: function() {
+    	    var me=this;
+    	    if(me.profil=="gtab") {
+		    //mode paysage: 1 lignes et 4 livres par ligne
+		    //mode portrait: 3 lignes et 3 livres par ligne
+    	    	    myreadings.settings.landline=2;
+    	    	    myreadings.settings.landbyline=4;
+    	    	    myreadings.settings.portline=3;
+    	    	    myreadings.settings.portbyline=3;
+    	    } else if(me.profil=="iphone") {
+		    //mode paysage: 1 ligne et 4 livres par ligne
+		    //mode portrait: 2 lignes et 3 livres par ligne
+    	    	    myreadings.settings.landline=1;
+    	    	    myreadings.settings.landbyline=4;
+    	    	    myreadings.settings.portline=2;
+    	    	    myreadings.settings.portbyline=3;
+    	    } else {
+		    //mode paysage: 2 lignes et 4 livres par ligne
+		    //mode portrait: 3 lignes et 3 livres par ligne
+    	    	    myreadings.settings.landline=2;
+    	    	    myreadings.settings.landbyline=4;
+    	    	    myreadings.settings.portline=3;
+    	    	    myreadings.settings.portbyline=3;
+    	    }
+    },
+    onChangeChg_nbbook: function(item,value,oldvalue){
+    	    //Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+    	    if(!item.getDisabled()) {
+    	    	    console.log("change");
+    	    	    if(value==0) {
+    	    	    	    myreadings.app.getController('articlesControl').defaultProfil();
+    	    	    	    this.getLandline().setValue(myreadings.settings.landline);
+    	    	    	    this.getLandbyline().setValue(myreadings.settings.landbyline);
+    	    	    	    this.getPortline().setValue(myreadings.settings.portline);
+    	    	    	    this.getPortbyline().setValue(myreadings.settings.portbyline);
+    	    	    	    this.getConfigport().hide();
+    	    	    	    this.getConfigland().hide();
+    	    	    } else {
+    	    	    	    this.getConfigport().show();
+    	    	    	    this.getConfigland().show();
+    	    	    }
+    	    }
+    },
+    onChgcarouselbuttonTap: function() {
+    	    myreadings.settings.chg_nbbook=this.getChg_nbbook().getValue();
+    	    myreadings.settings.showcust=this.getShowcust().getValue();
+    	    myreadings.settings.landline=this.getLandline().getValue();
+    	    myreadings.settings.landbyline=this.getLandbyline().getValue();
+    	    myreadings.settings.portline=this.getPortline().getValue();
+    	    myreadings.settings.portbyline=this.getPortbyline().setValue();
+    	    this.saveuser();
+    	    window.location.reload();
     },
     //Non nécessaire pour le résumé du livre.
     nl2br: function(str) {
