@@ -138,7 +138,7 @@ Ext.define('myreadings.view.Articles', {
 			'</tpl>'+
                         '<div class="author"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="tags">{data.tagsName}</div></tpl>'+
-                        '<tpl if="data.seriesName"><div class="<div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
+                        '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
                         '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>';
         if(showcust==1) mytplgtab1=mytplgtab1+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
 	mytplgtab1=mytplgtab1+'</div></div>';
