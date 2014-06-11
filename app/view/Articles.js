@@ -59,9 +59,9 @@ Ext.define('myreadings.view.Articles', {
                         '<div class="author"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="tags">{data.tagsName}</div></tpl>'+
                         '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
-                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>';
-        if(showcust==1) mytplipad=mytplipad+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
-	mytplipad=mytplipad+'</div></div>';
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+			'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>'+
+			'</div></div>';
 	
 	//avec retour à la ligne pour title et seriesName (avec tapclass), sans pubDate, sans txtBy
 	var mytpliphone= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
@@ -86,9 +86,9 @@ Ext.define('myreadings.view.Articles', {
                         '<div class="author"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="tags">{data.tagsName}</div></tpl>'+
                         '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>"><span class="tapclass">{data.seriesName}'+
-                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></span></div></tpl>';
-        if(showcust==1) mytpliphone=mytpliphone+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
-	mytpliphone=mytpliphone+'</div></div>';
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></span></div></tpl>'+
+			'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>'+
+			'</div></div>';
 	//sans le retour à la ligne, sans tagsName
 	var mytpliphone2= '<div class="clsarticle" ref="{data.id}"><div class="iphone">'+
     			'<div class="fond">'+
@@ -111,9 +111,9 @@ Ext.define('myreadings.view.Articles', {
 			'</tpl>'+
                         '<div class="author"><tpl if="data.authorsName">{data.authorsName}</tpl></div>'+
                         '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
-                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>';
-        if(showcust==1) mytpliphone2=mytpliphone2+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
-	mytpliphone2=mytpliphone2+'</div></div>';
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+			'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>'+
+			'</div></div>';
 	
 	//version galaxy tab2 (images plus petite en mode paysage car en 16/9, idem à l'ipad sinon.
 	//Mode paysage
@@ -139,9 +139,9 @@ Ext.define('myreadings.view.Articles', {
                         '<div class="author"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="tags">{data.tagsName}</div></tpl>'+
                         '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
-                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>';
-        if(showcust==1) mytplgtab1=mytplgtab1+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
-	mytplgtab1=mytplgtab1+'</div></div>';
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+			'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>'+
+			'</div></div>';
 	//Mode portrait
 	var mytplgtab2='<div class="clsarticle" ref="{data.id}"><div class="gtab2">'+
     			'<div class="fond">'+
@@ -165,9 +165,9 @@ Ext.define('myreadings.view.Articles', {
                         '<div class="author"><tpl if="data.authorsName">'+this.txtBy+' {data.authorsName}</tpl></div>'+
                         '<tpl if="data.tagsName"><div class="tags">{data.tagsName}</div></tpl>'+
                         '<tpl if="data.seriesName"><div class="<tpl if="data.nbgp==null||data.nbgp==1">series<tpl else>seriesbig</tpl>">{data.seriesName}'+
-                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>';
-        if(showcust==1) mytplgtab2=mytplgtab2+'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>';
-	mytplgtab2=mytplgtab2+'</div></div>';
+                        '<tpl if="(data.nbgp==null||data.nbgp==1)&&data.seriesIndex"> ({data.seriesIndex})</tpl></div></tpl>'+
+			'<tpl if="data.cust1value"><div class="custom">{data.cust1value}<tpl if="data.cust1extra"> ({data.cust1extra})</tpl></div></tpl>'+
+			'</div></div>';
 		    
 	    var mycontroller = myreadings.app.getController('articlesControl');
 	    var portline=myreadings.settings.portline;

@@ -36,6 +36,11 @@ if(!$path) erreur("No base");
 
 if(isset($_GET['userid'])) $userid=$_GET['userid'];
 else $userid="";
+
+//1 s'il est demandé d'afficher le premier custom column
+if(isset($_GET['showcust'])) $showcust=$_GET['showcust'];
+else $showcust="0";
+
 //Tri par livre lu ou pas - valeurs: all, notread, read
 if(isset($_GET['showifread'])) $showifread=$_GET['showifread'];
 else $showifread="all";
@@ -126,7 +131,7 @@ $custom1="";
 $custom1Table="";
 $customlabel="";
 $customs=$customcolumn[$txtbase];
-if($customs!=""&&$customs!=Null) {
+if($showcust==1&&$customs!=""&&$customs!=Null) {
 	$customarray= explode(",", $customs);
 	$customlabel=$customarray[0];
 }

@@ -568,6 +568,7 @@ Ext.define('myreadings.controller.articlesControl', {
 		store.getProxy().setExtraParam('idlist', this.idlist);
 		store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
 		store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
+		store.getProxy().setExtraParam('showcust', myreadings.settings.showcust);
 	}
 	
 	store.getProxy().setExtraParam('offset', myreadings.conf.offset);
@@ -1085,6 +1086,7 @@ Ext.define('myreadings.controller.articlesControl', {
 								start: params.start,
 								idlist: params.idlist,
 								userid: params.userid,
+								//showcust: myreadings.settings.showcust,
 								showifread: params.showifread,
 								findserie: serieid,
 								offset: 0
