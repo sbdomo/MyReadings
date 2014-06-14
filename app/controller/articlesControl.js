@@ -346,6 +346,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				Ext.getCmp('base').setOptions(newOptions);
 				if(basevalue!="") Ext.getCmp('base').setValue(basevalue);
+				else myreadings.currentbook.reading=false;
 				
 				//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
 				//Passe en enabled ensuite
