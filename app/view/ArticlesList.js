@@ -69,23 +69,7 @@ Ext.define('myreadings.view.ArticlesList', {
     },
 
     onTap: function(e) {
-        var element = Ext.get(e.target),
-            store = this.getStore(),
-            idarticle;
-            //console.log("id:"+element.id);
-        if(element.hasCls('nbgroup')||element.hasCls('fbookmark1')||element.hasCls('fbookmark')||element.hasCls('vignette')||element.hasCls('fond')||element.hasCls('title')||element.hasCls('author')||element.hasCls('tags')||element.hasCls('series')||element.hasCls('seriesbig')||element.hasCls('custom')||element.hasCls('tapclass')) {
-        	if (!element.hasCls('clsarticle')) {
-        		element = Ext.get(e.target).parent('.clsarticle');
-        	}
-        	idarticle = Math.abs(element.getAttribute('ref'));
-        	record = store.getById(idarticle);
-        	if (record) {
-        		//console.log("fireEvent itemtap");
-        		this.fireEvent('itemtap', this, record);
-        	}
-        } else {
-        	console.log('no tap');
-        }
+    	    myreadings.app.getController('articlesControl').onTapCarousel(e, this);
     },
 
     applyCount: function(count) {

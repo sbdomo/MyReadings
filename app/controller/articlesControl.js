@@ -1227,6 +1227,28 @@ Ext.define('myreadings.controller.articlesControl', {
     	    this.saveuser();
     	    window.location.reload();
     },
+    onTapCarousel: function(e, me) {
+        var element = Ext.get(e.target),
+            store = me.getStore(),
+            idarticle;
+            //console.log("id:"+element.id);
+        if(element.hasCls('nbgroup')||element.hasCls('fbookmark2')||element.hasCls('fbookmark1')||element.hasCls('fbookmark')||
+        	element.hasCls('vignette')||element.hasCls('fond')||
+        	element.hasCls('vignette_grp')||element.hasCls('fond_grp')||element.hasCls('title')||element.hasCls('author')||
+        	element.hasCls('tags')||element.hasCls('series')||element.hasCls('seriesbig')||element.hasCls('custom')||element.hasCls('tapclass')) {
+        	if (!element.hasCls('clsarticle')) {
+        		element = Ext.get(e.target).parent('.clsarticle');
+        	}
+        	idarticle = Math.abs(element.getAttribute('ref'));
+        	record = store.getById(idarticle);
+        	if (record) {
+        		//console.log("fireEvent itemtap");
+        		me.fireEvent('itemtap', me, record);
+        	}
+        } else {
+        	console.log('no tap');
+        }
+    },
     //Non nécessaire pour le résumé du livre.
     nl2br: function(str) {
 	    // Converts newlines to HTML line breaks
