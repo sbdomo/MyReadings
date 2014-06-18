@@ -1,1 +1,8 @@
-0.4.2
+0.4.3
+Changements:
+- Utilisation d'une image différente (deux livres supperposés) pour afficher les livres groupés par série.
+- Mise en place d'un filtre qui permet de sélectionner une étiquette, un auteur ou une série pour ne faire afficher que les livres correspondants à ce critère avec possibilité d'utiliser la partie recherche de My Readings sur cette sous-base.
+- Correction d'un bogue sur les marques-pages (quand le livre n'est pas dans la liste)
+
+A venir:
+Gestion de plusieurs logins et mots de passe

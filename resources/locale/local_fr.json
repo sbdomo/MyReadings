@@ -13,6 +13,9 @@
 	"txtFindTextButton": "Rechercher",
 	"txtFieldsetList": "ou recherche dans une liste:",
 	"txtFieldsetListButton": "Afficher la liste",
+	"txtSelectbase": "Base Calibre",
+	"txtFilterChoice": "Choisir un filtre",
+	"txtNoFilter": "Supprimer le filtre"
 },
 "orderview":{
 	"txtTitle": "Trier",
@@ -48,8 +51,16 @@
 	"txtnoMoreRecords":"Fin de la liste",
 	"txtEmpty":"Liste vide"
 },
+"filterview":{
+	"txtAuthor":" Auteurs",
+	"txtSerie":" Séries",
+	"txtTag":" Etiquettes",
+	"txtSearch":" Rechercher",
+	"txtLoadMore":"Chargement...",
+	"txtnoMoreRecords":"Fin de la liste",
+	"txtEmpty":"Liste vide"
+},
 "configpanel":{
-	"txtSelectbase": "Base Calibre",
 	"txtTitleLogin": "Connexion",
 	"txtLogin": "Nom",
 	"txtPass": "Mot de passe",
@@ -67,7 +78,7 @@
 	"landscape": "Mode paysage",
 	"nbline": "Nombre de ligne",
 	"nbbyline": "Nombre de livre par ligne",
-	"txtchgbookButton": "Mettre à jour"	
+	"txtchgbookButton": "Mettre à jour"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Paramètres du lecteur",
@@ -108,7 +119,9 @@
 	"marknotread": "Non lu",
 	"txtBookmark": "Marque-page",
 	"domarkread": "Indiquer que le livre est lu?",
-	"shownext": "Lire le livre suivant de la série?"
+	"shownext": "Lire le livre suivant de la série?",
+	"txtFilter": "Filtre",
+	"nofilter": "Pas de filtre"
 },
 "lang":
 {

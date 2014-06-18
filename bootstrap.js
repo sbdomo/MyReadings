@@ -749,8 +749,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.controller.epub": [],
   "myreadings.model.article": [],
   "myreadings.model.article2": [],
+  "myreadings.model.filtermodel": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
+  "myreadings.store.filterstore": [],
   "myreadings.store.liststore": [],
   "myreadings.view.Articles": [],
   "myreadings.view.ArticlesList": [],
@@ -762,6 +764,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "myreadings.view.comicview": [],
   "myreadings.view.configpanel": [],
   "myreadings.view.epubview": [],
+  "myreadings.view.filterview": [],
   "myreadings.view.listview": [],
   "myreadings.view.main": [],
   "myreadings.view.orderview": [],
@@ -1718,8 +1721,10 @@ Ext.ClassManager.addNameAliasMappings({
   "myreadings.controller.epub": [],
   "myreadings.model.article": [],
   "myreadings.model.article2": [],
+  "myreadings.model.filtermodel": [],
   "myreadings.model.listmodel": [],
   "myreadings.model.myreadingsUser": [],
+  "myreadings.store.filterstore": [],
   "myreadings.store.liststore": [],
   "myreadings.view.Articles": [
     "widget.articles"
@@ -1750,6 +1755,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "myreadings.view.epubview": [
     "widget.epubview"
+  ],
+  "myreadings.view.filterview": [
+    "widget.filterview"
   ],
   "myreadings.view.listview": [
     "widget.listview"

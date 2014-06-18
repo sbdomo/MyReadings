@@ -41,6 +41,13 @@ else $userid="";
 if(isset($_GET['showcust'])) $showcust=$_GET['showcust'];
 else $showcust="0";
 
+//s'il y a un filtre principal (en plus d'autres critères de recherche)
+if(isset($_GET['idfilter'])) $idfilter=$_GET['idfilter'];
+else      $idfilter="";
+//valeurs: author, serie, tag
+if(isset($_GET['listfilter'])) $listfilter=$_GET['listfilter'];
+else      $listfilter="";
+
 //Tri par livre lu ou pas - valeurs: all, notread, read
 if(isset($_GET['showifread'])) $showifread=$_GET['showifread'];
 else $showifread="all";
@@ -193,46 +200,64 @@ if($userid!="") {
 	}
 }
 
+if($listfilter!=""&&$listfilter!="") {
+	$books1="(SELECT books.id, books.title, books.sort, books.timestamp, books.pubdate, books.series_index, books.author_sort, books.path, books.has_cover FROM ";
+	switch ($listfilter)
+	{
+	case "tag":
+	$books=$books1."books_tags_link INNER JOIN books ON books_tags_link.book = books.id where books_tags_link.tag = ".$idfilter.") AS books";
+	break;
+	case "author":
+	$books=$books1."books_authors_link INNER JOIN books ON books_authors_link.book = books.id where books_authors_link.author = ".$idfilter.") AS books";
+	break;
+	case "serie":
+	$books=$books1."books_series_link INNER JOIN books ON books_series_link.book = books.id where books_series_link.series = ".$idfilter.") AS books";
+	break;
+	default:
+	$books="books";
+	}
+} else $books="books";
+
 //Tous les livres
 //$SQL_BY_TITLE est utilisé
 //texte dans titre du livre
 $SQL_BY_TITLE="SELECT DISTINCT ".$COLUMNS."
-	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM ".$books." ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books.title LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans étiquette (tags)
 $SQL_BY_TAGNAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM ".$books." ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark.",
 	    books_tags_link, tags
 	where books_tags_link.book = books.id and tags.id = books_tags_link.tag and
 	tags.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans auteur
 $SQL_BY_AUTHORNAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM ".$books." ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark.",
 	    books_authors_link, authors
 	where books_authors_link.book = books.id and authors.id = books_authors_link.author and
 	authors.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //texte dans serie
 $SQL_BY_SERIENAME="SELECT DISTINCT ".$COLUMNS."
-	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM ".$books." ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where series.name LIKE ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //un auteur
 $SQL_BY_AUTHOR="SELECT DISTINCT ".$COLUMNS."
-	FROM books_authors_link LEFT JOIN books ON books_authors_link.book = books.id
+	FROM books_authors_link INNER JOIN ".$books." ON books_authors_link.book = books.id
 	    ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_authors_link.author = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //une série
 $SQL_BY_SERIE="SELECT DISTINCT ".$COLUMNS."
-	FROM books ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
+	FROM ".$books." ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_series_link.series = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";
 //Une étiquette
 $SQL_BY_TAG="SELECT DISTINCT ".$COLUMNS."
-	FROM books_tags_link LEFT JOIN books ON books_tags_link.book = books.id
+	FROM books_tags_link INNER JOIN ".$books." ON books_tags_link.book = books.id
 	    ".$custom1Table."LEFT OUTER JOIN books_series_link ON books_series_link.book=books.id
 	    LEFT OUTER JOIN series ON books_series_link.series=series.id".$isbookmark."
 	where books_tags_link.tag = ? ".$isread.$byseries."ORDER BY ".$order." LIMIT ";

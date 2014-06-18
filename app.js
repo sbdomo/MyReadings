@@ -17,10 +17,10 @@ Ext.application({
         'Ext.ux.Iframe',
 	'Ext.MessageBox'
     ],
-    models:['article','article2','listmodel','myreadingsUser'],
-    stores:['liststore'],
+    models:['article','article2','listmodel','myreadingsUser', 'filtermodel'],
+    stores:['liststore', 'filterstore'],
     controllers: ['articlesControl', 'comic', 'epub'],
-    views: ['main', 'ArticlesList', 'articlesserieslist', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettingsPopup', 'epubview', 'bookmarkview', 'orderview'],
+    views: ['main', 'ArticlesList', 'articlesserieslist', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettingsPopup', 'epubview', 'bookmarkview', 'orderview', 'filterview'],
 
     icon: {
         '57': 'resources/icons/Icon.png',

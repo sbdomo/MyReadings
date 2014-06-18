@@ -45,6 +45,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	    btsearchfind: 'listview [name=btsearch]',
 	    btlistviewhide: 'listview [name=bthide]',
 	    btsearchhide: 'searchpanel [name=bthide]',
+	    btshowfilter: 'searchpanel #btshowfilter',
+	    btnofilter: 'searchpanel #btnofilter',
+	    txtfilter: 'searchpanel #txtfilter',
 	    
             articleView: {
                 autoCreate: true,
@@ -81,7 +84,14 @@ Ext.define('myreadings.controller.articlesControl', {
 	    orderfield: 'orderview #order',
 	    seriegroup: 'orderview #seriegroup',
 	    showIfRead: 'orderview #showIfRead',
-	    btOrder: 'articleslist #btOrder'
+	    btOrder: 'articleslist #btOrder',
+	    
+	    filterview: 'filterview',
+	    bthidefilter: 'filterview #bthide',
+	    typelistfindfilter: 'filterview #typelist',
+	    searchfieldfindfilter: 'filterview #searchfield',
+	    btsearchfindfilter: 'filterview #btsearch'
+	    
         },
         control: {
             articleslist: {
@@ -126,6 +136,12 @@ Ext.define('myreadings.controller.articlesControl', {
 	    btsearchhide: {
 		    tap: 'activateCarousel'
 	    },
+	    btshowfilter: {
+		    tap: 'showfilter'
+	    },
+	    btnofilter: {
+		    tap: 'nofilter'
+	    },
 	    btlistviewhide: {
 		    tap: 'activateCarousel'
 	    },
@@ -134,6 +150,18 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    chgcarouselbutton: {
 		    tap: 'onChgcarouselbuttonTap'
+	    },
+	    bthidefilter: {
+		    tap: 'hidefilter'
+	    },
+	    typelistfindfilter: {
+		    change: 'onChangeFilterView'
+	    },
+	    searchfieldfindfilter: {
+		    action: 'onChangeFilterView'
+	    },
+	    btsearchfindfilter: {
+		    tap: 'onChangeFilterView'
 	    }
         },
 
@@ -191,6 +219,11 @@ Ext.define('myreadings.controller.articlesControl', {
 				myreadings.settings.portline=cachedLoggedInUser.get('portline');
 				myreadings.settings.portbyline=cachedLoggedInUser.get('portbyline');
 				
+				myreadings.conf.listfilter=cachedLoggedInUser.get('listfilter');
+				myreadings.conf.idfilter=cachedLoggedInUser.get('idfilter');
+				myreadings.conf.namelistfilter=cachedLoggedInUser.get('namelistfilter');
+				myreadings.conf.namefilter=cachedLoggedInUser.get('namefilter');
+				
 				myreadings.settings.zoom_on_tap=cachedLoggedInUser.get('zoom_on_tap');
 				myreadings.settings.toggle_paging_bar=cachedLoggedInUser.get('toggle_paging_bar');
 				myreadings.settings.page_turn_drag_threshold=cachedLoggedInUser.get('page_turn_drag_threshold');
@@ -234,6 +267,10 @@ Ext.define('myreadings.controller.articlesControl', {
 				
 				myreadings.settings.chg_nbbook=0;
 				myreadings.settings.showcust=0;
+				
+				myreadings.conf.listfilter="";
+				myreadings.conf.namelistfilter="";
+				myreadings.conf.namefilter="";
 				
 				//*************SETTINGS*****************
 				//Zoom: 1:SingleTap, 2:DoubleTap
@@ -417,6 +454,14 @@ Ext.define('myreadings.controller.articlesControl', {
 				me.getSeriegroup().setValue(me.gpseries);
 				me.getSeriegroup().enable();
 				
+				//Indique le filtre en cours dans searchpanel
+				if(myreadings.conf.listfilter!="") {
+					me.getTxtfilter().setHtml(me.localtxt.txtFilter+" - "+myreadings.conf.namelistfilter + ": " + myreadings.conf.namefilter);
+					me.getBtnofilter().show();
+				} else {
+					me.getTxtfilter().setHtml(me.localtxt.nofilter);
+				}
+				
 				//S'il y a un user, il faut récupérer son id (qui peut changer suivant la base utilisée)
 				if(myreadings.conf.current_user!="") {
 				Ext.data.JsonP.request({
@@ -528,6 +573,7 @@ Ext.define('myreadings.controller.articlesControl', {
 			this.type=data.type;
 			this.idlist=data.idlist;
 		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
+			//et enlever le filtre
 			//console.log("changement de base calibre, ouvre tout: type=all");
 			//store.getProxy().setExtraParam('pathbase',data.pathbase);
 			store.getProxy().setExtraParam('type', data.type);
@@ -535,6 +581,16 @@ Ext.define('myreadings.controller.articlesControl', {
 			myreadings.conf.pathbase=data.pathbase;
 			myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
 			store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
+			
+			//enlève le filtre
+			store.getProxy().setExtraParam('listfilter', "");
+			myreadings.conf.listfilter="";
+			this.getTxtfilter().setHtml(this.localtxt.nofilter);
+			this.getBtnofilter().hide();
+			//et vide le proxy de la liste du filtre pour indiquer qu'il faut la réinitialiser
+			if(this.getFilterview()) {
+				this.getFilterview().getStore().getProxy().setExtraParam('list', "");
+			}
 			
 			this.type=data.type;
 		} else if(data.debut==6) {//changement de user	
@@ -545,6 +601,20 @@ Ext.define('myreadings.controller.articlesControl', {
 		} else if(data.debut==8) {//pour choisir tous, non lus, lus
 			myreadings.conf.showifread=data.showifread
 			store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
+		} else if(data.debut==9) {//applique un premier filtre
+			store.getProxy().setExtraParam('listfilter', data.listfilter);
+			store.getProxy().setExtraParam('idfilter', data.idfilter);
+			myreadings.conf.listfilter=data.listfilter;
+			myreadings.conf.idfilter=data.idfilter;
+			myreadings.conf.namelistfilter=data.namelistfilter;
+			myreadings.conf.namefilter=data.namefilter
+			if(data.listfilter!="") {
+				this.getTxtfilter().setHtml(this.localtxt.txtFilter+" - "+myreadings.conf.namelistfilter + ": " + myreadings.conf.namefilter);
+				this.getBtnofilter().show();
+			} else {
+				this.getTxtfilter().setHtml(this.localtxt.nofilter);
+				this.getBtnofilter().hide();
+			}
 		} else {//lancement depuis searchpanel
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('find', data.find);
@@ -570,6 +640,8 @@ Ext.define('myreadings.controller.articlesControl', {
 		store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
 		store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
 		store.getProxy().setExtraParam('showcust', myreadings.settings.showcust);
+		store.getProxy().setExtraParam('listfilter', myreadings.conf.listfilter);
+		store.getProxy().setExtraParam('idfilter', myreadings.conf.idfilter);
 	}
 	
 	store.getProxy().setExtraParam('offset', myreadings.conf.offset);
@@ -656,7 +728,9 @@ Ext.define('myreadings.controller.articlesControl', {
 	store.getProxy().setExtraParam('idlist', this.idlist);
 	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
 	store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
-	
+	store.getProxy().setExtraParam('listfilter', myreadings.conf.listfilter);
+	store.getProxy().setExtraParam('idfilter', myreadings.conf.idfilter);
+
 	//cherche par seriesName
 	store.getProxy().setExtraParam('gpseries', -1);
 	store.getProxy().setExtraParam('findserie', data.serieid);
@@ -720,6 +794,54 @@ Ext.define('myreadings.controller.articlesControl', {
 	//me.refresh();
 	store.loadPage(1);
 	this.isList=true;
+    },
+    showfilter: function() {
+        var filterview = this.getFilterview();
+	if (!filterview) {
+		console.log("no in view");
+		Ext.Viewport.add(Ext.create('myreadings.view.filterview'));
+		filterview = this.getFilterview();
+		this.loadfilterstore("tag", "");
+	} else {
+		//réinit si pas de liste par défaut (en cas de changement de base)
+		if(filterview.getStore().getProxy().getExtraParams()['list']=="") {
+			this.getSearchfieldfindfilter().setValue("");
+			this.loadfilterstore(this.getTypelistfindfilter().getValue(), "");
+		}
+	}
+	filterview.show();
+    },
+    nofilter: function() {
+	    this.changefilter(0, "", "", "");
+    },
+    changefilter: function(idfilter, listfilter, namefilter, namelistfilter) {
+	    this.showArticles({
+		idfilter: idfilter,
+		listfilter: listfilter,
+		namefilter: namefilter,
+		namelistfilter: namelistfilter,
+		debut: 9
+	    });
+	    this.activateCarousel();
+    },
+    loadfilterstore: function(list, search) {
+	var filterview = this.getFilterview();
+	var store = filterview.getStore();
+	store.getProxy().setExtraParam('pathbase',myreadings.conf.pathbase);
+	store.getProxy().setExtraParam('mylogin',myreadings.conf.username);
+        store.getProxy().setExtraParam('mypass',myreadings.conf.password);
+	store.getProxy().setExtraParam('list', list);
+	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+        store.getProxy().setExtraParam('search', search);
+	//Affiche le début de la liste
+	if(filterview.getScrollable().getScroller()) filterview.getScrollable().getScroller().scrollTo(0, 0);
+	store.loadPage(1);
+    },
+    hidefilter: function() {
+	    this.getFilterview().hide();
+    },
+    onChangeFilterView: function() {
+	    this.loadfilterstore(this.getTypelistfindfilter().getValue(), this.getSearchfieldfindfilter().getValue());
     },
     
     onLoginTap: function() {
@@ -793,6 +915,11 @@ Ext.define('myreadings.controller.articlesControl', {
 				landbyline: myreadings.settings.landbyline,
 				portline: myreadings.settings.portline,
 				portbyline: myreadings.settings.portbyline,
+				
+				listfilter: myreadings.conf.listfilter,
+				idfilter: myreadings.conf.idfilter,
+				namelistfilter: myreadings.conf.namelistfilter,
+				namefilter: myreadings.conf.namefilter,
 				
 				zoom_on_tap: myreadings.settings.zoom_on_tap,
 				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
@@ -1126,7 +1253,7 @@ Ext.define('myreadings.controller.articlesControl', {
 								alert('Php Error.');
 							}
 						});
-					}
+					} else Ext.Viewport.setMasked(false);
 				}					    
 			}
 		},

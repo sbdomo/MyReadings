@@ -13,6 +13,9 @@
 	"txtFindTextButton": "Search",
 	"txtFieldsetList": "or search in a list:",
 	"txtFieldsetListButton": "Show the list",
+	"txtSelectbase": "Calibre Store",
+	"txtFilterChoice": "Choose a filter",
+	"txtNoFilter": "Delete the filter"
 },
 "orderview":{
 	"txtTitle": "Sort out",
@@ -48,8 +51,16 @@
 	"txtnoMoreRecords":"End of the list",
 	"txtEmpty":"Empty list"
 },
+"filterview":{
+	"txtAuthor":" Authors",
+	"txtSerie":" Series",
+	"txtTag":" Tags",
+	"txtSearch":" Search",
+	"txtLoadMore":"More...",
+	"txtnoMoreRecords":"End of the list",
+	"txtEmpty":"Empty list"
+},
 "configpanel":{
-	"txtSelectbase": "Calibre Store",
 	"txtTitleLogin": "Connection",
 	"txtLogin": "Name",
 	"txtPass": "Password",
@@ -108,7 +119,9 @@
 	"marknotread": "Not read",
 	"txtBookmark": "Bookmark",
 	"domarkread": "Indicate that the book is read?",
-	"shownext": "Show the next book of the series?"
+	"shownext": "Show the next book of the series?",
+	"txtFilter": "Filter",
+	"nofilter": "No filter"
 },
 "lang":
 {

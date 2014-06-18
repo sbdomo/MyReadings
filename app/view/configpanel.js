@@ -3,7 +3,6 @@ Ext.define('myreadings.view.configpanel', {
 	xtype: 'configpanel',
 	id: 'configpanel',
 	requires: ['Ext.field.Password','Ext.form.FieldSet', 'Ext.field.Select'],
-	txtSelectbase: "",
 	txtTitleLogin: "",
 	txtLogin: "",
 	txtPass: "",
@@ -77,83 +76,6 @@ Ext.define('myreadings.view.configpanel', {
 		{
 			xtype: 'fieldset',
 			items:[
-			{
-				xtype: 'selectfield',
-				label: this.txtSelectbase,
-				labelWrap: true,
-				name:'base',
-				id:'base',
-				itemId:'base',
-				disabled: true,
-				//options: [{text:"test", value:"test"}],
-				listeners:
-				{
-					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-							var mycontroller = myreadings.app.getController('articlesControl');
-							if(myreadings.conf.current_user!="") {
-								myreadings.conf.current_userid="";
-								Ext.Viewport.setMasked({xtype: 'loadmask'});
-								Ext.data.JsonP.request({
-										url: './tools.php',
-										callbackKey: 'callback',
-										params: {
-											action: "getuserid",
-											mylogin: myreadings.conf.username,
-											mypass: myreadings.conf.password,
-											base: Ext.getCmp('base').getRecord().data.text,
-											user: myreadings.conf.current_user
-										},
-										success: function(result, request) {
-											Ext.Viewport.setMasked(false);
-											if(result.success==false) {
-												alert(result.message);
-											} else {
-												myreadings.conf.current_userid=result.resultat;
-											}
-											//console.log("userid "+myreadings.conf.current_userid);
-											//Relance la consultation de la base - type=all (et lance saveuser)
-											myreadings.app.getController('articlesControl').showArticles({
-													pathbase: value,
-													type: "all",
-													debut: 5
-											});
-									
-										},
-										failure: function(result, request) {
-											Ext.Viewport.setMasked(false);
-											//Relance la consultation de la base - type=all (et lance saveuser)
-											myreadings.app.getController('articlesControl').showArticles({
-													pathbase: value,
-													type: "all",
-													debut: 5
-											});
-											alert('Php Error for userid.');
-										}
-								});
-							} else {
-								myreadings.app.getController('articlesControl').showArticles({
-										pathbase: value,
-										type: "all",
-										debut: 5
-								});
-							}
-							//Cache la liste dans searchview si elle est ouverte et vide le champs recherche
-							Ext.getCmp('searchview').setActiveItem(0);
-							Ext.getCmp('listviewSearchfield').setValue('');
-							mycontroller.isList=false;
-							
-							myreadings.currentbook.idbook=null;
-							mycontroller.showViewerBt();
-							
-							//var form=this.getParent().getParent();
-							//form.hide();
-							myreadings.app.getController('articlesControl').activateCarousel();
-						}
-					}
-				}
-			},
 			{
 				xtype: 'togglefield',
 				label: this.forced,

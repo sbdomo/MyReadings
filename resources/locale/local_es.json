@@ -13,6 +13,9 @@
 	"txtFindTextButton": "Buscar",
 	"txtFieldsetList": "o buscar en una lista:",
 	"txtFieldsetListButton": "Mostrar la lista",
+	"txtSelectbase": "Nombre de la biblioteca",
+	"txtFilterChoice": "Escoger un filtro",
+	"txtNoFilter": "Suprimir el filtro"
 },
 "orderview":{
 	"txtTitle": "Clasificar",
@@ -48,8 +51,16 @@
 	"txtnoMoreRecords":"Fin de la lista",
 	"txtEmpty":"Lista vacia"
 },
+"filterview":{
+	"txtAuthor":" Autores",
+	"txtSerie":" Series",
+	"txtTag":" Tags",
+	"txtSearch":" Buscar",
+	"txtLoadMore":"Mas...",
+	"txtnoMoreRecords":"Fin de la lista",
+	"txtEmpty":"Lista vacia"
+},
 "configpanel":{
-	"txtSelectbase": "Nombre de la biblioteca",
 	"txtTitleLogin": "Conexion",
 	"txtLogin": "Usuario",
 	"txtPass": "Clave",
@@ -108,7 +119,9 @@
 	"marknotread": "No leído",
 	"txtBookmark": "Marca-página",
 	"domarkread": "Indicar que el libro es leído?",
-	"shownext": "Leer el siguiente libro de la serie?"
+	"shownext": "Leer el siguiente libro de la serie?",
+	"txtFilter": "Filtro",
+	"nofilter": "Ningún filtro"
 },
 "lang":
 {
