@@ -208,25 +208,25 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 		var me = this;
 			pageTurnDragThreshold = me.down('#page_turn_drag_threshold'),
 			pageChangeAreaWidth = me.down('#page_change_area_width');
-		//console.log("threshold" + myreadings.settings.page_turn_drag_threshold);
+		//console.log("threshold" + myreadings.user.get('page_turn_drag_threshold'));
 		me.setValues({
-			//open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
-			//open_next_comic: myreadings.settings.open_next_comic,
-			zoom_on_tap: myreadings.settings.zoom_on_tap,
-			page_fit_mode: myreadings.settings.page_fit_mode,
-			toggle_paging_bar: myreadings.settings.toggle_paging_bar,
-			use_page_turn_drag: (myreadings.settings.page_turn_drag_threshold < 1000),
-			page_turn_drag_threshold: (myreadings.settings.page_turn_drag_threshold < 1000) ? myreadings.settings.page_turn_drag_threshold : 50,
-			use_page_change_area: (myreadings.settings.page_change_area_width > 0),
-			page_change_area_width: (myreadings.settings.page_change_area_width > 0) ? myreadings.settings.page_change_area_width : 75
+			//open_current_comic_at_launch: myreadings.user.get('open_current_comic_at_launch'),
+			//open_next_comic: myreadings.user.get('settings.open_next_comic'),
+			zoom_on_tap: myreadings.user.get('zoom_on_tap'),
+			page_fit_mode: myreadings.user.get('page_fit_mode'),
+			toggle_paging_bar: myreadings.user.get('toggle_paging_bar'),
+			use_page_turn_drag: (myreadings.user.get('page_turn_drag_threshold') < 1000),
+			page_turn_drag_threshold: (myreadings.user.get('page_turn_drag_threshold') < 1000) ? myreadings.user.get('page_turn_drag_threshold') : 50,
+			use_page_change_area: (myreadings.user.get('page_change_area_width') > 0),
+			page_change_area_width: (myreadings.user.get('page_change_area_width') > 0) ? myreadings.user.get('page_change_area_width') : 75
 		});
-		if (myreadings.settings.page_change_area_width > 0) {
+		if (myreadings.user.get('page_change_area_width') > 0) {
 			pageChangeAreaWidth.enable();
 		} else {
 			pageChangeAreaWidth.disable();
 		}
 		
-		if (myreadings.settings.page_turn_drag_threshold < 1000) {
+		if (myreadings.user.get('page_turn_drag_threshold') < 1000) {
 			pageTurnDragThreshold.enable();
 		} else {
 			pageTurnDragThreshold.disable();
@@ -236,14 +236,12 @@ Ext.define('myreadings.view.comicSettingsPopup', {
 		var me = this,
 		values = me.getValues();
 		
-		//myreadings.settings.open_current_comic_at_launch = values.open_current_comic_at_launch;
-		//myreadings.settings.open_next_comic = values.open_next_comic;
-		myreadings.settings.zoom_on_tap = values.zoom_on_tap;
-		myreadings.settings.page_fit_mode = values.page_fit_mode;
-		myreadings.settings.toggle_paging_bar = values.toggle_paging_bar;
-		myreadings.settings.page_turn_drag_threshold = values.use_page_turn_drag ? values.page_turn_drag_threshold : 1000;
-		myreadings.settings.page_change_area_width = values.use_page_change_area ? values.page_change_area_width : 0;
+		myreadings.user.set('zoom_on_tap', values.zoom_on_tap);
+		myreadings.user.set('page_fit_mode', values.page_fit_mode);
+		myreadings.user.set('toggle_paging_bar', values.toggle_paging_bar);
+		myreadings.user.set('page_turn_drag_threshold', values.use_page_turn_drag ? values.page_turn_drag_threshold : 1000);
+		myreadings.user.set('page_change_area_width', values.use_page_change_area ? values.page_change_area_width : 0);
 		
-		myreadings.app.getController('articlesControl').saveuser();
+		myreadings.user.save();
   }
 });

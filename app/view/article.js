@@ -79,31 +79,31 @@ Ext.define('myreadings.view.article', {
 		    this.tplinit(myreadings.app.getController('articlesControl').profil),
 		    {
 			    pathCover: function(relativepath, id) {
-				    if(myreadings.conf.fetchmode=='direct') {
-					    return myreadings.conf.pathbase+relativepath+"/cover.jpg";
+				    if(myreadings.tempconf.fetchmode=='direct') {
+					    return myreadings.user.get('pathbase')+relativepath+"/cover.jpg";
 				    } else {
 					    var params = {
 						    path: relativepath,
 						    id: id,
-						    base: myreadings.conf.txtbase,
-						    mylogin: myreadings.conf.username,
-						    mypass: myreadings.conf.password
+						    base: myreadings.tempconf.txtbase,
+						    mylogin: myreadings.user.get('username'),
+						    mypass: myreadings.user.get('password')
 					    };
 					    var paramsencode = Ext.urlEncode(params);
 					    return "./cover.php?"+paramsencode;
 				    }
 			    },
 			    pathepub: function(filename, extension) {
-				    if(myreadings.conf.fetchmode=='direct') {
-					    return myreadings.conf.pathbase+me.relativePath+"/"+filename+"."+extension.toLowerCase();
+				    if(myreadings.tempconf.fetchmode=='direct') {
+					    return myreadings.user.get('pathbase')+me.relativePath+"/"+filename+"."+extension.toLowerCase();
 				    } else {
 					    var params = {
 						    path: me.relativePath,
 						    filename: filename,
 						    extension: extension.toLowerCase(),
-						    base: myreadings.conf.txtbase,
-						    mylogin: myreadings.conf.username,
-						    mypass: myreadings.conf.password
+						    base: myreadings.tempconf.txtbase,
+						    mylogin: myreadings.user.get('username'),
+						    mypass: myreadings.user.get('password')
 					    };
 					    var paramsencode = Ext.urlEncode(params);
 					    return "./getbook.php?"+paramsencode;
@@ -157,7 +157,7 @@ Ext.define('myreadings.view.article', {
     	var me = this;
 	me.setMasked({xtype: 'loadmask'});
 	Ext.getCmp('articletitle').setTitle(newData.title);
-	if(myreadings.conf.current_userid=="") {
+	if(myreadings.tempconf.current_userid=="") {
 		Ext.getCmp('articletitle').down('#bookmark').hide();
 	} else {
 		Ext.getCmp('articletitle').down('#bookmark').show();
@@ -182,10 +182,9 @@ Ext.define('myreadings.view.article', {
             callbackKey: 'callback',
             params: {
 		    id: newData.id,
-		    //pathbase: myreadings.conf.pathbase,
-		    txtbase: myreadings.conf.txtbase,
-		    mylogin: myreadings.conf.username,
-		    mypass: myreadings.conf.password
+		    txtbase: myreadings.tempconf.txtbase,
+		    mylogin: myreadings.user.get('username'),
+		    mypass: myreadings.user.get('password')
             },
             success: function(result, request) {
                 // Unmask the viewport
@@ -201,18 +200,18 @@ Ext.define('myreadings.view.article', {
 				if(!newData.viewer) {
 				for (var fileId in resultat.files) {
 					//console.log(resultat.files[fileId].extension);
-					if(resultat.files[fileId].extension=="EPUB"&&myreadings.conf.epubview=="on") {
+					if(resultat.files[fileId].extension=="EPUB"&&myreadings.tempconf.epubview=="on") {
 						//console.log("show");
-						me.epubpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
+						me.epubpath=myreadings.user.get('pathbase')+me.relativePath+"/"+resultat.files[fileId].filename+".epub";
 						Ext.getCmp('epubview').show();
-					} else if (resultat.files[fileId].extension=="CBZ"&&myreadings.conf.cbzview=="on") {
+					} else if (resultat.files[fileId].extension=="CBZ"&&myreadings.tempconf.cbzview=="on") {
 						//console.log("show");
-						me.cbzpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
+						me.cbzpath=myreadings.user.get('pathbase')+me.relativePath+"/"+resultat.files[fileId].filename+".cbz";
 						Ext.getCmp('cbzview').setText(me.read+" cbz");
 						Ext.getCmp('cbzview').show();
-					} else if (resultat.files[fileId].extension=="CBR"&&myreadings.conf.cbrview=="on") {
+					} else if (resultat.files[fileId].extension=="CBR"&&myreadings.tempconf.cbrview=="on") {
 						//console.log("show");
-						me.cbzpath=myreadings.conf.pathbase+me.relativePath+"/"+resultat.files[fileId].filename+".cbr";
+						me.cbzpath=myreadings.user.get('pathbase')+me.relativePath+"/"+resultat.files[fileId].filename+".cbr";
 						Ext.getCmp('cbzview').setText(me.read+" cbr");
 						Ext.getCmp('cbzview').show();
 					}

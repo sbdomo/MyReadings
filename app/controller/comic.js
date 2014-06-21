@@ -90,18 +90,18 @@ Ext.define('myreadings.controller.comic', {
 	//Lancé pour initialisé l'ouverture d'un livre
 	initComic: function() {
 		var me=this,
-			pagenr=myreadings.currentbook.current_page_nr;
+			pagenr=myreadings.user.get('book_currentpage');
 			titlebar = me.getComictitle();
 		
 		if(pagenr==null||pagenr < 0) {
 			alert("Error with current page number!");
-			myreadings.currentbook.current_page_nr=0;
+			myreadings.user.set('book_currentpage', 0);
 		}
 		
 		//Cache le menu si demandé
-		if(myreadings.settings.hidemenu==1) me.hideToolbars();
+		if(myreadings.user.get('hidemenu')==1) me.hideToolbars();
 		
-		me.showresizemsg=myreadings.settings.showresize;
+		me.showresizemsg=myreadings.user.get('showresize');
 		me.cache.length = 0;
 		me.waiting_for_page = -1;
 		//imageviewer.setLoadingMask(false);
@@ -110,29 +110,29 @@ Ext.define('myreadings.controller.comic', {
 		//imageviewer.loadImage('resources/images/no_image_available.jpg');
 		
 		//Si pas de users, pas de bookmark
-		if(myreadings.conf.current_user=="") me.getBookmark().hide();
+		if(myreadings.user.get('currentuser')=="") me.getBookmark().hide();
 		else  me.getBookmark().show();
 		Ext.data.JsonP.request({
 			url: './comicsreader.php',
 			callbackKey: 'callback',
 			params: {
-				id: myreadings.currentbook.idbook,
-				idbase: myreadings.conf.txtbase,
-				path: myreadings.currentbook.path,
+				id: myreadings.user.get('book_id'),
+				idbase: myreadings.tempconf.txtbase,
+				path: myreadings.user.get('book_path'),
 				page: "number_of_pages",
-				mylogin: myreadings.conf.username,
-				mypass: myreadings.conf.password
+				mylogin: myreadings.user.get('username'),
+				mypass: myreadings.user.get('password')
 			},
 			success: function(result, request) {
 				if(result.success==true) {
-					myreadings.currentbook.number_of_pages=result.resultat.nbrpages;
-					if(pagenr >= myreadings.currentbook.number_of_pages) {
+					myreadings.user.set('book_pages', result.resultat.nbrpages);
+					if(pagenr >= myreadings.user.get('book_pages')) {
 						alert("Error current page number out of bounds!");
-						myreadings.currentbook.current_page_nr=myreadings.currentbook.number_of_pages;
+						myreadings.user.set('book_currentpage', myreadings.user.get('book_pages'));
 					}
-					myreadings.currentbook.reading=true;
-					me.ShowPage(myreadings.currentbook.current_page_nr, null);
-					myreadings.app.getController('articlesControl').saveuser();
+					myreadings.user.set('book_reading', true);
+					me.ShowPage(myreadings.user.get('book_currentpage'), null);
+					myreadings.user.save();
 				} else Ext.Msg.alert("Error", result.message);
 			},
 			failure: function(result, request) {
@@ -141,29 +141,29 @@ Ext.define('myreadings.controller.comic', {
 		});
 	},
 	openComic: function() {
-		var pagenr=myreadings.currentbook.current_page_nr;
+		var pagenr=myreadings.user.get('book_currentpage');
 		//Si pas de users, pas de bookmark
-		if(myreadings.conf.current_user=="") this.getBookmark().hide();
+		if(myreadings.user.get('currentuser')=="") this.getBookmark().hide();
 		else  this.getBookmark().show();
 		
 		//Cache le menu si demandé
-		if(myreadings.settings.hidemenu==1) this.hideToolbars();
+		if(myreadings.user.get('hidemenu')==1) this.hideToolbars();
 		
-		if(!myreadings.currentbook.reading) {
-			myreadings.currentbook.reading=true;
-			myreadings.app.getController('articlesControl').saveuser();
+		if(!myreadings.user.get('book_reading')) {
+			myreadings.user.set('book_reading', true);
+			myreadings.user.save();
 		}
 		
-		this.showresizemsg=myreadings.settings.showresize;
+		this.showresizemsg=myreadings.user.get('showresize');
 		if(pagenr==null||pagenr < 0) {
 			alert("Error with current page number!");
-			myreadings.currentbook.current_page_nr=0;
+			myreadings.user.set('book_currentpage', 0);
 		}
-		if(pagenr >= myreadings.currentbook.number_of_pages) {
+		if(pagenr >= myreadings.user.get('book_pages')) {
 			alert("Error current page number out of bounds!");
-			myreadings.currentbook.current_page_nr=myreadings.currentbook.number_of_pages;
+			myreadings.user.set('book_currentpage', myreadings.user.get('book_pages'));
 		}
-		this.ShowPage(myreadings.currentbook.current_page_nr, null);
+		this.ShowPage(myreadings.user.get('book_currentpage'), null);
 	},
 	onShow: function() {
 		this.UpdateSettings();
@@ -204,7 +204,7 @@ Ext.define('myreadings.controller.comic', {
 		/*C'est déjà dans UpdateSettings
 		
 		// 1: Fit width, 2: Full page
-		if (myreadings.settings.page_fit_mode == 2) {
+		if (myreadings.user.get('page_fit_mode') == 2) {
 			imageviewer.setAutoFitWidth(true);
 			imageviewer.setAutoFitHeight(true);
 		} else {
@@ -213,8 +213,8 @@ Ext.define('myreadings.controller.comic', {
 			imageviewer.setAutoFitHeight(false);
 		}
 		
-		imageviewer.setZoomOnSingleTap(myreadings.settings.zoom_on_tap == 1);
-		imageviewer.setZoomOnDoubleTap(myreadings.settings.zoom_on_tap == 2);
+		imageviewer.setZoomOnSingleTap(myreadings.user.get('zoom_on_tap') == 1);
+		imageviewer.setZoomOnDoubleTap(myreadings.user.get('zoom_on_tap') == 2);
 		*/
 	},
 	UpdateSettings: function() {
@@ -226,7 +226,7 @@ Ext.define('myreadings.controller.comic', {
 		//imageviewer = me.getImageviewer1();
 		
 		// 1: Fit width, 2: Full page
-		if (myreadings.settings.page_fit_mode == 2) {
+		if (myreadings.user.get('page_fit_mode') == 2) {
 			imageviewer.setAutoFitWidth(true);
 			imageviewer.setAutoFitHeight(true);
 		} else {
@@ -235,8 +235,8 @@ Ext.define('myreadings.controller.comic', {
 			imageviewer.setAutoFitHeight(false);
 		}
 		
-		imageviewer.setZoomOnSingleTap(myreadings.settings.zoom_on_tap == 1);
-		imageviewer.setZoomOnDoubleTap(myreadings.settings.zoom_on_tap == 2);
+		imageviewer.setZoomOnSingleTap(myreadings.user.get('zoom_on_tap') == 1);
+		imageviewer.setZoomOnDoubleTap(myreadings.user.get('zoom_on_tap') == 2);
 		
 		imageviewer.resize();
 	},
@@ -255,8 +255,7 @@ Ext.define('myreadings.controller.comic', {
 		else if(oldpagenr<pagenr) sens="left";
 		else if(oldpagenr>pagenr) sens="right";
 		
-		console.log("sens "+sens);
-		//alert(sens+pagenr+" "+myreadings.currentbook.current_page_nr);
+		//console.log("sens "+sens);
 		if(sens=="none") imageviewer=me.getComicview().getActiveItem().down('imageviewer');
 		else {
 			if(me.getComicview().getActiveItem().getItemId()=='imageviewercontainer1') imageviewer = me.getImageviewer2();
@@ -268,14 +267,14 @@ Ext.define('myreadings.controller.comic', {
 		
 		var scroller = imageviewer.getScrollable().getScroller();
 		
-		if (pagenr < 0 || pagenr >= myreadings.currentbook.number_of_pages) {
-			console.log("pagenr " + pagenr + " out of bounds [0.."+(myreadings.currentbook.number_of_pages-1)+"]");
+		if (pagenr < 0 || pagenr >= myreadings.user.get('book_pages')) {
+			console.log("pagenr " + pagenr + " out of bounds [0.."+(myreadings.user.get('book_pages')-1)+"]");
 			return;
 		}
-		titlebar.setTitle(myreadings.currentbook.name + " " + (pagenr + 1)+ "/" + myreadings.currentbook.number_of_pages);
+		titlebar.setTitle(myreadings.user.get('book_title') + " " + (pagenr + 1)+ "/" + myreadings.user.get('book_pages'));
 		// todo: show loading indicator in toolbar and remove it when image is loaded.
 		
-		progressbutton.setText("" + (pagenr + 1)+ "/" + myreadings.currentbook.number_of_pages);
+		progressbutton.setText("" + (pagenr + 1)+ "/" + myreadings.user.get('book_pages'));
 		scroller.scrollTo(0,0);
 		if ((me.preload_count > 0) && me.cache[pagenr] && me.cache[pagenr].img) {
 
@@ -312,14 +311,14 @@ Ext.define('myreadings.controller.comic', {
 	    	i = 0;
 	    // Clear old cache images, not the page info.
 	    //avant preload_count
-	    for (i = 0; i <= myreadings.currentbook.current_page_nr - me.preload_count - 1; i++) {
+	    for (i = 0; i <= myreadings.user.get('book_currentpage') - me.preload_count - 1; i++) {
 		    if (me.cache[i] && me.cache[i].img) {
 			    me.cache[i].img.destroy();
 			    delete me.cache[i].img;
 		    }
 	    }
 	    //avant preload_count
-	    for (i = myreadings.currentbook.current_page_nr + me.preload_count + 1; i < myreadings.currentbook.number_of_pages; i++) {
+	    for (i = myreadings.user.get('book_currentpage') + me.preload_count + 1; i < myreadings.user.get('book_pages'); i++) {
 		    if (me.cache[i] && me.cache[i].img) {
 			    me.cache[i].img.destroy();
 			    delete me.cache[i].img;
@@ -327,14 +326,14 @@ Ext.define('myreadings.controller.comic', {
 	    }
 	    
 	    // Preload the next and previous pages.
-	    for (i = myreadings.currentbook.current_page_nr; i <= myreadings.currentbook.current_page_nr + me.preload_count; i++) me.PreloadPage(i);
+	    for (i = myreadings.user.get('book_currentpage'); i <= myreadings.user.get('book_currentpage') + me.preload_count; i++) me.PreloadPage(i);
 	    
-	    for (i = myreadings.currentbook.current_page_nr - 1; i >= myreadings.currentbook.current_page_nr - me.preload_count; i--) me.PreloadPage(i);
+	    for (i = myreadings.user.get('book_currentpage') - 1; i >= myreadings.user.get('book_currentpage') - me.preload_count; i--) me.PreloadPage(i);
 	},
 	PreloadPage: function(pagenr) {
 		var me = this;
 		
-		if (pagenr < 0 || pagenr >= myreadings.currentbook.number_of_pages) return;
+		if (pagenr < 0 || pagenr >= myreadings.user.get('currentbook.book_pages')) return;
 		
 		if (me.cache[pagenr]) {
 			if (!me.cache[pagenr].img) {
@@ -348,12 +347,12 @@ Ext.define('myreadings.controller.comic', {
 				url: './comicsreader.php',
 				callbackKey: 'callback',
 				params: {
-					id: myreadings.currentbook.idbook,
-					idbase: myreadings.conf.txtbase,
-					path: myreadings.currentbook.path,
+					id: myreadings.user.get('book_id'),
+					idbase: myreadings.user.get('txtbase'),
+					path: myreadings.user.get('book_path'),
 					page: pagenr,
-					mylogin: myreadings.conf.username,
-					mypass: myreadings.conf.password
+					mylogin: myreadings.user.get('username'),
+					mypass: myreadings.user.get('password')
 				},
 				success: function(result, request) {
 					if(result.success==true) {
@@ -372,7 +371,7 @@ Ext.define('myreadings.controller.comic', {
 	},
 	PreloadImage: function(pagenr) {
 	    var me = this;
-	    if (pagenr < 0 || pagenr >= myreadings.currentbook.number_of_pages) return;
+	    if (pagenr < 0 || pagenr >= myreadings.user.get('book_pages')) return;
 	    
 	    if (!me.cache[pagenr]) {
 		    console.log("PreloadImage called with no cache entry for page " + pagenr);
@@ -413,7 +412,7 @@ Ext.define('myreadings.controller.comic', {
 	    var me = this;
 	    var s = "ImageCache: ";
 	    var i = 0;
-	    for (i = 0; i < myreadings.currentbook.number_of_pages; i++) {
+	    for (i = 0; i < myreadings.user.get('book_pages'); i++) {
 		    if (me.cache[i] && me.cache[i].img) s += " " + (i+1);
 	    }
 	    
@@ -437,7 +436,6 @@ Ext.define('myreadings.controller.comic', {
 			scroller = imageviewer.getScrollable().getScroller(),
 			nextPageIcon = me.getNextPageIcon(),
 			previousPageIcon = me.getPrevPageIcon();
-		//console.log('Image Loaded '+myreadings.currentbook.current_page_nr);
 		if(imageviewer.getItemId()=="imageviewer1") me.getLoadingIndicator1().hide();
 		else me.getLoadingIndicator2().hide();
 		
@@ -445,9 +443,9 @@ Ext.define('myreadings.controller.comic', {
 		previousPageIcon.hide();
 		
 		scroller.scrollTo(0,0);
-		me.getSlider().setValue((myreadings.currentbook.current_page_nr / (myreadings.currentbook.number_of_pages-1)) * SLIDER_RANGE);
+		me.getSlider().setValue((myreadings.user.get('book_currentpage') / (myreadings.user.get('book_pages')-1)) * SLIDER_RANGE);
 		
-		myreadings.app.getController('articlesControl').saveuser();
+		myreadings.user.save();
 	},
 
 //*******Comportement des différents objets pour la navigation dans le livre
@@ -456,10 +454,11 @@ Ext.define('myreadings.controller.comic', {
 		var me = this,
 			nextPageIcon = me.getNextPageIcon();
 		
-		if (myreadings.currentbook.current_page_nr < (myreadings.currentbook.number_of_pages-1)) {
+		if (myreadings.user.get('book_currentpage') < (myreadings.user.get('book_pages')-1)) {
 			nextPageIcon.show();
-			var oldnr=myreadings.currentbook.current_page_nr;
-			Ext.defer(function() { me.ShowPage(++myreadings.currentbook.current_page_nr, oldnr); }, 150);
+			var oldnr=myreadings.user.get('book_currentpage');
+			myreadings.user.set('book_currentpage', oldnr+1);
+			Ext.defer(function() { me.ShowPage(myreadings.user.get('book_currentpage'), oldnr); }, 150);
 		} else {
 			me.onBookEnd();
 		}
@@ -468,11 +467,12 @@ Ext.define('myreadings.controller.comic', {
 		var me = this,
 			prevPageIcon = me.getPrevPageIcon();
 		
-		if (myreadings.currentbook.current_page_nr > 0) {
+		if(myreadings.user.get('book_currentpage') > 0) {
 			prevPageIcon.show();
 			Ext.defer(function() { this.hide(); }, 500, prevPageIcon);
-			var oldnr=myreadings.currentbook.current_page_nr;
-			Ext.defer(function() { me.ShowPage(--myreadings.currentbook.current_page_nr, oldnr); }, 150);
+			var oldnr=myreadings.user.get('book_currentpage');
+			myreadings.user.set('book_currentpage', oldnr-1);
+			Ext.defer(function() { me.ShowPage(myreadings.user.get('book_currentpage'), oldnr); }, 150);
 		} else {
 			me.onCloseButton();
 		}
@@ -483,7 +483,7 @@ Ext.define('myreadings.controller.comic', {
 		// In order to prevent double page turns, stop event propagation here.
 		var me = this;
 		
-		if (myreadings.settings.toggle_paging_bar == 2) me.onToggleToolbars();
+		if (myreadings.user.get('toggle_paging_bar') == 2) me.onToggleToolbars();
 		
 		event.stopPropagation();
 		return false;
@@ -521,17 +521,17 @@ Ext.define('myreadings.controller.comic', {
 		// If clicked in the image, then the event for the image comes before the event of the figure.
 		// In order to prevent double page turns, stop event propagation here.
 		var me = this;
-		if (event.pageX < myreadings.settings.page_change_area_width) {
+		if (event.pageX < myreadings.user.get('page_change_area_width')) {
 			me.onPreviousButton();
 			event.stopPropagation();
 			return true;
 		} else {
-			if (event.pageX > window.outerWidth - myreadings.settings.page_change_area_width) {
+			if (event.pageX > window.outerWidth - myreadings.user.get('page_change_area_width')) {
 				me.onNextButton();
 				event.stopPropagation();
 				return true;
 			} else {
-				if (myreadings.settings.toggle_paging_bar == 1) {
+				if (myreadings.user.get('toggle_paging_bar') == 1) {
 					me.onToggleToolbars();
 				}
 				
@@ -554,13 +554,13 @@ Ext.define('myreadings.controller.comic', {
 			nextPageIcon = me.getNextPageIcon(),
 			prevPageIcon = me.getPrevPageIcon();
 		
-		if ((scroller.position.x < scroller.getMinPosition().x - myreadings.settings.page_turn_drag_threshold) || 
-			(scroller.position.y < scroller.getMinPosition().y - myreadings.settings.page_turn_drag_threshold))
+		if ((scroller.position.x < scroller.getMinPosition().x - myreadings.user.get('page_turn_drag_threshold')) || 
+			(scroller.position.y < scroller.getMinPosition().y - myreadings.user.get('page_turn_drag_threshold')))
 		{
 			prevPageIcon.show();
 		} else {
-			if ((scroller.position.x > scroller.getMaxPosition().x + myreadings.settings.page_turn_drag_threshold) || 
-				(scroller.position.y > scroller.getMaxPosition().y + myreadings.settings.page_turn_drag_threshold))
+			if ((scroller.position.x > scroller.getMaxPosition().x + myreadings.user.get('page_turn_drag_threshold')) || 
+				(scroller.position.y > scroller.getMaxPosition().y + myreadings.user.get('page_turn_drag_threshold')))
 			{
 				nextPageIcon.show();
 			} else {
@@ -580,13 +580,13 @@ Ext.define('myreadings.controller.comic', {
 			//imageviewer = me.getImageviewer1(),
 			scroller = imageviewer.getScrollable().getScroller();
 		
-		if ((scroller.position.x < scroller.getMinPosition().x - myreadings.settings.page_turn_drag_threshold) || 
-			(scroller.position.y < scroller.getMinPosition().y - myreadings.settings.page_turn_drag_threshold))
+		if ((scroller.position.x < scroller.getMinPosition().x - myreadings.user.get('page_turn_drag_threshold')) || 
+			(scroller.position.y < scroller.getMinPosition().y - myreadings.user.get('page_turn_drag_threshold')))
 		{
 			this.onPreviousButton();
 		} else {
-			if ((scroller.position.x > scroller.getMaxPosition().x + myreadings.settings.page_turn_drag_threshold) || 
-				(scroller.position.y > scroller.getMaxPosition().y + myreadings.settings.page_turn_drag_threshold))
+			if ((scroller.position.x > scroller.getMaxPosition().x + myreadings.user.get('page_turn_drag_threshold')) || 
+				(scroller.position.y > scroller.getMaxPosition().y + myreadings.user.get('page_turn_drag_threshold')))
 			{
 				this.onNextButton();
 			}
@@ -594,14 +594,14 @@ Ext.define('myreadings.controller.comic', {
 	},
 	onSliderChange: function(slider) {
 		var me = this,
-			oldnr=myreadings.currentbook.current_page_nr;
-		myreadings.currentbook.current_page_nr = Math.round((myreadings.currentbook.number_of_pages-1) * slider.getValue() / SLIDER_RANGE);
+			oldnr=myreadings.user.get('book_currentpage');
+		myreadings.user.set('book_currentpage', Math.round((myreadings.user.get('book_pages')-1) * slider.getValue() / SLIDER_RANGE));
 		//Pas de rotation donc: null
-		me.ShowPage(myreadings.currentbook.current_page_nr, null);
+		me.ShowPage(myreadings.user.get('book_currentpage'), null);
 	},
 	onCloseButton: function() {
-		myreadings.currentbook.reading=false;
-		myreadings.app.getController('articlesControl').saveuser();
+		myreadings.user.set('book_reading', false);
+		myreadings.user.save();
 		//UnloadImages
 		this.getImageviewer1().unloadImage();
 		this.getImageviewer2().unloadImage();
@@ -630,19 +630,19 @@ Ext.define('myreadings.controller.comic', {
 			callbackKey: 'callback',
 			params: {
 				action: "getnextinseries",
-				userid: myreadings.conf.current_userid,
-				id: myreadings.currentbook.idbook,
-				base: myreadings.conf.txtbase,
-				mylogin: myreadings.conf.username,
-				mypass: myreadings.conf.password
+				userid:  myreadings.tempconf.current_userid,
+				id: myreadings.user.get('book_id'),
+				base: myreadings.tempconf.txtbase,
+				mylogin: myreadings.user.get('username'),
+				mypass: myreadings.user.get('password')
 			},
 			success: function(result, request) {
 				if(result.success=="true") {
 					me.onCloseButton();
-					if(myreadings.conf.current_user!=""&&result.resultat.bookmark!="-1") {
+					if(myreadings.user.get('currentuser')!=""&&result.resultat.bookmark!="-1") {
 						Ext.Msg.confirm(myreadings.app.getController('articlesControl').localtxt.msg, myreadings.app.getController('articlesControl').localtxt.domarkread, function(confirmed) {
 							if (confirmed == 'yes') {
-								myreadings.app.getController('articlesControl').saveusermark(myreadings.currentbook.idbook, "", -1, "", "bookmark");
+								myreadings.app.getController('articlesControl').saveusermark(myreadings.user.get('book_id'), "", -1, "", "bookmark");
 							}
 							if(result.resultat.books) Ext.defer(function() { me.showNextBook(result.resultat); }, 150);
 						}, this);
@@ -666,10 +666,10 @@ Ext.define('myreadings.controller.comic', {
 			path="";
 		for (var fileId in book.files) {
 			//console.log(resultat.files[fileId].extension);
-			if (book.files[fileId].extension=="CBZ"&&myreadings.conf.cbzview=="on") {
-				path=myreadings.conf.pathbase+ relativePath+ "/"+ book.files[fileId].filename+".cbz";
-			} else if (book.files[fileId].extension=="CBR"&&myreadings.conf.cbrview=="on") {
-				path=myreadings.conf.pathbase+ relativePath+"/"+ book.files[fileId].filename+".cbr";
+			if (book.files[fileId].extension=="CBZ"&&myreadings.tempconf.cbzview=="on") {
+				path=myreadings.user.get('pathbase')+ relativePath+ "/"+ book.files[fileId].filename+".cbz";
+			} else if (book.files[fileId].extension=="CBR"&&myreadings.tempconf.cbrview=="on") {
+				path=myreadings.user.get('pathbase')+ relativePath+"/"+ book.files[fileId].filename+".cbr";
 			}
 		}
 		if(path=="") return;

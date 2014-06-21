@@ -72,28 +72,28 @@ Ext.define('myreadings.view.searchpanel', {
 						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
 						if(!this.getDisabled()) {
 							var mycontroller = myreadings.app.getController('articlesControl');
-							if(myreadings.conf.current_user!="") {
-								myreadings.conf.current_userid="";
+							if(myreadings.user.get('currentuser')!="") {
+								myreadings.tempconf.current_userid="";
 								Ext.Viewport.setMasked({xtype: 'loadmask'});
 								Ext.data.JsonP.request({
 										url: './tools.php',
 										callbackKey: 'callback',
 										params: {
 											action: "getuserid",
-											mylogin: myreadings.conf.username,
-											mypass: myreadings.conf.password,
+											mylogin: myreadings.user.get('username'),
+											mypass: myreadings.user.get('password'),
 											base: selectbox.getRecord().data.text,
-											user: myreadings.conf.current_user
+											user: myreadings.user.get('currentuser')
 										},
 										success: function(result, request) {
 											Ext.Viewport.setMasked(false);
 											if(result.success==false) {
 												alert(result.message);
 											} else {
-												myreadings.conf.current_userid=result.resultat;
+												myreadings.tempconf.current_userid=result.resultat;
 											}
-											//console.log("userid "+myreadings.conf.current_userid);
-											//Relance la consultation de la base - type=all (et lance saveuser)
+											//console.log("userid "+);
+											//Relance la consultation de la base - type=all (et lance save)
 											myreadings.app.getController('articlesControl').showArticles({
 													pathbase: value,
 													type: "all",
@@ -103,7 +103,7 @@ Ext.define('myreadings.view.searchpanel', {
 										},
 										failure: function(result, request) {
 											Ext.Viewport.setMasked(false);
-											//Relance la consultation de la base - type=all (et lance saveuser)
+											//Relance la consultation de la base - type=all (et lance save)
 											myreadings.app.getController('articlesControl').showArticles({
 													pathbase: value,
 													type: "all",
@@ -124,7 +124,7 @@ Ext.define('myreadings.view.searchpanel', {
 							Ext.getCmp('listviewSearchfield').setValue('');
 							mycontroller.isList=false;
 							
-							myreadings.currentbook.idbook=null;
+							myreadings.user.set('book_id', null);
 							mycontroller.showViewerBt();
 							
 							//var form=this.getParent().getParent();

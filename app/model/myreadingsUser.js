@@ -2,8 +2,9 @@ Ext.define('myreadings.model.myreadingsUser', {
 	extend: 'Ext.data.Model',
 	config: {
 		fields: [
-			{name: 'name', type: 'string'},
-			{name: 'pass', type: 'string'},
+			{name: 'id', type: 'string'},
+			{name: 'username', type: 'string'},
+			{name: 'password', type: 'string'},
 			{name: 'pathbase', type: 'string'}, //chemin de la base de données
 			{name: 'type', type: 'string', defaultValue:""}, //type d'interrogation, ex: all: tout, authorname par auteur
 			{name: 'find', type: 'string', defaultValue:""}, //texte à rechercher
@@ -28,14 +29,14 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'namefilter', type: 'string', defaultValue:""}, //nom du filtre
 			
 			//settings comic viewer
-			{name: 'zoom_on_tap', type: 'int', defaultValue: 1},
-			{name: 'toggle_paging_bar', type: 'int', defaultValue: 2},
-			{name: 'page_turn_drag_threshold', type: 'int', defaultValue: 75},
-			{name: 'page_fit_mode', type: 'int', defaultValue: 1},
-			{name: 'page_change_area_width', type: 'int', defaultValue: 50},
-			{name: 'open_current_comic_at_launch', type: 'int', defaultValue: 1},
-			{name: 'showresize', type: 'int', defaultValue: 0},
-			{name: 'hidemenu', type: 'int', defaultValue: 0},
+			{name: 'zoom_on_tap', type: 'int', defaultValue: 1}, //Zoom: 1:SingleTap, 2:DoubleTap
+			{name: 'toggle_paging_bar', type: 'int', defaultValue: 2}, //Cache barre d'outils: 1:SingleTap, 2:DoubleTap
+			{name: 'page_turn_drag_threshold', type: 'int', defaultValue: 75}, //taille déplacement pour swipe
+			{name: 'page_fit_mode', type: 'int', defaultValue: 1}, // 1: Fit width, 2: Full page
+			{name: 'page_change_area_width', type: 'int', defaultValue: 50}, //Largeur bande pour changement de page
+			{name: 'open_current_comic_at_launch', type: 'int', defaultValue: 1}, //Open comic at launch
+			{name: 'showresize', type: 'int', defaultValue: 0}, //show message if comic page is resized
+			{name: 'hidemenu', type: 'int', defaultValue: 0}, //hide menu when comic is open
 			//setting epub viewer
 			{name: 'epub_mode', type: 'string', defaultValue: 'jour'},
 			{name: 'epub_font', type: 'string', defaultValue: 'arial'},
@@ -51,7 +52,7 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'book_pages', type: 'int'},
 			{name: 'book_type', type: 'string'}
 		],
-
+		idProperty: 'id',
 		proxy: {
 			type: 'localstorage',
 			id: 'login-myreadings'

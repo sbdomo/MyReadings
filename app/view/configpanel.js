@@ -3,9 +3,12 @@ Ext.define('myreadings.view.configpanel', {
 	xtype: 'configpanel',
 	id: 'configpanel',
 	requires: ['Ext.field.Password','Ext.form.FieldSet', 'Ext.field.Select'],
+	txtConfiguration: "",
+	txtAccount: "",
 	txtTitleLogin: "",
 	txtLogin: "",
 	txtPass: "",
+	txtUser: "",
 	txtLoginButton: "",
 	txtViewer: "",
 	txtbook_at_launch: "",
@@ -21,6 +24,9 @@ Ext.define('myreadings.view.configpanel', {
 	nbline: "",
 	nbbyline: "",
 	txtchgbookButton: "",
+	txtSaveaccount: "",
+	txtRestoreaccount: "",
+	txtTools: "",
 
 	config: {
 		//layout:'vbox',
@@ -32,12 +38,12 @@ Ext.define('myreadings.view.configpanel', {
 		{
 			xtype:'titlebar',
 			docked: 'top',
-			title: 'Configuration',
+			title: this.txtConfiguration,
 			//docked: 'bottom',
 			items: [
 			{
 				ui: 'decline',
-				name: 'bthide',
+				itemId: 'bthide',
 				align: 'left',
 				iconCls: 'delete',
 				iconMask: true//,
@@ -50,52 +56,174 @@ Ext.define('myreadings.view.configpanel', {
 		},
 		{
 			xtype: 'fieldset',
+			title: this.txtAccount,
+		items:[
+		{
+			xtype: 'fieldset',
 			title: this.txtTitleLogin,
-			name: 'loginfieldset',
+			itemId: 'loginfieldset',
 			items:[
 			{
 				xtype: 'textfield',
-				name: 'login',
+				itemId: 'login',
 				autoCapitalize: false,
 				placeHolder: this.txtLogin
 			},
 			{
 				xtype: 'passwordfield',
-				name: 'pass',
+				itemId: 'pass',
 				placeHolder: this.txtPass
+			},
+			{
+				itemId:"txtlogin",
+				hidden:true,
+				padding: 10,
+				html: ""
+			},
+			{
+				xtype: 'selectfield',
+				label: this.txtUser,
+				name:'listuser',
+				hidden:true,
+				id:'listuser',
+				itemId:'listuser',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.user.set('currentuser', value);
+							myreadings.tempconf.current_userid="";
+							
+							//Cache la liste dans searchview si elle est ouverte
+							Ext.getCmp('searchview').setActiveItem(0);
+							myreadings.app.getController('articlesControl').isList=false;
+							
+							Ext.Viewport.setMasked({xtype: 'loadmask'});
+							Ext.data.JsonP.request({
+								url: './tools.php',
+								callbackKey: 'callback',
+								params: {
+									action: "getuserid",
+									mylogin: myreadings.user.get('username'),
+									mypass: myreadings.user.get('password'),
+									base: myreadings.tempconf.txtbase,
+									user: myreadings.user.get('currentuser')
+								},
+								success: function(result, request) {
+									Ext.Viewport.setMasked(false);
+									if(result.success==false) {
+										alert(result.message);
+									} else {
+										myreadings.tempconf.current_userid=result.resultat;
+									}
+									//Relance la consultation de la base (et lance save)
+									myreadings.app.getController('articlesControl').showArticles({
+										debut: 6
+									});
+									
+								},
+								failure: function(result, request) {
+									Ext.Viewport.setMasked(false);
+									//Relance la consultation de la base (et lance save)
+									myreadings.app.getController('articlesControl').showArticles({
+										debut: 6
+									});
+									alert('Php Error for userid.');
+								}
+							});	
+						}
+					}
+				}
 			},
 			{
 				xtype: 'button',
 				margin: '10 40 10 40',
 				text: this.txtLoginButton,
-				name: 'loginbutton',
+				itemId: 'loginbutton',
 				ui: 'confirm'
 			}
 			]
 		},
 		{
 			xtype: 'fieldset',
-			items:[
+			itemId: 'configViewer',
+			title: this.txtViewer,
+			items: [
 			{
 				xtype: 'togglefield',
-				label: this.forced,
+				label: this.txtbook_at_launch,
 				labelWrap: true,
-				hidden: true,
 				labelWidth: '60%',
-				itemId: 'forced',
+				itemId: 'open_book_at_launch',
+				disabled: true,
 				listeners:
 				{
 					change:function(selectbox,value,oldvalue){
-						//console.log(value);
-						if(value==1) {
-							myreadings.conf.forced="true";
-							Ext.Msg.alert(this.getParent().getParent().info,this.getParent().getParent().forced_msg);
-						} else myreadings.conf.forced="false";
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.user.set('open_current_comic_at_launch', value);
+							myreadings.user.save();
+						}
+					}
+				}
+			},
+			{
+				xtype: 'togglefield',
+				label: this.txtresize,
+				labelWrap: true,
+				labelWidth: '60%',
+				itemId: 'showresize',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.user.set('showresize', value);
+							myreadings.user.save();
+						}
+					}
+				}
+			},
+			{
+				xtype: 'togglefield',
+				label: this.hidemenu,
+				labelWrap: true,
+				labelWidth: '60%',
+				itemId: 'hidemenu',
+				disabled: true,
+				listeners:
+				{
+					change:function(selectbox,value,oldvalue){
+						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
+						if(!this.getDisabled()) {
+							myreadings.user.set('hidemenu', value);
+							myreadings.user.save();
+						}
 					}
 				}
 			}
-			
 			]
+		},
+		{
+				xtype: 'button',
+				margin: '10 40 10 40',
+				hidden:true,
+				text: this.txtSaveaccount,
+				itemId: 'saveaccount',
+				ui: 'confirm'
+		},
+		{
+				xtype: 'button',
+				margin: '10 40 10 40',
+				text: this.txtRestoreaccount,
+				hidden:true,
+				itemId: 'restoreaccount'//,
+				//ui: 'confirm'
+		}
+		]
 		},
 		{
 			xtype: 'fieldset',
@@ -187,116 +315,25 @@ Ext.define('myreadings.view.configpanel', {
 		},
 		{
 			xtype: 'fieldset',
-			itemId: 'configViewer',
-			title: this.txtViewer,
-			items: [
-			{
-				xtype: 'selectfield',
-				label: "User", //this.txtSelectbase,
-				name:'listuser',
-				id:'listuser',
-				itemId:'listuser',
-				disabled: true,
-				listeners:
-				{
-					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-							myreadings.conf.current_user=value;
-							myreadings.conf.current_userid="";
-							
-							//Cache la liste dans searchview si elle est ouverte
-							Ext.getCmp('searchview').setActiveItem(0);
-							myreadings.app.getController('articlesControl').isList=false;
-							
-							Ext.Viewport.setMasked({xtype: 'loadmask'});
-							Ext.data.JsonP.request({
-								url: './tools.php',
-								callbackKey: 'callback',
-								params: {
-									action: "getuserid",
-									mylogin: myreadings.conf.username,
-									mypass: myreadings.conf.password,
-									base: myreadings.conf.txtbase,
-									user: myreadings.conf.current_user
-								},
-								success: function(result, request) {
-									Ext.Viewport.setMasked(false);
-									if(result.success==false) {
-										alert(result.message);
-									} else {
-										myreadings.conf.current_userid=result.resultat;
-									}
-									//Relance la consultation de la base (et lance saveuser)
-									myreadings.app.getController('articlesControl').showArticles({
-										debut: 6
-									});
-									
-								},
-								failure: function(result, request) {
-									Ext.Viewport.setMasked(false);
-									//Relance la consultation de la base (et lance saveuser)
-									myreadings.app.getController('articlesControl').showArticles({
-										debut: 6
-									});
-									alert('Php Error for userid.');
-								}
-							});	
-						}
-					}
-				}
-			},
+			itemId: "tools",
+			hidden: true,
+			title: this.txtTools,
+			items:[
 			{
 				xtype: 'togglefield',
-				label: this.txtbook_at_launch,
+				label: this.forced,
 				labelWrap: true,
 				labelWidth: '60%',
-				itemId: 'open_book_at_launch',
-				disabled: true,
+				//hidden:true,
+				itemId: 'forced',
 				listeners:
 				{
 					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-							myreadings.settings.open_current_comic_at_launch=value;
-							myreadings.app.getController('articlesControl').saveuser();
-						}
-					}
-				}
-			},
-			{
-				xtype: 'togglefield',
-				label: this.txtresize,
-				labelWrap: true,
-				labelWidth: '60%',
-				itemId: 'showresize',
-				disabled: true,
-				listeners:
-				{
-					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-							myreadings.settings.showresize=value;
-							myreadings.app.getController('articlesControl').saveuser();
-						}
-					}
-				}
-			},
-			{
-				xtype: 'togglefield',
-				label: this.hidemenu,
-				labelWrap: true,
-				labelWidth: '60%',
-				itemId: 'hidemenu',
-				disabled: true,
-				listeners:
-				{
-					change:function(selectbox,value,oldvalue){
-						//Test si enabled, ne fait rien sinon (sert pour le setoption lors de l'initialisation)
-						if(!this.getDisabled()) {
-							myreadings.settings.hidemenu=value;
-							myreadings.app.getController('articlesControl').saveuser();
-						}
+						//console.log(value);
+						if(value==1) {
+							myreadings.tempconf.forced="true";
+							Ext.Msg.alert(this.getParent().getParent().info,this.getParent().getParent().forced_msg);
+						} else myreadings.tempconf.forced="false";
 					}
 				}
 			}

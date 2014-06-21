@@ -13,15 +13,15 @@ Ext.define('myreadings.view.Articles', {
             this.tplinit(myreadings.app.getController('articlesControl').profil),
 	    {
 		    pathCover: function(relativepath, id) {
-			    if(myreadings.conf.fetchmode=='direct') {
-				    return myreadings.conf.pathbase+relativepath+"/cover.jpg";
+			    if(myreadings.tempconf.fetchmode=='direct') {
+				    return myreadings.user.get('pathbase')+relativepath+"/cover.jpg";
 			    } else {
 				    var params = {
 					    path: relativepath,
 					    id: id,
-					    base: myreadings.conf.txtbase,
-					    mylogin: myreadings.conf.username,
-					    mypass: myreadings.conf.password
+					    base: myreadings.tempconf.txtbase,
+					    mylogin: myreadings.user.get('username'),
+					    mypass: myreadings.user.get('password')
 				    };
 				    var paramsencode = Ext.urlEncode(params);
 				    return "./cover.php?"+paramsencode;
@@ -34,7 +34,7 @@ Ext.define('myreadings.view.Articles', {
     	this.callParent(arguments);
     },
     tplinit: function(profil) {
-    	var showcust=myreadings.settings.showcust;
+    	var showcust=myreadings.user.get('showcust');
     	//version iPad - iPad mini
     	//Configuration de l'affichage d'un livre
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
@@ -175,10 +175,10 @@ Ext.define('myreadings.view.Articles', {
 			'</div></div>';
 		    
 	    var mycontroller = myreadings.app.getController('articlesControl');
-	    var portline=myreadings.settings.portline;
-	    var portbyline=myreadings.settings.portbyline;
-	    var landline=myreadings.settings.landline;
-	    var landbyline=myreadings.settings.landbyline;
+	    var portline=myreadings.user.get('portline');
+	    var portbyline=myreadings.user.get('portbyline');
+	    var landline=myreadings.user.get('landline');
+	    var landbyline=myreadings.user.get('landbyline');
 	    var mytplportrait;
 	    var mytpllandscape;
 	    if(profil=="gtab") {
