@@ -17,12 +17,16 @@ Ext.define('myreadings.controller.articlesControl', {
 	    viewerBt: 'articleslist #viewer',
 	    viewerBt2: 'articlesserieslist #viewer',
 	    titlebarserie: 'articlesserieslist #titlebarserie',
-	    loginBt: 'configpanel [name=loginbutton]',
-	    usernameCt: 'configpanel [name=login]',
-	    passwordCt: 'configpanel [name=pass]',
-	    loginfieldset: 'configpanel [name=loginfieldset]',
-	    btconfigpanelhide: 'configpanel [name=bthide]',
-	    
+	    loginfieldset: 'configpanel #loginfieldset',
+	    loginBt: 'configpanel #loginbutton',
+	    saveaccount: 'configpanel #saveaccount',
+	    restoreaccount: 'configpanel #restoreaccount',
+	    usernameCt: 'configpanel #login',
+	    passwordCt: 'configpanel #pass',
+	    btconfigpanelhide: 'configpanel #bthide',
+	    txtlogin: 'configpanel #txtlogin',
+	    configlistuser: 'configpanel #listuser',
+	    configtools: 'configpanel #tools',
 	    //comicSettings: 'configpanel [name=comicSettings]',
 	    configViewer: 'configpanel #configViewer',
 	    open_book_at_launch: 'configpanel #open_book_at_launch',
@@ -162,6 +166,12 @@ Ext.define('myreadings.controller.articlesControl', {
 	    },
 	    btsearchfindfilter: {
 		    tap: 'onChangeFilterView'
+	    },
+	    saveaccount: {
+		    tap: 'onSaveaccount'
+	    },
+	    restoreaccount: {
+		    tap: 'onRestoreaccount'
 	    }
         },
 
@@ -183,121 +193,66 @@ Ext.define('myreadings.controller.articlesControl', {
         me.callParent();
 	me.isList = false;
 	if(!me.isInit) {
-		myreadings.currentbook = {};
-		myreadings.settings = {};
-		myreadings.conf = {};
-		myreadings.conf.current_userid="";
+		myreadings.tempconf = {};
+		myreadings.tempconf.offset=0; //Pour calculer le décalage dans le carousel avec les bookmarks
+		myreadings.tempconf.offset2=0; //Pour calculer le décalage dans le carousel d'une série avec les bookmarks
+		myreadings.tempconf.forced="false"; //Pour refaire la couverture
+		myreadings.tempconf.current_userid=""; //Id du user (suivant la base)
+		myreadings.tempconf.userchoice="no";
+		//myreadings.tempconf.fetchmode
+		//myreadings.tempconf.epubview
+		//myreadings.tempconf.cbzview
+		//myreadings.tempconf.cbrview
+		//myreadings.tempconf.txtbase
 		
-		myreadings.conf.offset=0;
-		myreadings.conf.offset2=0;
-		myreadings.conf.forced="false";
-		
-		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
+		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load("1", {
 			scope: this,
 			success: function(cachedLoggedInUser) {
 				delete cachedLoggedInUser.phantom;
-				myreadings.conf.username=cachedLoggedInUser.get('name');
-				myreadings.conf.password=cachedLoggedInUser.get('pass');
 				
-				myreadings.conf.pathbase=cachedLoggedInUser.get('pathbase');
-				myreadings.conf.current_user=cachedLoggedInUser.get('currentuser');
-				myreadings.conf.showifread=cachedLoggedInUser.get('showifread');
-				me.order=cachedLoggedInUser.get('order');
-				me.gpseries=cachedLoggedInUser.get('gpseries');
-				
-				me.type=cachedLoggedInUser.get('type');
-				me.find=cachedLoggedInUser.get('find');
-				me.start=cachedLoggedInUser.get('start');
-				me.idlist=cachedLoggedInUser.get('idlist');
-				//me.list=cachedLoggedInUser.get('list');
-				//me.search=cachedLoggedInUser.get('search');
-				
-				myreadings.settings.chg_nbbook=cachedLoggedInUser.get('chg_nbbook');
-				myreadings.settings.showcust=cachedLoggedInUser.get('showcust');
-				myreadings.settings.landline=cachedLoggedInUser.get('landline');
-				myreadings.settings.landbyline=cachedLoggedInUser.get('landbyline');
-				myreadings.settings.portline=cachedLoggedInUser.get('portline');
-				myreadings.settings.portbyline=cachedLoggedInUser.get('portbyline');
-				
-				myreadings.conf.listfilter=cachedLoggedInUser.get('listfilter');
-				myreadings.conf.idfilter=cachedLoggedInUser.get('idfilter');
-				myreadings.conf.namelistfilter=cachedLoggedInUser.get('namelistfilter');
-				myreadings.conf.namefilter=cachedLoggedInUser.get('namefilter');
-				
-				myreadings.settings.zoom_on_tap=cachedLoggedInUser.get('zoom_on_tap');
-				myreadings.settings.toggle_paging_bar=cachedLoggedInUser.get('toggle_paging_bar');
-				myreadings.settings.page_turn_drag_threshold=cachedLoggedInUser.get('page_turn_drag_threshold');
-				myreadings.settings.page_fit_mode=cachedLoggedInUser.get('page_fit_mode');
-				myreadings.settings.page_change_area_width=cachedLoggedInUser.get('page_change_area_width');
-				myreadings.settings.open_current_comic_at_launch=cachedLoggedInUser.get('open_current_comic_at_launch');
-				myreadings.settings.showresize=cachedLoggedInUser.get('showresize');
-				myreadings.settings.hidemenu=cachedLoggedInUser.get('hidemenu');
-				
-				myreadings.settings.epub_mode=cachedLoggedInUser.get('epub_mode');
-				myreadings.settings.epub_font=cachedLoggedInUser.get('epub_font');
-				myreadings.settings.epub_fontsize=cachedLoggedInUser.get('epub_fontsize');
-				
-				myreadings.currentbook.idbook=cachedLoggedInUser.get('book_id');
-				myreadings.currentbook.reading=cachedLoggedInUser.get('book_reading');
-				myreadings.currentbook.name=cachedLoggedInUser.get('book_title');
-				//myreadings.currentbook.idbase=cachedLoggedInUser.get('book_idbase');
-				//Contiendra le path complet du fichier
-				myreadings.currentbook.path=cachedLoggedInUser.get('book_path');
-				myreadings.currentbook.current_page_nr=cachedLoggedInUser.get('book_currentpage');
-				myreadings.currentbook.number_of_pages=cachedLoggedInUser.get('book_pages');
-				myreadings.currentbook.book_type=cachedLoggedInUser.get('book_type');
-				
+				myreadings.user = cachedLoggedInUser;				
+
 				
 				console.info('Auto-Login succeeded.');
 			},
-			failure : function() {
-				myreadings.conf.username="";
-				myreadings.conf.password="";
-				myreadings.conf.pathbase="";
-				myreadings.conf.current_user="";
-				myreadings.conf.showifread="all";
-				me.order="recent";
-				me.gpseries=0;
-				me.type="";
-				me.find="";
-				me.start="0";
-				me.idlist="";
-				//me.list="author";
-				//me.search="";
+			failure : function() {				
+				myreadings.user= Ext.create('myreadings.model.myreadingsUser', {
+					id: "1",
+					username: "",
+					password: "",
+					pathbase: "",
+					type: "",
+					find: "",
+					start: "",
+					order: "recent",
+					gpseries: 0,
+					idlist: "",
+					currentuser: "",
+					showifread: "all",
+					chg_nbbook: 0,
+					
+					namelistfilter: "",
+					listfilter: "",
+					
+					namefilter: "",
+					zoom_on_tap: 1,
+					toggle_paging_bar: 2,
+					page_turn_drag_threshold: 75,
+					page_fit_mode: 1,
+					page_change_area_width: 50,
+					open_current_comic_at_launch: 1,
+					showresize: 0,
+					hidemenu: 0,
+					epub_mode: "jour",
+					epub_font: "arial",
+					epub_fontsize: "1.45",
+					book_reading: false
+					
+					
+				});
+				myreadings.user.save();
 				
-				myreadings.settings.chg_nbbook=0;
-				myreadings.settings.showcust=0;
-				
-				myreadings.conf.listfilter="";
-				myreadings.conf.namelistfilter="";
-				myreadings.conf.namefilter="";
-				
-				//*************SETTINGS*****************
-				//Zoom: 1:SingleTap, 2:DoubleTap
-				myreadings.settings.zoom_on_tap =1;
-				//Cache barre d'outils: 1:SingleTap, 2:DoubleTap
-				myreadings.settings.toggle_paging_bar=2;
-				//taille déplacement pour swipe
-				myreadings.settings.page_turn_drag_threshold=75;
-				// 1: Fit width, 2: Full page
-				myreadings.settings.page_fit_mode=1;
-				//Largeur bande pour changement de page
-				myreadings.settings.page_change_area_width=50;
-				//Open comic at launch
-				myreadings.settings.open_current_comic_at_launch=1;
-				//show message if comic page is resized
-				myreadings.settings.showresize=0;
-				//hide menu when comic is open
-				myreadings.settings.hidemenu=0;
-				
-				//epub
-				myreadings.settings.epub_mode="jour";
-				myreadings.settings.epub_font="arial";
-				myreadings.settings.epub_fontsize="1.45";
-				
-				
-				myreadings.currentbook.reading=false;
-				
+
 				console.warn('Auto-Login failed (user was not logged in).');
 			}
 		});
@@ -306,8 +261,8 @@ Ext.define('myreadings.controller.articlesControl', {
             url: './getConfig.php',
             callbackKey: 'callback',
             params: {
-            	   mylogin: myreadings.conf.username,
-            	   mypass: myreadings.conf.password
+            	   mylogin: myreadings.user.get('username'),
+            	   mypass: myreadings.user.get('password')
             },
             success: function(result, request) {
 		if(result.success==true) {
@@ -347,31 +302,26 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				}
 				
-				if(myreadings.settings.chg_nbbook!=1) me.defaultProfil();
+				if(myreadings.user.get('chg_nbbook')!=1) me.defaultProfil();
 				Ext.Viewport.add(Ext.create('myreadings.view.main'));
 				me.articleView = Ext.create('myreadings.view.article');
-				//Ext.Viewport.add(Ext.create('myreadings.view.ArticlesList'));
 				Ext.Viewport.add(Ext.create('myreadings.view.articlesserieslist'));
-				//Ext.Viewport.add(Ext.create('myreadings.view.configpanel'));
-				//Ext.Viewport.add(Ext.create('myreadings.view.searchview'));
 				Ext.create('myreadings.view.orderview');
 			}
 			
 			if(result.config.connect=="noprotect"||result.config.connect=="protectok") {
 				if(me.isInit==true) {
 					me.getBtconfigpanelhide().show();
-					//me.getComicSettings().show();
 					me.getConfigViewer().show();
-					//me.getConfigpanel().hide();
 					me.getMain().setActiveItem(0);
 					
 				}
 				
-				myreadings.conf.fetchmode=result.config.fetchmode;
+				myreadings.tempconf.fetchmode=result.config.fetchmode;
 				
-				myreadings.conf.epubview=result.config.epubview;
-				myreadings.conf.cbzview=result.config.cbzview;
-				myreadings.conf.cbrview=result.config.cbrview;
+				myreadings.tempconf.epubview=result.config.epubview;
+				myreadings.tempconf.cbzview=result.config.cbzview;
+				myreadings.tempconf.cbrview=result.config.cbrview;
 				
 				me.bases = result.config.bases;
 				var newOptions = [];
@@ -379,109 +329,133 @@ Ext.define('myreadings.controller.articlesControl', {
 				for (var base in me.bases) {
 					newOptions.push({text: base,  value: me.bases[base]});
 					//Cherche si la dernière base utilisée peut être réouverte
-					if(me.bases[base]==myreadings.conf.pathbase) basevalue=me.bases[base];
+					if(me.bases[base]==myreadings.user.get('pathbase')) basevalue=me.bases[base];
 				}
 				Ext.getCmp('base').setOptions(newOptions);
 				if(basevalue!="") Ext.getCmp('base').setValue(basevalue);
-				else myreadings.currentbook.reading=false;
+				else myreadings.user.set('book_reading', false);
 				
 				//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
 				//Passe en enabled ensuite
 				Ext.getCmp('base').enable();
 				
-				myreadings.conf.pathbase=Ext.getCmp('base').getValue();
-				myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
+				myreadings.user.set('pathbase', Ext.getCmp('base').getValue());
+				myreadings.tempconf.txtbase=Ext.getCmp('base').getRecord().data.text;
 				
 				//console.log("set profil dans config panel " + me.profil);
 				me.getProfil().setTitle(me.localtxt.txtProfil+": "+me.localtxt[me.profil]);
-				me.getChg_nbbook().setValue(myreadings.settings.chg_nbbook);
-				me.getShowcust().setValue(myreadings.settings.showcust);
-				me.getLandline().setValue(myreadings.settings.landline);
-				me.getLandbyline().setValue(myreadings.settings.landbyline);
-				me.getPortline().setValue(myreadings.settings.portline);
-				me.getPortbyline().setValue(myreadings.settings.portbyline);
+				me.getChg_nbbook().setValue(myreadings.user.get('chg_nbbook'));
+				me.getShowcust().setValue(myreadings.user.get('showcust'));
+				me.getLandline().setValue(myreadings.user.get('landline'));
+				me.getLandbyline().setValue(myreadings.user.get('landbyline'));
+				me.getPortline().setValue(myreadings.user.get('portline'));
+				me.getPortbyline().setValue(myreadings.user.get('portbyline'));
 				me.getChg_nbbook().enable();
 				me.getProfil().show();
-				if(myreadings.settings.chg_nbbook==1) {
+				if(myreadings.user.get('chg_nbbook')==1) {
 					me.getConfigport().show();
 					me.getConfigland().show();
 				}
-				me.getOpen_book_at_launch().setValue(myreadings.settings.open_current_comic_at_launch);
+				me.getOpen_book_at_launch().setValue(myreadings.user.get('open_current_comic_at_launch'));
 				me.getOpen_book_at_launch().enable();
-				me.getShowresize().setValue(myreadings.settings.showresize);
+				me.getShowresize().setValue(myreadings.user.get('showresize'));
 				me.getShowresize().enable();
 				
-				me.getHidemenu().setValue(myreadings.settings.hidemenu);
+				me.getHidemenu().setValue(myreadings.user.get('hidemenu'));
 				me.getHidemenu().enable();
 				
-				if(myreadings.conf.fetchmode=="resize_and_cache") me.getForcedThumb().show();
+				if(myreadings.tempconf.fetchmode=="resize_and_cache") {
+					//me.getForcedThumb().show();
+					me.getConfigtools().show();
+				}
 				
 				//Init user
-				//console.log(result.config.users);
-				var listusers = result.config.users;
-				if(listusers!="") {
-					newOptions = [];
-					var uservalue="";
-					for (var usernum in listusers) {
-						newOptions.push({text: listusers[usernum],  value: listusers[usernum]});
-						//Cherche si la dernière base utilisée peut être réouverte
-						if(listusers[usernum]==myreadings.conf.current_user) uservalue=listusers[usernum];
-					}
-					Ext.getCmp('listuser').setOptions(newOptions);
-					if(uservalue!="") Ext.getCmp('listuser').setValue(uservalue);
-					
-					//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
-					//Passe en enabled ensuite
-					Ext.getCmp('listuser').enable();
-					
-					myreadings.conf.current_user=Ext.getCmp('listuser').getValue();
-					
-					me.getShowIfRead().setValue(myreadings.conf.showifread);
-					me.getShowIfRead().enable();
-					
+				if(result.config.connect=="noprotect") {
+					myreadings.tempconf.userchoice="free";
+					me.getTxtlogin().hide();
 				} else {
-					myreadings.conf.current_user="";
-					Ext.getCmp('listuser').hide();
+					if(result.config.account[0]=="Forced") myreadings.tempconf.userchoice="forced";
+					else if(result.config.account[0]=="Free") myreadings.tempconf.userchoice="free";
+				}
+				if(myreadings.tempconf.userchoice=="no") {
+					myreadings.user.set('currentuser', "");
+					me.getTxtlogin().setHtml(me.localtxt.account+": "+myreadings.user.get('username'));
+					me.getShowIfRead().hide();
+				} else if(myreadings.tempconf.userchoice=="forced") {
+					myreadings.user.set('currentuser', result.config.account[1]);
+					me.getTxtlogin().setHtml(me.localtxt.account+": "+myreadings.user.get('username')+ " " + me.localtxt.user+": "+myreadings.user.get('currentuser'));
+					me.getShowIfRead().setValue(myreadings.user.get('showifread'));
+					me.getShowIfRead().enable();
+				} else {
+					if(result.config.connect!="noprotect") {
+						me.getTxtlogin().setHtml(me.localtxt.account+": "+myreadings.user.get('username'));
+						if(myreadings.user.get('currentuser')=="") myreadings.user.set('currentuser', result.config.account[1]);
+					}
+					var listusers = result.config.users;
+					if(listusers!="") {
+						newOptions = [];
+						var uservalue="";
+						for (var usernum in listusers) {
+							newOptions.push({text: listusers[usernum],  value: listusers[usernum]});
+							//Cherche si la dernière base utilisée peut être réouverte
+							if(listusers[usernum]==myreadings.user.get('currentuser')) uservalue=listusers[usernum];
+						}
+						me.getConfiglistuser().setOptions(newOptions);
+						if(uservalue!="") me.getConfiglistuser().setValue(uservalue);
+						
+						//Etat disabled car test dans la fonction change du selectfield pour ne pas déclencher le lancement de change
+						//Passe en enabled ensuite
+						me.getConfiglistuser().enable();
+						
+						myreadings.user.set('currentuser', me.getConfiglistuser().getValue());
+						
+						me.getShowIfRead().setValue(myreadings.user.get('showifread'));
+						me.getShowIfRead().enable();
+						me.getConfiglistuser().show();
+						
+					} else {
+						myreadings.user.set('currentuser', "");
+					}
 				}
 				
 				//Initialisation de order
 				var orderfield=me.getOrderfield().getOptions();
 				for (var myorder in orderfield) {
-					if(orderfield[myorder].value==me.order) me.getOrderfield().setValue(me.order);
+					if(orderfield[myorder].value==myreadings.user.get('order')) me.getOrderfield().setValue(myreadings.user.get('order'));
 				}
 				me.getOrderfield().enable();
 				
-				me.getSeriegroup().setValue(me.gpseries);
+				me.getSeriegroup().setValue(myreadings.user.get('gpseries'));
 				me.getSeriegroup().enable();
 				
 				//Indique le filtre en cours dans searchpanel
-				if(myreadings.conf.listfilter!="") {
-					me.getTxtfilter().setHtml(me.localtxt.txtFilter+" - "+myreadings.conf.namelistfilter + ": " + myreadings.conf.namefilter);
+				if(myreadings.user.get('listfilter')!="") {
+					me.getTxtfilter().setHtml(me.localtxt.txtFilter+" - "+ myreadings.user.get('namelistfilter') + ": " + myreadings.user.get('namefilter'));
 					me.getBtnofilter().show();
 				} else {
 					me.getTxtfilter().setHtml(me.localtxt.nofilter);
 				}
 				
 				//S'il y a un user, il faut récupérer son id (qui peut changer suivant la base utilisée)
-				if(myreadings.conf.current_user!="") {
+				if(myreadings.user.get('currentuser')!="") {
 				Ext.data.JsonP.request({
 					url: './tools.php',
 					callbackKey: 'callback',
 					params: {
 						action: "getuserid",
-						mylogin: myreadings.conf.username,
-						mypass: myreadings.conf.password,
-						base: myreadings.conf.txtbase,
-						user: myreadings.conf.current_user
+						mylogin: myreadings.user.get('username'),
+						mypass: myreadings.user.get('password'),
+						base: myreadings.tempconf.txtbase,
+						user: myreadings.user.get('currentuser')
 					},
 					success: function(result, request) {
 						//Ext.Viewport.setMasked(false);
 						if(result.success==false) alert(result.message);
 						else {
-							myreadings.conf.current_userid=result.resultat;
+							myreadings.tempconf.current_userid=result.resultat;
 						}
 						me.showArticles();
-						if(myreadings.settings.open_current_comic_at_launch==1&&myreadings.currentbook.reading) me.openviewer();
+						if(myreadings.user.get('open_current_comic_at_launch')==1&&myreadings.user.get('book_reading')) me.openviewer();
 					},
 					failure: function(result, request) {
 						Ext.Viewport.setMasked(false);
@@ -490,7 +464,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				});
 				} else {
 				me.showArticles();
-				if(myreadings.settings.open_current_comic_at_launch==1&&myreadings.currentbook.reading) me.openviewer();
+				if(myreadings.user.get('open_current_comic_at_launch')==1&&myreadings.user.get('book_reading')) me.openviewer();
 				}
 				
 				me.showViewerBt();
@@ -510,12 +484,18 @@ Ext.define('myreadings.controller.articlesControl', {
 				}
 				
 				if(result.config.connect=="noprotect") {
-					me.getLoginfieldset().hide();
+					me.getUsernameCt().hide();
+					me.getPasswordCt().hide();
+					me.getLoginBt().hide();
+					me.getLoginfieldset().setTitle("");
 				} else {
 					me.logged = true;
 					me.getLoginBt().setText(me.localtxt.notlogin);
 					me.getUsernameCt().hide();
 					me.getPasswordCt().hide();
+					me.getTxtlogin().show(); 
+					me.getSaveaccount().show();
+					me.getRestoreaccount().show();
 				}
 				
 				//Ouverture OK - Effacement du cache ancien des cbz
@@ -524,8 +504,8 @@ Ext.define('myreadings.controller.articlesControl', {
 						callbackKey: 'callback',
 						params: {
 							action: "cache",
-							mylogin: myreadings.conf.username,
-							mypass: myreadings.conf.password
+							mylogin: myreadings.user.get('username'),
+							mypass: myreadings.user.get('password')
 						},
 						success: function(result, request) {
 							if(result.success==false) console.log('Error in cache.');
@@ -557,7 +537,7 @@ Ext.define('myreadings.controller.articlesControl', {
         });
     },
     showArticles: function(data) {
- 	myreadings.conf.offset=0;
+ 	myreadings.tempconf.offset=0;
  	var store = Ext.create("Ext.data.Store", {
     	    model: "myreadings.model.article",
     	    pageSize: 100,
@@ -566,50 +546,49 @@ Ext.define('myreadings.controller.articlesControl', {
         if(data) {
         	if(data.debut==4) {//changement d'ordre de tri demandé
 			store.getProxy().setExtraParam('order', data.order);
-			this.order=data.order;
+			myreadings.user.set('order', data.order);
 		} else if(data.debut==3) {//lancement depuis listview
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('idlist', data.idlist);
-			this.type=data.type;
-			this.idlist=data.idlist;
+			myreadings.user.set('type', data.type);
+			myreadings.user.set('idlist', data.idlist);
 		} else if(data.debut==5) {//changement de base calibre, ouvre tout: type=all
 			//et enlever le filtre
 			//console.log("changement de base calibre, ouvre tout: type=all");
 			//store.getProxy().setExtraParam('pathbase',data.pathbase);
 			store.getProxy().setExtraParam('type', data.type);
-			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);			
-			myreadings.conf.pathbase=data.pathbase;
-			myreadings.conf.txtbase=Ext.getCmp('base').getRecord().data.text;
-			store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
+			store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);			
+			myreadings.user.set('pathbase', data.pathbase);
+			myreadings.tempconf.txtbase=Ext.getCmp('base').getRecord().data.text;
+			store.getProxy().setExtraParam('txtbase', myreadings.tempconf.txtbase);
 			
 			//enlève le filtre
 			store.getProxy().setExtraParam('listfilter', "");
-			myreadings.conf.listfilter="";
+			myreadings.user.set('listfilter', "");
 			this.getTxtfilter().setHtml(this.localtxt.nofilter);
 			this.getBtnofilter().hide();
 			//et vide le proxy de la liste du filtre pour indiquer qu'il faut la réinitialiser
 			if(this.getFilterview()) {
 				this.getFilterview().getStore().getProxy().setExtraParam('list', "");
 			}
-			
-			this.type=data.type;
+			myreadings.user.set('type', data.type);
 		} else if(data.debut==6) {//changement de user	
-			store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+			store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);
 		} else if(data.debut==7) {//groupé pas serie ou pas
-			this.gpseries=data.gpseries
-			store.getProxy().setExtraParam('gpseries', this.gpseries);
+			myreadings.user.set('gpseries', data.gpseries);
+			store.getProxy().setExtraParam('gpseries', myreadings.user.get('gpseries'));
 		} else if(data.debut==8) {//pour choisir tous, non lus, lus
-			myreadings.conf.showifread=data.showifread
-			store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
+			myreadings.user.set('showifread', data.showifread);
+			store.getProxy().setExtraParam('showifread', myreadings.user.get('showifread'));
 		} else if(data.debut==9) {//applique un premier filtre
 			store.getProxy().setExtraParam('listfilter', data.listfilter);
 			store.getProxy().setExtraParam('idfilter', data.idfilter);
-			myreadings.conf.listfilter=data.listfilter;
-			myreadings.conf.idfilter=data.idfilter;
-			myreadings.conf.namelistfilter=data.namelistfilter;
-			myreadings.conf.namefilter=data.namefilter
+			myreadings.user.set('listfilter', data.listfilter);
+			myreadings.user.set('idfilter', data.idfilter);
+			myreadings.user.set('namelistfilter', data.namelistfilter);
+			myreadings.user.set('namefilter', data.namefilter);
 			if(data.listfilter!="") {
-				this.getTxtfilter().setHtml(this.localtxt.txtFilter+" - "+myreadings.conf.namelistfilter + ": " + myreadings.conf.namefilter);
+				this.getTxtfilter().setHtml(this.localtxt.txtFilter+" - "+myreadings.user.get('namelistfilter') + ": " + myreadings.user.get('namefilter'));
 				this.getBtnofilter().show();
 			} else {
 				this.getTxtfilter().setHtml(this.localtxt.nofilter);
@@ -619,32 +598,32 @@ Ext.define('myreadings.controller.articlesControl', {
 			store.getProxy().setExtraParam('type', data.type);
 			store.getProxy().setExtraParam('find', data.find);
 			store.getProxy().setExtraParam('start', data.debut);
-			this.type=data.type;
-			this.find=data.find;
-			this.start=data.debut;
+			
+			myreadings.user.set('type', data.type);
+			myreadings.user.set('debut', data.debut);
+			myreadings.user.set('find', data.find);
 		}
-		this.saveuser(); //pour sauver la base par défaut
+		myreadings.user.save();
         } else {
 		//lors du premier lancement, pas de data car requête par défaut
-		//store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
-		store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
+		store.getProxy().setExtraParam('txtbase', myreadings.tempconf.txtbase);
 		
-		store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
-		store.getProxy().setExtraParam('mypass', myreadings.conf.password);
-		store.getProxy().setExtraParam('order', this.order);
-		store.getProxy().setExtraParam('gpseries', this.gpseries);
-		store.getProxy().setExtraParam('type', this.type);
-		store.getProxy().setExtraParam('find', this.find);
-		store.getProxy().setExtraParam('start', this.start);
-		store.getProxy().setExtraParam('idlist', this.idlist);
-		store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
-		store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
-		store.getProxy().setExtraParam('showcust', myreadings.settings.showcust);
-		store.getProxy().setExtraParam('listfilter', myreadings.conf.listfilter);
-		store.getProxy().setExtraParam('idfilter', myreadings.conf.idfilter);
+		store.getProxy().setExtraParam('mylogin', myreadings.user.get('username'));
+		store.getProxy().setExtraParam('mypass', myreadings.user.get('password'));
+		store.getProxy().setExtraParam('order', myreadings.user.get('order'));
+		store.getProxy().setExtraParam('gpseries', myreadings.user.get('gpseries'));
+		store.getProxy().setExtraParam('type', myreadings.user.get('type'));
+		store.getProxy().setExtraParam('find', myreadings.user.get('find'));
+		store.getProxy().setExtraParam('start', myreadings.user.get('start'));
+		store.getProxy().setExtraParam('idlist', myreadings.user.get('idlist'));
+		store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);
+		store.getProxy().setExtraParam('showifread', myreadings.user.get('showifread'));
+		store.getProxy().setExtraParam('showcust', myreadings.user.get('showcust'));
+		store.getProxy().setExtraParam('listfilter', myreadings.user.get('listfilter'));
+		store.getProxy().setExtraParam('idfilter', myreadings.user.get('idfilter'));
 	}
 	
-	store.getProxy().setExtraParam('offset', myreadings.conf.offset);
+	store.getProxy().setExtraParam('offset', myreadings.tempconf.offset);
 	store.load();
 	//console.log(store.getProxy().getExtraParams());
 	var articlesView= this.getArticleslist();
@@ -662,12 +641,12 @@ Ext.define('myreadings.controller.articlesControl', {
         return this.articleView;
     },
     onArticleTap: function(view, record) {
-    	    if(this.getArticlesserieslist().isHidden()&&this.gpseries=="1"&&record.data.nbgp!=1) {
+    	    if(this.getArticlesserieslist().isHidden()&&myreadings.user.get('gpseries')=="1"&&record.data.nbgp!=1) {
     	    	    this.showArticlesSeries(record.data)
 		    this.getTitlebarserie().setTitle(record.data.seriesName);
     	    	    this.getArticlesserieslist().show();
     	    } else {
-		    if(myreadings.conf.forced=="true") {
+		    if(myreadings.tempconf.forced=="true") {
 		    Ext.Viewport.setMasked({xtype: 'loadmask'});
 		    var me= this;
 		    Ext.data.JsonP.request({
@@ -677,9 +656,9 @@ Ext.define('myreadings.controller.articlesControl', {
 				    path: record.data.relativePath,
 				    id: record.data.id,
 				    forced: "true",
-				    base: myreadings.conf.txtbase,
-				    mylogin: myreadings.conf.username,
-				    mypass: myreadings.conf.password
+				    base: myreadings.tempconf.txtbase,
+				    mylogin: myreadings.user.get('username'),
+				    mypass: myreadings.user.get('password')
 			    },
 			    success: function(result, request) {
 				    if(result.success==false) {
@@ -708,7 +687,7 @@ Ext.define('myreadings.controller.articlesControl', {
     	    }
     },
     showArticlesSeries: function(data) {
-    	myreadings.conf.offset2=0;
+    	myreadings.tempconf.offset2=0;
  	var store = Ext.create("Ext.data.Store", {
     	    model: "myreadings.model.article2",
     	    pageSize: 100,
@@ -717,26 +696,25 @@ Ext.define('myreadings.controller.articlesControl', {
         //console.log(data);
         	
 	//Initialise le proxy
-	//store.getProxy().setExtraParam('pathbase', myreadings.conf.pathbase);
-	store.getProxy().setExtraParam('txtbase', myreadings.conf.txtbase);
-	store.getProxy().setExtraParam('mylogin', myreadings.conf.username);
-	store.getProxy().setExtraParam('mypass', myreadings.conf.password);
-	store.getProxy().setExtraParam('order', this.order);
-	store.getProxy().setExtraParam('type', this.type);
-	store.getProxy().setExtraParam('find', this.find);
-	store.getProxy().setExtraParam('start', this.start);
-	store.getProxy().setExtraParam('idlist', this.idlist);
-	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
-	store.getProxy().setExtraParam('showifread', myreadings.conf.showifread);
-	store.getProxy().setExtraParam('listfilter', myreadings.conf.listfilter);
-	store.getProxy().setExtraParam('idfilter', myreadings.conf.idfilter);
+	store.getProxy().setExtraParam('txtbase', myreadings.tempconf.txtbase);
+	store.getProxy().setExtraParam('mylogin', myreadings.user.get('username'));
+	store.getProxy().setExtraParam('mypass', myreadings.user.get('password'));
+	store.getProxy().setExtraParam('order', myreadings.user.get('order'));
+	store.getProxy().setExtraParam('type', myreadings.user.get('type'));
+	store.getProxy().setExtraParam('find', myreadings.user.get('find'));
+	store.getProxy().setExtraParam('start', myreadings.user.get('start'));
+	store.getProxy().setExtraParam('idlist', myreadings.user.get('idlist'));
+	store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);
+	store.getProxy().setExtraParam('showifread',myreadings.user.get('showifread'));
+	store.getProxy().setExtraParam('listfilter', myreadings.user.get('listfilter'));
+	store.getProxy().setExtraParam('idfilter', myreadings.user.get('idfilter'));
 
 	//cherche par seriesName
 	store.getProxy().setExtraParam('gpseries', -1);
 	store.getProxy().setExtraParam('findserie', data.serieid);
 	//store.getProxy().setExtraParam('findserie', data.seriesName);
 	
-	store.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+	store.getProxy().setExtraParam('offset', myreadings.tempconf.offset2);
 	store.load();
 	var articlesView= this.getArticlesserieslist();
 
@@ -753,8 +731,8 @@ Ext.define('myreadings.controller.articlesControl', {
         var articleView = this.getArticleView();
 	
 	articleView.setData({
-			id: myreadings.currentbook.idbook,
-			title: myreadings.currentbook.name,
+			id: myreadings.user.get('book_id'),
+			title:myreadings.user.get('book_title'),
 			viewer: true
 	});
 	
@@ -781,11 +759,11 @@ Ext.define('myreadings.controller.articlesControl', {
     loadliststore: function(list, search) {
         var listview = Ext.getCmp('listview');
         var store = listview.getStore();
-	store.getProxy().setExtraParam('pathbase',myreadings.conf.pathbase);
-	store.getProxy().setExtraParam('mylogin',myreadings.conf.username);
-        store.getProxy().setExtraParam('mypass',myreadings.conf.password);
+	store.getProxy().setExtraParam('pathbase',myreadings.user.get('pathbase'));
+	store.getProxy().setExtraParam('mylogin',myreadings.user.get('username'));
+        store.getProxy().setExtraParam('mypass',myreadings.user.get('password'));
 	store.getProxy().setExtraParam('list', list);
-	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+	store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);
         store.getProxy().setExtraParam('search', search);
 	//Affiche le début de la liste
 	if(listview.getScrollable().getScroller()) listview.getScrollable().getScroller().scrollTo(0, 0);
@@ -827,11 +805,11 @@ Ext.define('myreadings.controller.articlesControl', {
     loadfilterstore: function(list, search) {
 	var filterview = this.getFilterview();
 	var store = filterview.getStore();
-	store.getProxy().setExtraParam('pathbase',myreadings.conf.pathbase);
-	store.getProxy().setExtraParam('mylogin',myreadings.conf.username);
-        store.getProxy().setExtraParam('mypass',myreadings.conf.password);
+	store.getProxy().setExtraParam('pathbase',myreadings.user.get('pathbase'));
+	store.getProxy().setExtraParam('mylogin',myreadings.user.get('username'));
+        store.getProxy().setExtraParam('mypass',myreadings.user.get('password'));
 	store.getProxy().setExtraParam('list', list);
-	store.getProxy().setExtraParam('userid', myreadings.conf.current_userid);
+	store.getProxy().setExtraParam('userid', myreadings.tempconf.current_userid);
         store.getProxy().setExtraParam('search', search);
 	//Affiche le début de la liste
 	if(filterview.getScrollable().getScroller()) filterview.getScrollable().getScroller().scrollTo(0, 0);
@@ -843,33 +821,31 @@ Ext.define('myreadings.controller.articlesControl', {
     onChangeFilterView: function() {
 	    this.loadfilterstore(this.getTypelistfindfilter().getValue(), this.getSearchfieldfindfilter().getValue());
     },
+    onSaveaccount: function() {
+    	    
+     },
+    onRestoreaccount: function() {
+    	    
+    },
     
     onLoginTap: function() {
 	if(this.logged!=true) {
-		myreadings.conf.username = this.getUsernameCt().getValue(),
-		myreadings.conf.password = this.getPasswordCt().getValue();
-		if(!Ext.isEmpty(myreadings.conf.password) && !Ext.isEmpty(myreadings.conf.username)) {
-			var user = Ext.create('myreadings.model.myreadingsUser', {
-				id: 1,
-				name: myreadings.conf.username,
-				pass: myreadings.conf.password,
-				
-				zoom_on_tap: myreadings.settings.zoom_on_tap,
-				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
-				page_turn_drag_threshold: myreadings.settings.page_turn_drag_threshold,
-				page_fit_mode: myreadings.settings.page_fit_mode,
-				page_change_area_width: myreadings.settings.page_change_area_width,
-				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
-				showresize: myreadings.settings.showresize,
-				hidemenu: myreadings.settings.hidemenu,
-				chg_nbbook: myreadings.settings.chg_nbbook,
-				showcust: myreadings.settings.showcust
-			});
-			user.save();
+		if(!Ext.isEmpty(this.getPasswordCt().getValue()) && !Ext.isEmpty(this.getUsernameCt().getValue())) {
+			console.log("save login");
+			myreadings.user.set('username', this.getUsernameCt().getValue());
+			myreadings.user.set('password', this.getPasswordCt().getValue());
+			myreadings.user.save();
 			this.init();
 		} else Ext.Msg.alert(this.localtxt.error,this.localtxt.mustloginandpass);
 	} else {
-		Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
+		Ext.Msg.confirm(this.localtxt.msg, this.localtxt.notloginconfirm, function(confirmed) {
+					if (confirmed == 'yes') {
+						Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').getProxy().clear();
+						window.location.reload();
+					}
+				}, this);
+		
+		/*Ext.ModelMgr.getModel('myreadings.model.myreadingsUser').load(1, {
 			success: function(user) {
 				Ext.Msg.confirm(this.localtxt.msg, this.localtxt.notloginconfirm, function(confirmed) {
 					if (confirmed == 'yes') {
@@ -881,7 +857,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				// this should not happen, nevertheless:
 				window.location.reload();
 			}
-		}, this);
+		}, this);*/
 	}
     },
     //Lancé si dans routes une profil existant est indiqué
@@ -894,67 +870,13 @@ Ext.define('myreadings.controller.articlesControl', {
     onChangeListView: function() {
 	    this.loadliststore(this.getTypelistfind().getValue(), this.getSearchfieldfind().getValue());
     },
-    saveuser: function() {
-	    var user = Ext.create('myreadings.model.myreadingsUser', {
-				id: 1,
-				name: myreadings.conf.username,
-				pass: myreadings.conf.password,
-				pathbase: myreadings.conf.pathbase,
-				currentuser: myreadings.conf.current_user,
-				showifread: myreadings.conf.showifread,
-				order: this.order,
-				gpseries: this.gpseries,
-				type: this.type,
-				find: this.find,
-				start: this.start,
-				idlist: this.idlist,
-				
-				chg_nbbook: myreadings.settings.chg_nbbook,
-				showcust: myreadings.settings.showcust,
-				landline:myreadings.settings.landline,
-				landbyline: myreadings.settings.landbyline,
-				portline: myreadings.settings.portline,
-				portbyline: myreadings.settings.portbyline,
-				
-				listfilter: myreadings.conf.listfilter,
-				idfilter: myreadings.conf.idfilter,
-				namelistfilter: myreadings.conf.namelistfilter,
-				namefilter: myreadings.conf.namefilter,
-				
-				zoom_on_tap: myreadings.settings.zoom_on_tap,
-				toggle_paging_bar: myreadings.settings.toggle_paging_bar,
-				page_turn_drag_threshold: myreadings.settings.page_turn_drag_threshold,
-				page_fit_mode: myreadings.settings.page_fit_mode,
-				page_change_area_width: myreadings.settings.page_change_area_width,
-				open_current_comic_at_launch: myreadings.settings.open_current_comic_at_launch,
-				showresize: myreadings.settings.showresize,
-				hidemenu: myreadings.settings.hidemenu,
-				
-				epub_mode: myreadings.settings.epub_mode,
-				epub_font: myreadings.settings.epub_font,
-				epub_fontsize: myreadings.settings.epub_fontsize,
-				
-				book_id: myreadings.currentbook.idbook,
-				book_reading: myreadings.currentbook.reading,
-				book_title: myreadings.currentbook.name,
-				//book_idbase: myreadings.currentbook.idbase,
-				book_path: myreadings.currentbook.path,
-				book_currentpage: myreadings.currentbook.current_page_nr,
-				book_pages: myreadings.currentbook.number_of_pages,
-				book_type: myreadings.currentbook.book_type
-				
-				//list: this.list,
-				//search: this.search
-	    });
-	    user.save();
-    },
-    
+
     
     //Pour réouvrir un livre
     openviewer: function() {
-    	    if(myreadings.currentbook.book_type=="epub") {
+    	    if(myreadings.user.get('book_type')=="epub") {
     	    	  this.openepubviewer();
-    	    } else if(myreadings.currentbook.book_type=="comic") {
+    	    } else if(myreadings.user.get('book_type')=="comic") {
     	    	    this.opencomicviewer();
     	    }
     },
@@ -971,32 +893,31 @@ Ext.define('myreadings.controller.articlesControl', {
 	    
 	    //Mise à jour currentbook
 	    //console.log(book.books[0]);
-	    myreadings.currentbook.idbook=book.books[0].id;
-	    myreadings.currentbook.name=book.books[0].title;
-	    //myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
-	    myreadings.currentbook.path=path;
-	    myreadings.currentbook.book_type="comic";
+	    myreadings.user.set('book_id', book.books[0].id);
+	    myreadings.user.set('book_title', book.books[0].title);
+	    myreadings.user.set('book_path', path);
+	    myreadings.user.set('book_type', "comic");
 	    
-	    if(bookmark=="1"&&myreadings.conf.current_userid!="") {
+	    if(bookmark=="1"&&myreadings.tempconf.current_userid!="") {
 		    Ext.Viewport.setMasked({xtype: 'loadmask'});
 		    Ext.data.JsonP.request({
 			    url: './tools.php',
 			    callbackKey: 'callback',
 			    params: {
 				    action: "getpage",
-				    mylogin: myreadings.conf.username,
-				    mypass: myreadings.conf.password,
-				    id: myreadings.currentbook.idbook,
-				    base: myreadings.conf.txtbase,
-				    type: myreadings.currentbook.book_type,
-				    userid: myreadings.conf.current_userid
+				    mylogin: myreadings.user.get('username'),
+				    mypass: myreadings.user.get('password'),
+				    id: myreadings.user.get('book_id'),
+				    base: myreadings.tempconf.txtbase,
+				    type: myreadings.user.get('book_type'),
+				    userid: myreadings.tempconf.current_userid
 			    },
 			    success: function(result, request) {
 				    Ext.Viewport.setMasked(false);
 				    if(result.success==false) alert(result.message);
 				    else {
-					 myreadings.currentbook.current_page_nr=parseInt(result.resultat.percent)-1;
-				    	 //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
+					 myreadings.user.set('book_currentpage', parseInt(result.resultat.percent)-1);
+				    	 //InitComic réinitialise la lecture en cours et renseigne book_pages
 				    	 myreadings.app.getController('comic').initComic();
 				    	 comicView.show();
 				    }
@@ -1007,14 +928,14 @@ Ext.define('myreadings.controller.articlesControl', {
 			    }
 		    });
 	    } else {
-		    myreadings.currentbook.current_page_nr=0;
-		    //InitComic réinitialise la lecture en cours et renseigne myreadings.currentbook.number_of_pages
+		    myreadings.user.set('book_currentpage', 0);
+		    //InitComic réinitialise la lecture en cours et renseigne book_pages
 		    myreadings.app.getController('comic').initComic();
 		    comicView.show();
 	    }
 	    this.showViewerBt();
     },
-    //Réouvre cbz à la page en cours: myreadings.currentbook.current_page_nr
+    //Réouvre cbz à la page en cours: book_currentpage
     //Lance opencomic
     opencomicviewer: function() {
 	    var comicView = (!this.getComicView()) ? Ext.create('App.view.comicview') : this.getComicView();
@@ -1034,24 +955,23 @@ Ext.define('myreadings.controller.articlesControl', {
 		    Ext.Viewport.add(epubView);
 	    }
 	    //Mise à jour currentbook
-	    myreadings.currentbook.idbook=book.books[0].id;
-	    myreadings.currentbook.name=book.books[0].title;
-	    //myreadings.currentbook.idbase=Ext.getCmp('base').getRecord().data.text;
-	    myreadings.currentbook.path=path;
-	    myreadings.currentbook.book_type="epub";
-	    if(bookmark=="1"&&myreadings.conf.current_userid!="") {
+	    myreadings.user.set('book_id', book.books[0].id);
+	    myreadings.user.set('book_title', book.books[0].title);
+	    myreadings.user.set('book_path', path);
+	    myreadings.user.set('book_type', "epub");
+	    if(bookmark=="1"&&myreadings.tempconf.current_userid!="") {
 		    Ext.Viewport.setMasked({xtype: 'loadmask'});
 		    Ext.data.JsonP.request({
 			    url: './tools.php',
 			    callbackKey: 'callback',
 			    params: {
 				    action: "getpage",
-				    mylogin: myreadings.conf.username,
-				    mypass: myreadings.conf.password,
-				    id: myreadings.currentbook.idbook,
-				    base: myreadings.conf.txtbase,
-				    type: myreadings.currentbook.book_type,
-				    userid: myreadings.conf.current_userid
+				    mylogin: myreadings.user.get('username'),
+				    mypass: myreadings.user.get('password'),
+				    id: myreadings.user.get('book_id'),
+				    base: myreadings.tempconf.txtbase,
+				    type: myreadings.user.get('book_type'),
+				    userid: myreadings.tempconf.current_userid
 			    },
 			    success: function(result, request) {
 				    Ext.Viewport.setMasked(false);
@@ -1081,7 +1001,7 @@ Ext.define('myreadings.controller.articlesControl', {
     },
     
     showViewerBt: function() {
-	    if(myreadings.currentbook.idbook==null) {
+	    if(myreadings.user.get('book_id')==null) {
 		    this.getViewerBt().hide();
 		    this.getViewerBt2().hide();
 	    } else {
@@ -1090,12 +1010,12 @@ Ext.define('myreadings.controller.articlesControl', {
 	    }
     },
     savebookmark: function() {
-    	    this.saveusermark(myreadings.currentbook.idbook, myreadings.currentbook.book_type, myreadings.currentbook.current_page_nr+1, "", "bookmarkpage");
+    	    this.saveusermark(myreadings.user.get('book_id'), myreadings.user.get('book_type'), myreadings.user.get('book_currentpage')+1, "", "bookmarkpage");
     },
-    //idbook: id calibre du livre, type: epub ou comic (book_type)
+    //book_id: id calibre du livre, type: epub ou comic (book_type)
     //mark: -1:lu, 0:non lu, numéro de page ou percent (pour epub)
     //componentId:Chapitre (fichier) de l'epub, action: bookmark: lu ou non lu ou bookmarkpage: marque l'emplacement
-    saveusermark: function(idbook, type, mark, componentId, action) {
+    saveusermark: function(book_id, type, mark, componentId, action) {
 	    Ext.Viewport.setMasked({xtype: 'loadmask'});
 	    var me=this;
 	    Ext.data.JsonP.request({
@@ -1103,11 +1023,11 @@ Ext.define('myreadings.controller.articlesControl', {
 		callbackKey: 'callback',
 		params: {
 			action: action,
-			mylogin: myreadings.conf.username,
-			mypass: myreadings.conf.password,
-			id: idbook,
-			base: myreadings.conf.txtbase,
-			userid: myreadings.conf.current_userid,
+			mylogin: myreadings.user.get('username'),
+			mypass: myreadings.user.get('password'),
+			id: book_id,
+			base: myreadings.tempconf.txtbase,
+			userid: myreadings.tempconf.current_userid,
 			type: type,
 			page: mark,
 			componentId: componentId
@@ -1123,66 +1043,66 @@ Ext.define('myreadings.controller.articlesControl', {
 				if(action=="bookmarkpage") mark=1;
 				
 				//Traitement du store du groupe
-				if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',idbook)) {
+				if(!me.getArticlesserieslist().isHidden()&&me.getArticlesserieslist().getStore().findRecord('id',book_id)) {
 					var store2=me.getArticlesserieslist().getStore();
-					curbookmark=store2.findRecord('id',idbook).get("bookmark");
-					store2.findRecord('id',idbook).set("bookmark",mark);
+					curbookmark=store2.findRecord('id',book_id).get("bookmark");
+					store2.findRecord('id',book_id).set("bookmark",mark);
 					me.getArticlesserieslist().refreshItems();
 					//Explication dans la partie suivante...
-					if(myreadings.conf.showifread!="all") {
-						if(myreadings.conf.showifread!="notread") {
+					if(myreadings.user.get('showifread')!="all") {
+						if(myreadings.user.get('showifread')!="notread") {
 							if(mark==-1) {
-								myreadings.conf.offse2t=myreadings.conf.offset2+1;
-								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+								myreadings.tempconf.offse2t=myreadings.tempconf.offset2+1;
+								store2.getProxy().setExtraParam('offset', myreadings.tempconf.offset2);
 							} else if(curbookmark==-1) {
-								myreadings.conf.offset2=myreadings.conf.offset2-1;
-								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+								myreadings.tempconf.offset2=myreadings.tempconf.offset2-1;
+								store2.getProxy().setExtraParam('offset', myreadings.tempconf.offset2);
 							}
 						} else {//read
 							if(mark==-1) {
-								myreadings.conf.offset2=myreadings.conf.offset2-1;
-								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+								myreadings.tempconf.offset2=myreadings.tempconf.offset2-1;
+								store2.getProxy().setExtraParam('offset', myreadings.tempconf.offset2);
 							} else if(curbookmark==-1) {
-								myreadings.conf.offset2=myreadings.conf.offset2+1;
-								store2.getProxy().setExtraParam('offset', myreadings.conf.offset2);
+								myreadings.tempconf.offset2=myreadings.tempconf.offset2+1;
+								store2.getProxy().setExtraParam('offset', myreadings.tempconf.offset2);
 							}
 						}
 					}
 				}
 				
-				var record=me.getArticleslist().getStore().findRecord('id',idbook);
+				var record=me.getArticleslist().getStore().findRecord('id',book_id);
 				//Si le livre est dans la liste et n'est pas dans un groupe
 				if(record&&(record.get("nbgp")==null||record.get("nbgp")==1)) {
 					curbookmark=record.get("bookmark");
 					record.set("bookmark",mark);
 					me.getArticleslist().refreshItems();
 					//Gestion du offset (pour décaler la limite du min/max dans recordsjson: max=max-offset)
-					if(myreadings.conf.showifread!="all") {
+					if(myreadings.user.get('showifread')!="all") {
 						//Cas de l'affichage des non lus
-						if(myreadings.conf.showifread!="notread") {
+						if(myreadings.user.get('showifread')!="notread") {
 							//Le nouveau bookmark indique lu, il ne l'était donc pas
 							if(mark==-1) {
 								//Il faut augmenter l'offset car il y aura un livre de moins dans la requête
-								myreadings.conf.offset=myreadings.conf.offset+1;
-								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+								myreadings.tempconf.offset=myreadings.tempconf.offset+1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.tempconf.offset);
 								//Remove pour l'enlever du store, non utilisé...
 								//me.getArticleslist().getStore().remove(record);
 							} else if(curbookmark==-1) {
 								//Il n'est plus indiqué comme lu mais il l'était: diminuer l'offset car le livre revient dans la liste
 								//S'il n'était pas lu (affectation d'un marque-page), pas de changment d'offset
-								myreadings.conf.offset=myreadings.conf.offset-1;
-								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+								myreadings.tempconf.offset=myreadings.tempconf.offset-1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.tempconf.offset);
 							}
 						} else {//Cas des lus
 							//Le nouveau bookmark indique lu, il sera de nouveau dans la liste
 							if(mark==-1) {
-								myreadings.conf.offset=myreadings.conf.offset-1;
-								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+								myreadings.tempconf.offset=myreadings.tempconf.offset-1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.tempconf.offset);
 							} else if(curbookmark==-1) {
 								//Il n'est plus lu mais il l'était : augmenter l'offset
 								//S'il n'était pas lu (affectation d'un marque-page), pas de changment d'offset
-								myreadings.conf.offset=myreadings.conf.offset+1;
-								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.conf.offset);
+								myreadings.tempconf.offset=myreadings.tempconf.offset+1;
+								me.getArticleslist().getStore().getProxy().setExtraParam('offset', myreadings.tempconf.offset);
 							}
 						}
 					}
@@ -1190,7 +1110,7 @@ Ext.define('myreadings.controller.articlesControl', {
 				} else {
 					var serieid="";
 					//S'il est dans un groupe pour une série, il faut chercher ce groupe
-					if(!record&&me.gpseries==1) {
+					if(!record&&myreadings.user.get('gpseries')==1) {
 						serieid=result.resultat.serieid;
 						record=me.getArticleslist().getStore().findRecord('serieid',serieid);
 					}
@@ -1214,7 +1134,6 @@ Ext.define('myreadings.controller.articlesControl', {
 								start: params.start,
 								idlist: params.idlist,
 								userid: params.userid,
-								//showcust: myreadings.settings.showcust,
 								showifread: params.showifread,
 								findserie: serieid,
 								offset: 0
@@ -1237,7 +1156,7 @@ Ext.define('myreadings.controller.articlesControl', {
 									console.log("No result");
 									//Affecte 0 à ngp car le groupe reste affiché mais indique qu'il n'y a plus rien
 									record.set("nbgp", 0);
-									if(myreadings.conf.showifread=="notread") {
+									if(myreadings.user.get('showifread')=="notread") {
 										//Pour indiquer que c'est lu: ngp=read
 										record.set("read", 0);
 									} else {
@@ -1306,24 +1225,24 @@ Ext.define('myreadings.controller.articlesControl', {
     	    if(me.profil=="gtab") {
 		    //mode paysage: 1 lignes et 4 livres par ligne
 		    //mode portrait: 3 lignes et 3 livres par ligne
-    	    	    myreadings.settings.landline=2;
-    	    	    myreadings.settings.landbyline=4;
-    	    	    myreadings.settings.portline=3;
-    	    	    myreadings.settings.portbyline=3;
+    	    	    myreadings.user.set('landline', 2);
+    	    	    myreadings.user.set('landbyline', 4);
+    	    	    myreadings.user.set('portline', 3);
+    	    	    myreadings.user.set('portbyline', 3);
     	    } else if(me.profil=="iphone") {
 		    //mode paysage: 1 ligne et 4 livres par ligne
 		    //mode portrait: 2 lignes et 3 livres par ligne
-    	    	    myreadings.settings.landline=1;
-    	    	    myreadings.settings.landbyline=4;
-    	    	    myreadings.settings.portline=2;
-    	    	    myreadings.settings.portbyline=3;
+    	    	    myreadings.user.set('landline', 1);
+    	    	    myreadings.user.set('landbyline', 4);
+    	    	    myreadings.user.set('portline', 2);
+    	    	    myreadings.user.set('portbyline', 3);
     	    } else {
 		    //mode paysage: 2 lignes et 4 livres par ligne
 		    //mode portrait: 3 lignes et 3 livres par ligne
-    	    	    myreadings.settings.landline=2;
-    	    	    myreadings.settings.landbyline=4;
-    	    	    myreadings.settings.portline=3;
-    	    	    myreadings.settings.portbyline=3;
+    	    	    myreadings.user.set('landline', 2);
+    	    	    myreadings.user.set('landbyline', 4);
+    	    	    myreadings.user.set('portline', 3);
+    	    	    myreadings.user.set('portbyline', 3);
     	    }
     },
     onChangeChg_nbbook: function(item,value,oldvalue){
@@ -1332,10 +1251,10 @@ Ext.define('myreadings.controller.articlesControl', {
     	    	    console.log("change");
     	    	    if(value==0) {
     	    	    	    myreadings.app.getController('articlesControl').defaultProfil();
-    	    	    	    this.getLandline().setValue(myreadings.settings.landline);
-    	    	    	    this.getLandbyline().setValue(myreadings.settings.landbyline);
-    	    	    	    this.getPortline().setValue(myreadings.settings.portline);
-    	    	    	    this.getPortbyline().setValue(myreadings.settings.portbyline);
+    	    	    	    this.getLandline().setValue(myreadings.user.get('landline'));
+    	    	    	    this.getLandbyline().setValue(myreadings.user.get('landbyline'));
+    	    	    	    this.getPortline().setValue(myreadings.user.get('portline'));
+    	    	    	    this.getPortbyline().setValue(myreadings.user.get('portbyline'));
     	    	    	    this.getConfigport().hide();
     	    	    	    this.getConfigland().hide();
     	    	    } else {
@@ -1345,13 +1264,13 @@ Ext.define('myreadings.controller.articlesControl', {
     	    }
     },
     onChgcarouselbuttonTap: function() {
-    	    myreadings.settings.chg_nbbook=this.getChg_nbbook().getValue();
-    	    myreadings.settings.showcust=this.getShowcust().getValue();
-    	    myreadings.settings.landline=this.getLandline().getValue();
-    	    myreadings.settings.landbyline=this.getLandbyline().getValue();
-    	    myreadings.settings.portline=this.getPortline().getValue();
-    	    myreadings.settings.portbyline=this.getPortbyline().setValue();
-    	    this.saveuser();
+    	    myreadings.user.set('chg_nbbook', this.getChg_nbbook().getValue());
+    	    myreadings.user.set('showcust', this.getShowcust().getValue());
+    	    myreadings.user.set('landline', this.getLandline().getValue());
+    	    myreadings.user.set('landbyline', this.getLandbyline().getValue());
+    	    myreadings.user.set('portline', this.getPortline().getValue());
+    	    myreadings.user.set('portbyline', this.getPortbyline().setValue());
+    	    myreadings.user.save();
     	    window.location.reload();
     },
     onTapCarousel: function(e, me) {
