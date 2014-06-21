@@ -61,9 +61,12 @@
 	"txtEmpty":"Empty list"
 },
 "configpanel":{
+	"txtConfiguration": "Configuration",
+	"txtAccount": "Account",
 	"txtTitleLogin": "Connection",
 	"txtLogin": "Name",
 	"txtPass": "Password",
+	"txtUser": "User",
 	"txtLoginButton": "Log in",
 	"txtViewer": "Viewer Settings",
 	"txtbook_at_launch": "Open current comic at app launch",
@@ -78,7 +81,10 @@
 	"landscape": "Landscape mode",
 	"nbline": "Number of line",
 	"nbbyline": "Number of book by line",
-	"txtchgbookButton": "Update"
+	"txtchgbookButton": "Update",
+	"txtSaveaccount": "Save account",
+	"txtRestoreaccount": "Reset account",
+	"txtTools": "Tools"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Comic Viewer Settings",
@@ -121,7 +127,9 @@
 	"domarkread": "Indicate that the book is read?",
 	"shownext": "Show the next book of the series?",
 	"txtFilter": "Filter",
-	"nofilter": "No filter"
+	"nofilter": "No filter",
+	"account": "Account",
+	"user": "User"
 },
 "lang":
 {

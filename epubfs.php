@@ -13,7 +13,7 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('./config/config.php');
 
-if($protect==false||(($mylogin==$login&&$mypass==$pass)||($mylogin==$login2&&$mypass==$pass2&&$control==true))) {
+if($protect==false||($account[$mylogin]&&$account[$mylogin][0]==$mypass)) {
 	 //OK
 } else {
 	echo "Non autorisé";

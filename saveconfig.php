@@ -41,14 +41,6 @@ $phptxt="<?php"."\r\n".'$language="'.$_GET['language'].'";'."\r\n";
 $protect=$_GET['protect'];
 if($protect!=false&&$protect!=true) $protect=true;
 $phptxt.='$protect='.$protect.';'."\r\n";
-$phptxt.='$login="'.$_GET['login'].'";'."\r\n";
-$phptxt.='$pass="'.$_GET['pass'].'";'."\r\n";
-
-$control=$_GET['control'];
-if($control!=false&&$control!=true) $control=false;
-$phptxt.='$control='.$control.';'."\r\n";
-$phptxt.='$login2="'.$_GET['login2'].'";'."\r\n";
-$phptxt.='$pass2="'.$_GET['pass2'].'";'."\r\n";
 $phptxt.='$fetchmode="'.$_GET['fetchmode'].'";'."\r\n";
 
 $XSendfile=$_GET['XSendfile'];
@@ -113,6 +105,17 @@ if(strval($_GET['nbuser']>1)) {
 	}
 }
 $phptxt.=');'."\r\n";
+
+$phptxt.='$account=array('."\r\n";
+if(strval($_GET['nbaccount']>1)) {
+	$nbaccount=strval($_GET['nbaccount'])-1;
+	for ($x=1; $x<=$nbaccount; $x++) {
+		if($_GET['acc_login'.$x]!="")
+		$phptxt.='"'.$_GET['acc_login'.$x].'" => array("'.$_GET['acc_pass'.$x].'", "'.$_GET['acc_access'.$x].'", "'.$_GET['acc_userchoice'.$x].'", "'.$_GET['acc_user'.$x].'"),'."\r\n";
+	}
+}
+$phptxt.=');'."\r\n";
+
 
 
 $phptxt.="?>";

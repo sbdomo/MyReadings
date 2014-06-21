@@ -9,18 +9,35 @@ $result="";
 if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 	$result="login error";
 } else {
+	$result="";
 	if(file_exists('./config/config.php')) {
 		require_once('./config/config.php');
+		//Test des comptes si protégé
+		$accountok=true;
+		if($protect==true) {
+			if($account&&count($account)>0) {
+					//Prendre un compte par défaut pour les tests
+					$login= array_keys($account)[0];
+					$pass=$account[$login][0];
+			} else {
+				$accountok=false;
+			}
+			
+		} else {
+			$login="";
+			$pass="";
+		}
+		if($accountok==true){
 		if($calibre) {
 			$success="true";
-			if (!extension_loaded("sqlite3")) $result='<p class="yellow">Sqlite3 extension could be not loaded.</p>';
+			if (!extension_loaded("sqlite3")) $result.='<p class="yellow">Sqlite3 extension could be not loaded.</p>';
 				
 			if(phpversion()<=5.2) $result.='<p>Your php version is '.phpversion().'. If you have a problem, you could test a newer version.</p>';
 			$result.='<p>Connection Test:</p>';
 			$result.="<p>If all is OK, you must see a cover for each library.</p>";
 			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
-			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn);
-			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn);
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account);
 			if(fw("./thumb")) {
 				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
 			} else {
@@ -49,10 +66,11 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 				$result.='<p class="red">Directory cache is not writable (you can\'t use viewer)</p>';
 			}
 		} else {
-			$result="Calibre libraires are not defined";
+			$result='Calibre libraires are not defined';
 		}
+		} else $result.='Error in accounts';
 	} else {
-		$result="Configuration is not defined";
+		$result.="Configuration is not defined";
 	}
 }
 $json = json_encode($result);
@@ -64,7 +82,7 @@ if (isset($_GET['callback'])) {
 	echo $json;
 }
 
-function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs) {
+function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs, $account) {
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
 	foreach ($bases as $key => $path) {
@@ -78,7 +96,7 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 		//$resultat = $stmt->fetchAll();
 		$resultat = $stmt->fetch();
 		$hascover=0;
-		$result.='<p>'.$key.' is OK</p>';
+		$result.='<p class="grey">'.$key.' is OK</p>';
 		while($resultat&&$hascover==0){
 			//echo $resultat;
 			if($resultat['hasCover']) {
@@ -92,6 +110,8 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 			} else $resultat = $stmt->fetch();
 		}
 		//Cherche les customs column pour les users
+		//Dans la listes des users
+		$resultuser="";
 		if($users) {
 			$erroruser="";
 			foreach ($users as $value) {
@@ -103,9 +123,28 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 					$erroruser.=" ".$value." is not integer.";
 				}
 			}
-			if($erroruser!="") $result.='<p class="red">User error:'.$erroruser.'</p>';
-			else $result.='<p>All users OK</p>';
+			if($erroruser!="") $resultuser.='<p class="red">User error:'.$erroruser.'</p>';
+			//else $result.='<p>All users OK</p>';
 		}
+		
+		if($account&&count($account)>0) {
+			$erroruser="";
+			foreach ($account as $key => $value) {
+				if($value[3]!="") {
+					$queryuser = "SELECT id, datatype from custom_columns WHERE name = '".$value[3]."'";
+					$resultquery = $pdo->query($queryuser)->fetch();
+					if(!$resultquery) {
+						$erroruser.=" ".$value[3]." not found (in account ".$key.").";
+					} else if($resultquery['datatype']!='int') {
+						$erroruser.=" ".$value[3]." is not integer (in account ".$key.").";
+					}
+				}
+			}
+			if($erroruser!="") $resultuser.='<p class="red">User error:'.$erroruser.'</p>';
+			//else $result.='<p>All users OK</p>';
+		}
+		$result.=$resultuser;
+		
 		//Cherche les custom column
 		if($customs&&$customs[$key]!=Null&&$customs[$key]!="") {
 			$customarray= explode(",", $customs[$key]);

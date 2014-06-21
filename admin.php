@@ -48,6 +48,12 @@ if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!
 	background-color: #ff8c02;
 }
 
+.grey {
+	background-color: grey;
+	text-shadow: 0 0px;
+	font-size: 1.1em;
+}
+
 label.error {
 	float: none;
 	color: red;
@@ -132,14 +138,10 @@ else {
 	} else {
 		$language="en";
 		$protect=false;
-		$login="";
-		$pass="";
 		$control=false;
 		$epubview=true;
 		$cbzview=true;
 		$cbrview=true;
-		$login2="";
-		$pass2="";
 		$fetchmode="resize_and_cache";
 		$XSendfile=false;
 		$calibre=array();
@@ -150,13 +152,29 @@ else {
 	if($maxsize==""||$maxsize==NULL) $maxsize=5242880;
 ?>
 <script type="text/javascript">
-function removecalibre(me){
+function removeline(me){
 	$(me).parents('li').remove();
 	return false;
 }
 
-function removeuser(me){
-	$(me).parents('li').remove();
+function editaccount(index){
+	$("#poplogin").val($("#acc_login"+index).val());
+	$("#poppass").val($("#acc_pass"+index).val());
+	$("#poppassconf").val($("#acc_pass"+index).val());
+	
+	$("input[name=popaccess]").prop( "checked", false ).checkboxradio( "refresh" );
+	$("input[name=popaccess][value='"+$("#acc_access"+index).val()+"']").prop( "checked", true ).checkboxradio( "refresh" );
+	
+	$("input[name=popuserchoice]").prop( "checked", false ).checkboxradio( "refresh" );
+	$("input[name=popuserchoice][value='"+$("#acc_userchoice"+index).val()+"']").prop( "checked", true ).checkboxradio( "refresh" );
+	
+	$("#popuser").val($("#acc_user"+index).val());
+	$("#popid").val(index);
+	
+	$( "#popupLogin" ).popup( "open" );
+	//Pour réinitialiser le test de validité (et ne pas afficher le résultat précédent)
+	var test=$("#editlogin").valid();
+	
 	return false;
 }
 
@@ -171,7 +189,7 @@ $(function() {
 			'<input type="text" value="" id="calkey' + i +'" name="calkey' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
 			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
 			'<input type="text" value="" id="calcustom' + i +'" name="calcustom' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
-			'<a href="#" id="calremove' + i +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>'+
+			'<a href="#" id="calremove' + i +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
 			'</div></div>'
 			'</fieldset></li>';
 			i++;
@@ -188,7 +206,7 @@ $(function() {
 			'<input type="text" value="" id="limkey' + i2 +'" name="limkey' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
 			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
 			'<input type="text" value="" id="limcustom' + i2 +'" name="limcustom' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
-			'<a href="#" id="limremove' + i2 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>'+
+			'<a href="#" id="limremove' + i2 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
 			'</div></div>'
 			'</fieldset></li>';
 			i2++;
@@ -200,28 +218,83 @@ $(function() {
         $('#adduser').on('click', function() {
 			listItem = '<li><div data-role="controlgroup" data-type="horizontal">'+
 			'<input type="text" value="" id="userval' + i3 +'" name="userval' + i3 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
-			'<a href="#" id="userremove' + i3 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeuser(this);">Remove</a>'+
+			'<a href="#" id="userremove' + i3 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
 			'</div></li>';
 			i3++;
         		$('#userlist').append(listItem);
         		$('#userlist').listview('refresh').trigger('create');
         });
 	
+	$('#newaccount').on('click', function() {
+			$("#poplogin").val("");
+			$("#poppass").val("");
+			$("#poppassconf").val("");
+			
+			$("input[name=popaccess]").prop( "checked", false ).checkboxradio( "refresh" );
+			$("input[name=popaccess][value='"+"Normal"+"']").prop( "checked", true ).checkboxradio( "refresh" );
+			
+			$("input[name=popuserchoice]").prop( "checked", false ).checkboxradio( "refresh" );
+			$("input[name=popuserchoice][value='"+"No user"+"']").prop( "checked", true ).checkboxradio( "refresh" );
+			
+			$("#popuser").val("");
+			$("#popid").val(0);
+			
+			$( "#popupLogin" ).popup( "open" );
+	});
 	
-	$.validator.addMethod("passmatch1", function(value) {
-			return value == $("#pass").val();
+	var i4 = $('#accountlist li').size();
+	$('#addaccount').on('click', function() {
+	   if($("#editlogin").valid()) {
+		$( "#popupLogin" ).popup( "close" );
+		var newacc=$("#poplogin").val()+": "+$('input[name=popaccess]:checked').val()+" / "+$('input[name=popuserchoice]:checked').val()+" / "+$("#popuser").val();
+		if($("#popid").val()==0) {
+			var index = i4;
+			listItem = '<li><div data-role="controlgroup" data-type="horizontal">'+
+			'<a href="#" id="accountbt' + index +'" class="ui-btn ui-corner-all" onclick="editaccount(' + index +');">'+newacc+'</a>'+
+			'<input name="acc_login' + index +'" id="acc_login' + index +'" type="hidden" value="'+$("#poplogin").val()+'"/>'+
+			'<input name="acc_pass' + index +'" id="acc_pass' + index +'" type="hidden" value="'+$("#poppass").val()+'"/>'+
+			'<input name="acc_access' + index +'" id="acc_access' + index +'" type="hidden" value="'+$('input[name=popaccess]:checked').val()+'"/>'+
+			'<input name="acc_userchoice' + index +'" id="acc_userchoice' + index +'" type="hidden" value="'+$('input[name=popuserchoice]:checked').val()+'"/>'+
+			'<input name="acc_user' + index +'" id="acc_user' + index +'" type="hidden" value="'+$("#popuser").val()+'"/>'+
+			'<a href="#" id="accountdel' + index +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
+			'</div></li>';
+			i4++;
+        		$('#accountlist').append(listItem);
+        		$('#accountlist').listview('refresh').trigger('create');
+		} else {
+			var index=$("#popid").val();
+			$('#accountbt' + index).text(newacc);
+			$('#acc_login' + index).val($("#poplogin").val());
+			$('#acc_pass' + index).val($("#poppass").val());
+			$('#acc_access' + index).val($('input[name=popaccess]:checked').val());
+			$('#acc_userchoice' + index).val($('input[name=popuserchoice]:checked').val());
+			$('#acc_user' + index).val($("#popuser").val());
+		}
+	   }
+	   return false;
+	});
+	
+	$.validator.addMethod("poppassmatch", function(value) {
+			return value == $("#poppass").val();
 	}, 'Confirmation password must match.');
 	
-	$.validator.addMethod("passmatch2", function(value) {
-			return value == $("#pass2").val();
-	}, 'Confirmation password must match.');
+	$("#editlogin").validate({
+		errorPlacement: function(error, element) {
+			error.insertAfter($(element).parent());
+		}//,
+		//submitHandler: function(form) {
+		//	console.log("Call Login Action");
+		//}
+	});
+	
+	
 	
 	$("#editconfig").validate({
 		errorPlacement: function(error, element) {
 			error.insertAfter($(element).parent());
 		},
 		rules: {
-			login: {
+			/*login: {
 				required: { depends: function () { return $('#protect').val()=="true"; } }
 			},
 			pass: {
@@ -232,7 +305,7 @@ $(function() {
 			},
 			pass2: {
 				required: { depends: function () { return $('#control').val()=="true"; } }
-			},
+			},*/
 			maxsize: {
 				required: { depends: function () { return $('#resizecbz').val()=="true"; } },
 				number: true
@@ -243,6 +316,7 @@ $(function() {
 			$('#nbcal').val(i);
 			$('#nblim').val(i2);
 			$('#nbuser').val(i3);
+			$('#nbaccount').val(i4);
 			$.get("./saveconfig.php", $('#editconfig').serialize(),
 			function(data){
 				if(data.success=="true") alert("Your configuration has been saved.");
@@ -351,21 +425,8 @@ $(function() {
 			Yes
 			</option>
 			</select>
-			<br/><p>If yes, use login and password enter below</p>
+			<br/><p>If yes, you must have account created below.</p>
 	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="login">Login</label>
-		<input type="text" value="<?php echo $login;?>"  id="login" name="login" />
-	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="pass">Password</label>
-		<input  type="password" value="<?php echo $pass;?>" id="pass" name="pass" />
-	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="passconf">Confirm Password</label>
-		<input  type="password" value="<?php echo $pass;?>" id="passconf" name="passconf" class="passmatch1"/>
-	</fieldset>
-
 	<ul class="ui-li" data-role="listview" id="calibrelibrary1" data-inset="true"  data-scroll="true">
 	<li data-role="list-divider">Calibre libraries - Enter the path of your metadata file, the name that will appear in My Readings and, if you want, custom columns</li>
 <?php
@@ -385,49 +446,19 @@ foreach ($calibre as $key => $value) {
 			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
 					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="calcustom<?php echo $nbcalibre1;?>" name="calcustom<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
-					<a href="#" id="calremove<?php echo $nbcalibre1;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>
+					<a href="#" id="calremove<?php echo $nbcalibre1;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
 				</div>
 			</div>
 		</fieldset>
 	</li>
 <?php }} ?>
 	</ul>
-	<input type="button" id="addcalibre1" class="btn" value="Add library" />
-	<p><b>Library path</b> can be a full path (for exemple //volume1/calibre1/), you can't use direct access mode in that case.<br/>
-Or, if your library is in web directory, it can be a relative path (as ../calibre1/) and then you can use any access mode.<br/>
-Note the <b>"/" at the end</b> of the path <b>is necessary</b>.<br/>
-If you want to use <b>custom columns</b>, put the label of the custom columns you want with , as separator. Ex: custom1,custom2</p>
-</div>
-
-<div data-role="collapsible" data-collapsed="false">
-	<h2>Calibre libraries with parental control</h2>
-	<fieldset data-role="fieldcontain">
-		<label for="control">Parental control?</label>
-		<select name="control" id="control" data-role="slider">
-			<option value="false" <?php if(!$control) echo "selected";?> >
-			No
-			</option>
-			<option value="true" <?php if($control) echo "selected";?> >
-			Yes
-			</option>
-		</select>
-		<br/><p>If yes, use login and password enter below</p>
-	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="login2">Login</label>
-		<input type="text" value="<?php echo $login2;?>"  id="login2" name="login2" />
-	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="pass2">Password</label>
-		<input  type="password" value="<?php echo $pass2;?>" id="pass2" name="pass2"/>
-	</fieldset>
-	<fieldset data-role="fieldcontain">
-		<label for="pass2conf">Confirm Password</label>
-		<input  type="password" value="<?php echo $pass2;?>" id="pass2conf" name="pass2conf" class="passmatch2"/>
-	</fieldset>
-
+	<input type="button" id="addcalibre1" class="btn" value='Add "normal" library' />
+	
+	
+	
 	<ul class="ui-li" data-role="listview" id="calibrelibrary2" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Calibre libraries with parental control</li>
+	<li data-role="list-divider">Calibre libraries with access reserved for parental accounts</li>
 <?php
 $nbcalibre2=0;
 if($limited) {
@@ -445,15 +476,71 @@ foreach ($limited as $key => $value) {
 			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
 					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="limcustom<?php echo $nbcalibre2;?>" name="limcustom<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
-					<a href="#" id="limremove<?php echo $nbcalibre2;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removecalibre(this);">Remove</a>
+					<a href="#" id="limremove<?php echo $nbcalibre2;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
 				</div>
 			</div>
 		</fieldset>
 	</li>
 <?php }} ?>
 	</ul>
-	<input type="button" id="addcalibre2" class="btn" value="Add library" />
+	<input type="button" id="addcalibre2" class="btn" value="Add library with parental control" />
+	
+	<p><b>Library path</b> can be a full path (for exemple //volume1/calibre1/), you can't use direct access mode in that case.<br/>
+Or, if your library is in web directory, it can be a relative path (as ../calibre1/) and then you can use any access mode.<br/>
+Note the <b>"/" at the end</b> of the path <b>is necessary</b>.<br/>
+If you want to use <b>custom columns</b>, put the label of the custom columns you want with , as separator. Ex: custom1,custom2</p>
 </div>
+
+<div data-role="collapsible" data-collapsed="false">
+<h2>Accounts and users</h2>
+<ul class="ui-li" data-role="listview" id="accountlist" data-inset="true"  data-scroll="true">
+<li data-role="list-divider">Accounts</li>
+<?php
+$nbaccount=0;
+if($account) {
+foreach ($account as $key => $value) {
+	$nbaccount=$nbaccount+1;
+	$newacc=$key.": ".$value[1]." / ".$value[2]." / ".$value[3];
+?>
+<li><div data-role="controlgroup" data-type="horizontal">
+	<a href="#" id="accountbt<?php echo $nbaccount;?>" class="ui-btn ui-corner-all" onclick="editaccount(<?php echo $nbaccount;?>);"><?php echo $newacc;?></a>
+	<input name="acc_login<?php echo $nbaccount;?>" id="acc_login<?php echo $nbaccount;?>" type="hidden" value="<?php echo $key;?>"/>
+	<input name="acc_pass<?php echo $nbaccount;?>" id="acc_pass<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[0];?>"/>
+	<input name="acc_access<?php echo $nbaccount;?>" id="acc_access<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[1];?>"/>
+	<input name="acc_userchoice<?php echo $nbaccount;?>" id="acc_userchoice<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[2];?>"/>
+	<input name="acc_user<?php echo $nbaccount;?>" id="acc_user<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[3];?>"/>
+	<a href="#" id="accountdel<?php echo $nbaccount;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+</div></li>
+<?php }} ?>
+</ul>
+	<input type="button" id="newaccount" class="btn" value="Add Account" />
+	<p>If you choose to protect access, only these accounts can connect.<br />
+	For each account, you can indicate if it has access to all the libraires or only libraires without parental control. A user can be associated with the account: With "NO user", the account wil have no user, with "Forced", there will be the user you have to indicate, with "Free", the user can be chosen since the part configuration of My Readings.</p>
+	<p>Several accounts can have the same user. If you want to have users (to be able to save bookmarks), you must create them below.</p>
+
+	<ul class="ui-li" data-role="listview" id="userlist" data-inset="true"  data-scroll="true">
+	<li data-role="list-divider">Add names of users (for bookmarks) - all names must be different</li>
+<?php
+$nbusers=0;
+if($users) {
+foreach ($users as $key => $value) {
+	$nbusers=$nbusers+1;
+?>
+<li><div data-role="controlgroup" data-type="horizontal">
+	<input type="text" value="<?php echo $value;?>" id="userval<?php echo $nbusers;?>" name="userval<?php echo $nbusers;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+	<a href="#" id="userremove<?php echo $nbusers;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+</div></li>
+<?php }} ?>
+
+	</ul>
+	<input type="button" id="adduser" class="btn" value="Add user" />
+	<p>For each user, you can save a bookmark of a book or indicate that the book has been read. 
+For that, you must create a custom column in calibre for each user. The datatype must be "integer". 
+For example, you create a custom column with label user1 and name "Toto" and then, here, you add Toto. 
+If you want use that, I recommend you to add, in the first one, a "guest" user who will be used by default (in account with free choice).</p>
+
+</div>
+
 
 <div data-role="collapsible" data-collapsed="false">
 	<h2>Viewers</h2>
@@ -484,40 +571,48 @@ foreach ($limited as $key => $value) {
 	<p>Some devices as those under iOS seem to have a limit of size for the images which can be shown. By activating this function, the images will be resized to 5242880 pixels (5x1024x1024= 5Mpx) by default. The original book will not be changed. You can change this size.</p>
 </div>
 
-<div data-role="collapsible" data-collapsed="false">
-	<h2>Users (For bookmarks)</h2>
-	<ul class="ui-li" data-role="listview" id="userlist" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Add names of users - all names must be different</li>
-<?php
-$nbusers=0;
-if($users) {
-foreach ($users as $key => $value) {
-	$nbusers=$nbusers+1;
-?>
-<li><div data-role="controlgroup" data-type="horizontal">
-	<input type="text" value="<?php echo $value;?>" id="userval<?php echo $nbusers;?>" name="userval<?php echo $nbusers;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
-	<a href="#" id="userremove<?php echo $nbusers;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeuser(this);">Remove</a>
-</div></li>
-<?php }} ?>
-
-
-	</ul>
-	<input type="button" id="adduser" class="btn" value="Add user" />
-	<p>For each user, you can save a bookmark of a book or indicate that the book has been read. 
-For that, you must create a custom column in calibre for each user. The datatype must be "integer". 
-For example, you create a custom column with label user1 and name "Toto" and then, here, you add Toto. 
-If you want use that, I recommend you to add, in the first one, a "guest" user who will be the account used by default.</p>
-</div>
-
-
-
 <input name="nbcal" id="nbcal" type="hidden" value=""/>
 <input name="nblim" id="nblim" type="hidden" value=""/>
 <input name="nbuser" id="nbuser" type="hidden" value=""/>
+<input name="nbaccount" id="nbaccount" type="hidden" value=""/>
 <input name="admin_login" type="hidden" value="<?php echo $admin_login;?>"/>
 <input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
 <input type="submit" name="Submit" value="Save configuration" data-theme="b" />
 </form>
+
+<div data-role="popup" id="popupLogin"  class="ui-content">
+    <form action="#" method="get" enctype="multipart/form-data" name="editlogin" id="editlogin" >
+        <div>
+            <label for="poplogin" class="ui-hidden-accessible">Login:</label>
+            <input type="text" name="poplogin" id="poplogin" value="" placeholder="Login" class="required"/>
+            <label for="poppass">Password:</label>
+            <input type="password" name="poppass" id="poppass" value="" class="required">
+	    <label for="poppassconf">Confirm Password:</label>
+            <input type="password" name="poppassconf" id="poppassconf" value="" class="required poppassmatch">
+	    <legend>Libraries Access:</legend>
+	    <fieldset data-role="controlgroup" data-type="horizontal">
+	    	<input type="radio" name="popaccess" id="popaccessa" value="Normal" checked="checked">
+		<label for="popaccessa">Normal</label>
+		<input type="radio" name="popaccess" id="popaccessb" value="Parental">
+		<label for="popaccessb">Parental</label>
+	    </fieldset>
+	    <legend>User choice::</legend>
+	    <fieldset data-role="controlgroup" data-type="horizontal">
+	    	<input type="radio" name="popuserchoice" id="popuserchoicea" value="No user" checked="checked">
+		<label for="popuserchoicea">No user</label>
+		<input type="radio" name="popuserchoice" id="popuserchoiceb" value="Forced">
+		<label for="popuserchoiceb">Forced</label>
+		<input type="radio" name="popuserchoice" id="popuserchoicec" value="Free">
+		<label for="popuserchoicec">Free</label>
+	    </fieldset>
+	    <label for="popuser">User:</label>
+            <input type="text" name="popuser" id="popuser" value="" />
+	    <input type="hidden"  name="popid" id="popid" value="" />
+            <button type="button" id="addaccount" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Update</button>
+        </div>
+    </form>
+</div>
+
 </div><!-- /config tab -->
 
 <div id="runtest">

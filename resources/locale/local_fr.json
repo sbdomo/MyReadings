@@ -61,9 +61,12 @@
 	"txtEmpty":"Liste vide"
 },
 "configpanel":{
+	"txtConfiguration": "Configuration",
+	"txtAccount": "Compte",
 	"txtTitleLogin": "Connexion",
 	"txtLogin": "Nom",
 	"txtPass": "Mot de passe",
+	"txtUser": "Utilisateur",
 	"txtLoginButton": "S'identifier",
 	"txtViewer": "Paramètres du lecteur",
 	"txtbook_at_launch": "Réouvrir le livre au lancement",
@@ -78,7 +81,10 @@
 	"landscape": "Mode paysage",
 	"nbline": "Nombre de ligne",
 	"nbbyline": "Nombre de livre par ligne",
-	"txtchgbookButton": "Mettre à jour"
+	"txtchgbookButton": "Mettre à jour",
+	"txtSaveaccount": "Sauver compte",
+	"txtRestoreaccount": "Réinitialiser compte",
+	"txtTools": "Outils"
 },
 "comicSettingsPopup":{
 	"txtTitle": "Paramètres du lecteur",
@@ -121,7 +127,9 @@
 	"domarkread": "Indiquer que le livre est lu?",
 	"shownext": "Lire le livre suivant de la série?",
 	"txtFilter": "Filtre",
-	"nofilter": "Pas de filtre"
+	"nofilter": "Pas de filtre",
+	"account": "Compte",
+	"user": "Utilisateur"
 },
 "lang":
 {
