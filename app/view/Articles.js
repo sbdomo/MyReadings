@@ -34,7 +34,7 @@ Ext.define('myreadings.view.Articles', {
     	this.callParent(arguments);
     },
     tplinit: function(profil) {
-    	var showcust=myreadings.user.get('showcust');
+    	var showcust=myreadings.conf.get('showcust');
     	//version iPad - iPad mini
     	//Configuration de l'affichage d'un livre
     	var mytplipad= '<div class="clsarticle" ref="{data.id}"><div class="tablet">'+
@@ -175,10 +175,10 @@ Ext.define('myreadings.view.Articles', {
 			'</div></div>';
 		    
 	    var mycontroller = myreadings.app.getController('articlesControl');
-	    var portline=myreadings.user.get('portline');
-	    var portbyline=myreadings.user.get('portbyline');
-	    var landline=myreadings.user.get('landline');
-	    var landbyline=myreadings.user.get('landbyline');
+	    var portline=myreadings.conf.get('portline');
+	    var portbyline=myreadings.conf.get('portbyline');
+	    var landline=myreadings.conf.get('landline');
+	    var landbyline=myreadings.conf.get('landbyline');
 	    var mytplportrait;
 	    var mytpllandscape;
 	    if(profil=="gtab") {

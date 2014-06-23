@@ -5,8 +5,13 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('./config/config.php');
 
-if($protect==false||($account[$mylogin]&&$account[$mylogin][0]==$mypass)) {
-	 //OK
+if($protect==false) {
+	//OK
+} else if($account[$mylogin]&&$account[$mylogin][0]==$mypass) {
+	//ok
+	if($account[$mylogin][1]=="Parental"&&$limited) {
+		$calibre=array_merge ($calibre, $limited);
+	}
 } else {
 	erreur("login error");
 }
@@ -22,8 +27,6 @@ else      $extension="";
 
 if(isset($_GET['base'])) $base=$_GET['base'];
 else      $base="";
-
-if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
 
 $ebook=$calibre[$base].$path."/".$filename.".".$extension;
 

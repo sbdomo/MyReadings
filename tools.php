@@ -12,14 +12,18 @@ else      $action="";
 
 require_once('./config/config.php');
 
-if($protect==false||($account[$mylogin]&&$account[$mylogin][0]==$mypass)) {
-	 //OK
+if($protect==false) {
+	//OK
+} else if($account[$mylogin]&&$account[$mylogin][0]==$mypass) {
+	//ok
+	if($account[$mylogin][1]=="Parental"&&$limited) {
+		$calibre=array_merge ($calibre, $limited);
+	}
 } else {
 	erreur("login error");
 }
 
 $baseconf="./config/conf.db";
-if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
 
 if($action=="cache") {
 	//Le chemin est en dur pour éviter le détournement de ClearCache
@@ -195,7 +199,6 @@ if($action=="cache") {
 	//user
 	if(isset($_GET['user'])) $user=$_GET['user'];
 	else erreur("No user");
-	
 	$basename=$calibre[$base].'metadata.db';
 	try{
 		$pdo = new PDO('sqlite:'.$basename);
@@ -282,7 +285,47 @@ if($action=="cache") {
 		//echo "Impossible d'accéder à la base de données SQLite : ".$e->getMessage();
 		erreur($e->getMessage());
 	}
-	
+} else if($action=="saveaccount") {
+	$fichierjson="./config/accounts.json";
+	if ($json = @file_get_contents('php://input')) {
+		    $json = json_decode($json, true);
+		    $account= $json['account'];
+		    
+		    $sav= array(
+		    	    'order' => $account['order'],
+		    	    'gpseries' => $account['gpseries'],
+		    	    'showifread' => $account['showifread'],
+		    	    'currentuser' => $account['currentuser'],
+		    	    'open_current_comic_at_launch' => $account['open_current_comic_at_launch'],
+		    	    'showresize' => $account['showresize'],
+		    	    'hidemenu' => $account['hidemenu'],
+		    	    'zoom_on_tap' => $account['zoom_on_tap'],
+		    	    'toggle_paging_bar' => $account['toggle_paging_bar'],
+		    	    'page_turn_drag_threshold' => $account['page_turn_drag_threshold'],
+		    	    'page_fit_mode' => $account['page_fit_mode'],
+		    	    'page_change_area_width' => $account['page_change_area_width'],
+		    	    'epub_mode' => $account['epub_mode'],
+		    	    'epub_font' => $account['epub_font'],
+		    	    'epub_fontsize' => $account['epub_fontsize']
+		    	    );
+		    
+		    if($json = @file_get_contents($fichierjson)) {
+		    	    $json = json_decode($json, true);
+		    	    $accounts= $json['accounts'];
+		    } else {
+		    	    $accounts=array();
+		    }
+		    	$accounts[$account["username"]]=$sav;  
+		    $acountencode='{"accounts":'.json_encode($accounts).'}';
+		    file_put_contents($fichierjson, $acountencode);
+		    
+		    $result="OK";
+		    $success = "true";
+	} else {
+		$success = "false";
+		$result="No account";
+		
+	}
 
 //Non utilisé
 } else if($action=="getbookmarkcalibre") {

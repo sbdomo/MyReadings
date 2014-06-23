@@ -10,6 +10,7 @@ if($protect==false||($account[$mylogin]&&$account[$mylogin][0]==$mypass)) {
 } else {
 	erreur("login error");
 }
+if($limited) $calibre=array_merge ($calibre, $limited);
 
 if(isset($_GET['path'])) $path=$_GET['path'];
 else      $path="";
@@ -22,8 +23,6 @@ else      $id="1";
 
 if(isset($_GET['forced'])) $forced=$_GET['forced'];
 else $forced="false";
-
-if($control==true&&$limited) $calibre=array_merge ($calibre, $limited);
 
 $cover=$calibre[$base].$path."/cover.jpg";
 $thumb_path="./thumb/";

@@ -3,6 +3,11 @@ Changements:
 - Utilisation d'une image différente (deux livres supperposés) pour afficher les livres groupés par série.
 - Mise en place d'un filtre qui permet de sélectionner une étiquette, un auteur ou une série pour ne faire afficher que les livres correspondants à ce critère avec possibilité d'utiliser la partie recherche de My Readings sur cette sous-base.
 - Correction d'un bogue sur les marques-pages (quand le livre n'est pas dans la liste)
+- Gestion de plusieurs comptes avec login et mot de passe et possiblité d'y associer un utilisateur.
+- Possiblité d'enregister sur le serveur les paramètres d'un compte pour les récupérer lors d'une reconnexion dans My Readings.
+- Possibilité de réinitialiser les paramètres du compte dans My Readings (pour remettre le paramètrage par défaut, celui-ci pouvant être différent de celui sauvegardé sur le serveur).
+- Possiblité de ne faire afficher que les livres en cours de lecture (dans le pop pour trier)
 
 A venir:
-Gestion de plusieurs logins et mots de passe
+- test xsendifle avec image dans admin.php
+- Effacer la sauvegarde d'un comptes dans la partie Tools de admin.php

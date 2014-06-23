@@ -9,6 +9,7 @@ Ext.define('myreadings.view.orderview', {
 	txtAll: "",
 	txtNotRead: "",
 	txtRead: "",
+	txtReading: "",
 	txtSerie: "",
 
 	config: {
@@ -110,6 +111,9 @@ Ext.define('myreadings.view.orderview', {
     	    	    }, {
     	    	    	text: this.txtRead,
     	    	    	value: 'read'
+    	    	    }, {
+    	    	    	text: this.txtReading,
+    	    	    	value: 'reading'
     	    	    }
     	    	    ],
     	    	    listeners:

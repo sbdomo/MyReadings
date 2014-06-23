@@ -9,8 +9,13 @@ if(isset($_GET['mypass'])) $mypass=$_GET['mypass'];
 else      $mypass="";
 require_once('./config/config.php');
 
-if($protect==false||($account[$mylogin]&&$account[$mylogin][0]==$mypass)) {
-	 //OK
+if($protect==false) {
+	//OK
+} else if($account[$mylogin]&&$account[$mylogin][0]==$mypass) {
+	//ok
+	if($account[$mylogin][1]=="Parental"&&$limited) {
+		$calibre=array_merge ($calibre, $limited);
+	}
 } else {
 	erreur("login error");
 }
@@ -48,7 +53,7 @@ else      $idfilter="";
 if(isset($_GET['listfilter'])) $listfilter=$_GET['listfilter'];
 else      $listfilter="";
 
-//Tri par livre lu ou pas - valeurs: all, notread, read
+//Tri par livre lu ou pas - valeurs: all, notread, read, reading
 if(isset($_GET['showifread'])) $showifread=$_GET['showifread'];
 else $showifread="all";
 //Type de requête (par titre, auteur...)
@@ -197,6 +202,8 @@ if($userid!="") {
 		$isread="and bookmark='-1' ";
 	} else if($showifread=="notread") {
 		$isread="and (bookmark is NULL or bookmark<>'-1') ";
+	} else if($showifread=="reading") {
+		$isread="and bookmark='1' ";
 	}
 }
 

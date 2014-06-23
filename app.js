@@ -17,7 +17,7 @@ Ext.application({
         'Ext.ux.Iframe',
 	'Ext.MessageBox'
     ],
-    models:['article','article2','listmodel','myreadingsUser', 'filtermodel'],
+    models:['article','article2','listmodel','myreadingsUser', 'filtermodel', 'myreadingsConf'],
     stores:['liststore', 'filterstore'],
     controllers: ['articlesControl', 'comic', 'epub'],
     views: ['main', 'ArticlesList', 'articlesserieslist', 'article', 'searchview', 'searchpanel', 'listview', 'configpanel', 'comicview', 'ImageViewer', 'comicSettingsPopup', 'epubview', 'bookmarkview', 'orderview', 'filterview'],

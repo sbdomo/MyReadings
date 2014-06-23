@@ -27,6 +27,7 @@
 	"txtAll": "Todos",
 	"txtNotRead": "No leídos",
 	"txtRead": "Leídos",
+	"txtReading": "Corriente",
 	"txtSerie": "Agrupado por serie"
 },
 "article":{
@@ -62,7 +63,6 @@
 },
 "configpanel":{
 	"txtConfiguration": "Configuración",
-	"txtAccount": "Cuenta",
 	"txtTitleLogin": "Conexión",
 	"txtLogin": "Nombre",
 	"txtPass": "Clave",

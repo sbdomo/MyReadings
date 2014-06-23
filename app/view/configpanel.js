@@ -4,7 +4,6 @@ Ext.define('myreadings.view.configpanel', {
 	id: 'configpanel',
 	requires: ['Ext.field.Password','Ext.form.FieldSet', 'Ext.field.Select'],
 	txtConfiguration: "",
-	txtAccount: "",
 	txtTitleLogin: "",
 	txtLogin: "",
 	txtPass: "",
@@ -56,7 +55,6 @@ Ext.define('myreadings.view.configpanel', {
 		},
 		{
 			xtype: 'fieldset',
-			title: this.txtAccount,
 		items:[
 		{
 			xtype: 'fieldset',
@@ -241,14 +239,6 @@ Ext.define('myreadings.view.configpanel', {
 				disabled: true
 			},
 			{
-				xtype: 'togglefield',
-				label: this.showcust,
-				labelWrap: true,
-				labelWidth: '60%',
-				itemId: 'showcust'//,
-				//disabled: true
-			},
-			{
 			xtype: 'fieldset',
 			itemId: "configland",
 			hidden: true,
@@ -303,6 +293,14 @@ Ext.define('myreadings.view.configpanel', {
 				itemId: 'portbyline'
 			}
 			]
+			},
+			{
+				xtype: 'togglefield',
+				label: this.showcust,
+				labelWrap: true,
+				labelWidth: '60%',
+				itemId: 'showcust'//,
+				//disabled: true
 			},
 			{
 				xtype: 'button',

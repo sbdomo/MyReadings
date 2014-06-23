@@ -39,7 +39,7 @@ if($calibre) {
 
 if (!extension_loaded("sqlite3")) echo "sqlite3 extension could be not loaded.";
 
-if($control==true) $calibre=array_merge ($calibre, $limited);
+if($limited) $calibre=array_merge ($calibre, $limited);
 foreach ($calibre as $key => $path) {
 	$connect=false;
 	$result="";
