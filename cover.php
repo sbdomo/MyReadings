@@ -24,6 +24,8 @@ else      $id="1";
 if(isset($_GET['forced'])) $forced=$_GET['forced'];
 else $forced="false";
 
+if($_GET['testxsendfile']=="true") $fetchmode="no resize";
+
 $cover=$calibre[$base].$path."/cover.jpg";
 $thumb_path="./thumb/";
 

@@ -371,6 +371,48 @@ $(function() {
 		$.mobile.loading( "hide" );
 		return false;
 	});
+	
+	$('#deletesavingaccount').on('click', function() {
+		$.mobile.loading( "show");
+
+		var $container = $('#accountoptionsgroup').find('.ui-controlgroup-controls');
+		var params=$('#deleteaccount').serialize();
+		$.get("./admintools.php", params,
+		function(data){
+			$.mobile.loading( "hide" );
+			if(data.success==true) {
+				if($('#deletesaveaccountaction').val()!="initdeletesaveaccount"||data.resultat!="") {
+					$container.find('.ui-radio').remove();
+					var i=0;
+					$.each(data.resultat, function(key, value) {
+						var id = 'accountsav_' + i;
+						
+						$('<input />', {
+							'id': id,
+							'type': 'radio',
+							'name': 'accountsav',
+							'value': value
+						}).append('<label for="' + id + '">' + value + '</label>').appendTo($container);
+						i=i+1;
+					});
+					$container.find('input[type=radio]').checkboxradio();
+					$("#accountoptionsgroup").controlgroup("refresh");
+					if($('#deletesaveaccountaction').val()=="initdeletesaveaccount") {
+						$('#deletesaveaccountaction').val("deletesaveaccount");
+						$('#deletesavingaccount').val("Delete a saving").button('refresh');
+					} else if(data.resultat=="") {
+						$('#deletesaveaccountaction').val("initdeletesaveaccount");
+						$('#deletesavingaccount').val("Show list of saving").button('refresh');
+					}
+				} else alert("No Account find");
+			} else alert(data.resultat);
+		}, "json")
+		.error(function() {
+			$.mobile.loading( "hide" );
+			alert("error");
+		});
+
+	});
 });
 </script>
 <div data-role="tabs" id="tabs">
@@ -647,6 +689,20 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 		<input name="action" type="hidden" value="deletethumb"/>
 		<input type="submit" name="Submit" value="Delete files in cache" data-theme="b" />
 		</form>
+	</div>
+	
+	<div data-role="collapsible" data-collapsed="false">
+	<h2>Management of the saving of the configuration of the accounts</h2>
+	<p>The user can save the configuration of his account since My Readings. You can delete this saving.</p>
+	<form action="#" method="get" enctype="multipart/form-data" name="deleteaccount" id="deleteaccount" >
+                <fieldset id="accountoptionsgroup" data-role="controlgroup">
+                	<legend>Choose an account:</legend>
+                </fieldset>
+		<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
+		<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
+		<input name="action" id="deletesaveaccountaction" type="hidden" value="initdeletesaveaccount"/>
+		<input type="button" id="deletesavingaccount" class="btn" value="Show list of saving" data-theme="b" />
+	</form>
 	</div>
 	<div data-role="collapsible" data-collapsed="false">
 		<h2>Skins to test the aspect on tablet or smartphone</h2>

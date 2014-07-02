@@ -22,6 +22,39 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 		}
 		$result="delete ".$filenbr." files in thumb";
 		$success=true;
+	} else if($action=="initdeletesaveaccount") {
+		$result=array();
+		$fichierjson="./config/accounts.json";
+		if ($json = @file_get_contents($fichierjson)) {
+		    $json = json_decode($json, true);
+		    $accounts= $json['accounts'];
+		    foreach( $accounts as $key => $value){
+			    $result[]=$key;
+		    }
+		}
+		$success=true;
+	} else if($action=="deletesaveaccount") {
+		if($_GET['accountsav']) {
+		$account=$_GET['accountsav'];
+		$result=array();
+		$fichierjson="./config/accounts.json";
+		if ($json = @file_get_contents($fichierjson)) {
+		    $json = json_decode($json, true);
+		    $accounts= $json['accounts'];
+		    unset($accounts[$account]);
+		    
+		    $acountencode='{"accounts":'.json_encode($accounts).'}';
+		    file_put_contents($fichierjson, $acountencode);
+		    
+		    foreach( $accounts as $key => $value){
+			    $result[]=$key;
+		    }
+		}
+		$success=true;
+		} else {
+			$result="You didn't choose the account to delete";
+		}
+		
 	} else {
 		$result="error";
 	}

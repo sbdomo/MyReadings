@@ -35,9 +35,10 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 			if(phpversion()<=5.2) $result.='<p>Your php version is '.phpversion().'. If you have a problem, you could test a newer version.</p>';
 			$result.='<p>Connection Test:</p>';
 			$result.="<p>If all is OK, you must see a cover for each library.</p>";
-			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.</p>";
-			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account);
-			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account);
+			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.<br />
+			If you use X-Sendfile and if its configuration is correct, a second cover should appear.</p>";
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile);
 			if(fw("./thumb")) {
 				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
 			} else {
@@ -82,7 +83,7 @@ if (isset($_GET['callback'])) {
 	echo $json;
 }
 
-function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs, $account) {
+function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs, $account, $XSendfile) {
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
 	foreach ($bases as $key => $path) {
@@ -106,6 +107,11 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 				} else {
 				$url="./cover.php?path=".urlencode($resultat['relativePath'])."&id=".$resultat['id']."&base=".urlencode($key)."&mylogin=".urlencode($login)."&mypass=".urlencode($pass);
 				$result.='<p><img  src="'.$url.'"/></p>';
+				}
+				//Test de Xsenfile grace à cover.php
+				if($XSendfile) {
+				$url="./cover.php?testxsendfile=true&path=".urlencode($resultat['relativePath'])."&id=".$resultat['id']."&base=".urlencode($key)."&mylogin=".urlencode($login)."&mypass=".urlencode($pass);
+				$result.='<p>Test X-Sendfile:<br/><img  src="'.$url.'"/></p>';
 				}
 			} else $resultat = $stmt->fetch();
 		}

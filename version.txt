@@ -6,8 +6,8 @@ Changements:
 - Gestion de plusieurs comptes avec login et mot de passe et possiblité d'y associer un utilisateur.
 - Possiblité d'enregister sur le serveur les paramètres d'un compte pour les récupérer lors d'une reconnexion dans My Readings.
 - Possibilité de réinitialiser les paramètres du compte dans My Readings (pour remettre le paramètrage par défaut, celui-ci pouvant être différent de celui sauvegardé sur le serveur).
+- Possiblité d'effacer la sauvegarde d'un comptes dans la partie Tools de admin.php
 - Possiblité de ne faire afficher que les livres en cours de lecture (dans le pop pour trier)
+- test de xsendifle dans admin.php (affichage de la couverture d'un livre en utilisant xsendfile).
 
 A venir:
-- test xsendifle avec image dans admin.php
-- Effacer la sauvegarde d'un comptes dans la partie Tools de admin.php
