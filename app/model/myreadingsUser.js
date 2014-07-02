@@ -26,9 +26,9 @@ Ext.define('myreadings.model.myreadingsUser', {
 			{name: 'epub_mode', type: 'string', defaultValue: 'jour'},
 			{name: 'epub_font', type: 'string', defaultValue: 'arial'},
 			{name: 'epub_fontsize', type: 'string', defaultValue: '1.45'},
-			//******************Non sauvegardé*****************
 			//Menu recherche
-			{name: 'pathbase', type: 'string'}, //chemin de la base de données
+			{name: 'pathbase', type: 'string'}, //chemin de la base de données	
+			//******************Non sauvegardé*****************
 				//filtre
 			{name: 'namelistfilter', type: 'string', defaultValue:""}, //nom de la liste
 			{name: 'listfilter', type: 'string', defaultValue:""}, //code de la liste

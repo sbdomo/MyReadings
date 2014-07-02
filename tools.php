@@ -306,7 +306,8 @@ if($action=="cache") {
 		    	    'page_change_area_width' => $account['page_change_area_width'],
 		    	    'epub_mode' => $account['epub_mode'],
 		    	    'epub_font' => $account['epub_font'],
-		    	    'epub_fontsize' => $account['epub_fontsize']
+		    	    'epub_fontsize' => $account['epub_fontsize'],
+		    	    'pathbase' => $account['pathbase']
 		    	    );
 		    
 		    if($json = @file_get_contents($fichierjson)) {
