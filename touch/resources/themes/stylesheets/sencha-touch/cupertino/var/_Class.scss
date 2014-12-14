@@ -6,12 +6,12 @@
  * and user. Set to false to reduce CSS weight.
  */
 $include-default-icons: true !default;
-$background-color: #fff;
-$primary-text-color: #000;
+$background-color: #fff !default;
+$primary-text-color: #000 !default;
 
-$ios7-blue: #157efb;
-$ios7-red: #fc3e39;
-$ios7-green: #53d769;
+$ios7-blue: #157efb !default;
+$ios7-red: #fc3e39 !default;
+$ios7-green: #53d769 !default;
 
 $ios7-blue-lighten: lighten($ios7-blue, 30%);
 $ios7-red-lighten: lighten($ios7-red, 30%);

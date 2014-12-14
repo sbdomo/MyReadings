@@ -1,1 +1,1 @@
-sencha app build production
+F:\Users\sallegym\bin\Sencha\Cmd\5.1.0.26\sencha app build production
