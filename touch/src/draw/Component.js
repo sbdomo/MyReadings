@@ -6,18 +6,14 @@
  * One way to create a draw component is:
  *
  *     var drawComponent = new Ext.draw.Component({
- *         items: [{
+ *         fullscreen: true,
+ *         sprites: [{
  *             type: 'circle',
  *             fill: '#79BB3F',
  *             radius: 100,
  *             x: 100,
  *             y: 100
  *         }]
- *     });
- *
- *     new Ext.Panel({
- *         fullscreen: true,
- *         items: [drawComponent]
  *     });
  *
  * In this case we created a draw component and added a sprite to it.
@@ -29,7 +25,7 @@
  *
  *     drawComponent.getSurface('main').add({
  *         type: 'circle',
- *         fill: '#79BB3F',
+ *         fill: 'blue',
  *         radius: 100,
  *         x: 100,
  *         y: 100
@@ -48,7 +44,7 @@ Ext.define('Ext.draw.Component', {
         'Ext.draw.Surface',
         'Ext.draw.engine.Svg',
         'Ext.draw.engine.Canvas',
-        'Ext.draw.sprite.GradientDefinition'
+        'Ext.draw.gradient.GradientDefinition'
     ],
     engine: 'Ext.draw.engine.Canvas',
     statics: {
@@ -83,6 +79,9 @@ Ext.define('Ext.draw.Component', {
 
         /**
          * @cfg {Function} [resizeHandler] The resize function that can be configured to have a behavior.
+         *
+         * __Note:__ since resize events trigger {@link #renderFrame} calls automatically,
+         * return `false` from the resize function, if it also calls `renderFrame`, to prevent double rendering.
          */
         resizeHandler: null,
 
@@ -143,7 +142,7 @@ Ext.define('Ext.draw.Component', {
 
     applyGradients: function (gradients) {
         var result = [],
-            i, n, gradient;
+            i, n, gradient, offset;
         if (!Ext.isArray(gradients)) {
             return result;
         }
@@ -174,7 +173,7 @@ Ext.define('Ext.draw.Component', {
             }
             result.push(gradient);
         }
-        Ext.draw.sprite.GradientDefinition.add(result);
+        Ext.draw.gradient.GradientDefinition.add(result);
         return result;
     },
 
@@ -244,15 +243,15 @@ Ext.define('Ext.draw.Component', {
 
     onResize: function () {
         var me = this,
-            size = me.element.getSize();
+            size = me.element.getSize(),
+            resizeHandler = me.getResizeHandler() || me.resizeHandler,
+            result;
         me.fireEvent('resize', me, size);
-        if (me.getResizeHandler()) {
-            me.getResizeHandler().call(me, size);
-        } else {
-            me.resizeHandler(size);
+        result = resizeHandler.call(me, size);
+        if (result !== false) {
+            me.renderFrame();
+            me.onPlaceWatermark();
         }
-        me.renderFrame();
-        me.onPlaceWatermark();
     },
 
     resizeHandler: function (size) {
@@ -344,6 +343,7 @@ Ext.define('Ext.draw.Component', {
         Ext.draw.Animator.removeFrameCallback(this.frameCallbackId);
         this.callSuper();
     }
+
 }, function () {
     if (location.search.match('svg')) {
         Ext.draw.Component.prototype.engine = 'Ext.draw.engine.Svg';

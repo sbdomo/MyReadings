@@ -158,6 +158,10 @@ Ext.define('Ext.chart.series.Gauge', {
 
         rotation: 0,
 
+        /**
+        * @cfg {Number} totalAngle
+        * The size of the sector that the series will occupy.
+        */
         totalAngle: Math.PI / 2,
 
         region: [0, 0, 1, 1],
@@ -260,8 +264,7 @@ Ext.define('Ext.chart.series.Gauge', {
     doUpdateShape: function (radius, donut) {
         var endRhoArray,
             sectors = this.getSectors(),
-            sectorCount = (sectors && sectors.length) || 0;
-            needle = this.getNeedle(),
+            sectorCount = (sectors && sectors.length) || 0,
             needleLength = this.getNeedleLength() / 100;
 
         // Initialize an array that contains the endRho for each sprite.
@@ -395,7 +398,8 @@ Ext.define('Ext.chart.series.Gauge', {
     getSprites: function () {
         var me = this,
             store = me.getStore(),
-            value = me.getValue();
+            value = me.getValue(),
+            i, ln;
 
         // The store must be initialized, or the value must be set
         if (!store && !Ext.isNumber(value)) {
@@ -432,7 +436,7 @@ Ext.define('Ext.chart.series.Gauge', {
         // Create background sprite(s)
         me.getLabel().getTemplate().setField(true); // Enable labels
         sectors = me.normalizeSectors(me.getSectors());
-        for (i = 0; i < sectors.length; i++) {
+        for (i = 0, ln = sectors.length; i < ln; i++) {
             attr = {
                 startAngle: me.valueToAngle(sectors[i].start),
                 endAngle: me.valueToAngle(sectors[i].end),

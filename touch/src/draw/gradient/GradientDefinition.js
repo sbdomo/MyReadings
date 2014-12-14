@@ -1,4 +1,4 @@
-Ext.define('Ext.draw.sprite.GradientDefinition', {
+Ext.define('Ext.draw.gradient.GradientDefinition', {
     singleton: true,
 
     urlStringRe: /^url\(#([\w\-]+)\)$/,
@@ -24,4 +24,4 @@ Ext.define('Ext.draw.sprite.GradientDefinition', {
         }
         return str;
     }
-})
+});
