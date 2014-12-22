@@ -6,6 +6,9 @@ else      $admin_pw="";
 if(isset($_POST['action_login'])) $action_login=$_POST['action_login'];
 else      $action_login="";
 
+if(isset($_POST['language0'])) $language0=$_POST['language0'];
+else      $language0="";
+
 $adminpass="./config/confadmin.php";
 //Create $adminpass
 if($action_login=="save"&&!file_exists($adminpass)&&$admin_pw!=""&&$admin_login!="") {
@@ -87,7 +90,14 @@ if(!file_exists($adminpass)) {
 	$testconnect=false;
 
 }
-if($testconnect==false)	{?>
+if($testconnect==false)	{
+	if(file_exists('./config/language.php')) {
+		require_once('./config/language.php');
+	} else {
+		$language0="en";	
+	}
+?>	
+	
 <script type="text/javascript">
 $(function() {
 	
@@ -122,6 +132,15 @@ $(function() {
 		<input name="admin_pw2" id="admin_pw2" type="password" value="" class="required passmatch"/>
 	</fieldset>
 	<?php } ?>
+	<fieldset data-role="fieldcontain">
+	<label for="language0" class="select">Language</label>
+	<select name="language0" id="language0" data-native-menu="false">
+		<option>Language</option>
+		<option value="en" <?php if($language0=="en") echo "selected";?> >English</option>
+		<option value="fr" <?php if($language0=="fr") echo "selected";?> >French</option>
+		<option value="es" <?php if($language0=="es") echo "selected";?> >Spanish</option>
+	</select>
+	</fieldset>
 		<input name="action_login"type="hidden" value="<?php echo $action ?>"/><br/>
 		<input data-inline="true" type="submit" name="Submit" value="Submit" />
 		<p><?php echo $message ?></p>
@@ -149,7 +168,13 @@ else {
 		$resizecbz=false;
 		$maxsize=5242880;
 	}
+	if($language0!="") $language=$language0;
 	if($maxsize==""||$maxsize==NULL) $maxsize=5242880;
+	$languagejson="./resources/locale/admin_".$language.".json";
+	if(!file_exists($languagejson)) $languagejson="./resources/locale/admin_en.json";
+	$json = file_get_contents($languagejson);
+	$json = json_decode($json, true);
+	$msg= $json['msg'];
 ?>
 <script type="text/javascript">
 function removeline(me){
@@ -184,12 +209,12 @@ $(function() {
         $('#addcalibre1').on('click', function() {
 			listItem = '<li><fieldset class="ui-grid-b">'+
 			'<div class="ui-block-a">'+
-			'<input type="text" value="" id="calval' + i +'" name="calval' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>'+
+			'<input type="text" value="" id="calval' + i +'" name="calval' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["path"]; ?>"/>'+
 			'</div><div class="ui-block-b">'+
-			'<input type="text" value="" id="calkey' + i +'" name="calkey' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
+			'<input type="text" value="" id="calkey' + i +'" name="calkey' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"]; ?>"/>'+
 			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
-			'<input type="text" value="" id="calcustom' + i +'" name="calcustom' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
-			'<a href="#" id="calremove' + i +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
+			'<input type="text" value="" id="calcustom' + i +'" name="calcustom' + i +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["cust_col_labels"]; ?>"/>'+
+			'<a href="#" id="calremove' + i +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>'+
 			'</div></div>'
 			'</fieldset></li>';
 			i++;
@@ -201,12 +226,12 @@ $(function() {
         $('#addcalibre2').on('click', function() {
 			listItem = '<li><fieldset class="ui-grid-b">'+
 			'<div class="ui-block-a">'+
-			'<input type="text" value="" id="limval' + i2 +'" name="limval' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>'+
+			'<input type="text" value="" id="limval' + i2 +'" name="limval' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["path"]; ?>"/>'+
 			'</div><div class="ui-block-b">'+
-			'<input type="text" value="" id="limkey' + i2 +'" name="limkey' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
+			'<input type="text" value="" id="limkey' + i2 +'" name="limkey' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"]; ?>"/>'+
 			'</div><div class="ui-block-c"><div data-role="controlgroup" data-type="horizontal">'+
-			'<input type="text" value="" id="limcustom' + i2 +'" name="limcustom' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>'+
-			'<a href="#" id="limremove' + i2 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
+			'<input type="text" value="" id="limcustom' + i2 +'" name="limcustom' + i2 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["cust_col_labels"]; ?>"/>'+
+			'<a href="#" id="limremove' + i2 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>'+
 			'</div></div>'
 			'</fieldset></li>';
 			i2++;
@@ -217,8 +242,8 @@ $(function() {
 	var i3 = $('#userlist li').size();
         $('#adduser').on('click', function() {
 			listItem = '<li><div data-role="controlgroup" data-type="horizontal">'+
-			'<input type="text" value="" id="userval' + i3 +'" name="userval' + i3 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>'+
-			'<a href="#" id="userremove' + i3 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
+			'<input type="text" value="" id="userval' + i3 +'" name="userval' + i3 +'" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"]; ?>"/>'+
+			'<a href="#" id="userremove' + i3 +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>'+
 			'</div></li>';
 			i3++;
         		$('#userlist').append(listItem);
@@ -256,7 +281,7 @@ $(function() {
 			'<input name="acc_access' + index +'" id="acc_access' + index +'" type="hidden" value="'+$('input[name=popaccess]:checked').val()+'"/>'+
 			'<input name="acc_userchoice' + index +'" id="acc_userchoice' + index +'" type="hidden" value="'+$('input[name=popuserchoice]:checked').val()+'"/>'+
 			'<input name="acc_user' + index +'" id="acc_user' + index +'" type="hidden" value="'+$("#popuser").val()+'"/>'+
-			'<a href="#" id="accountdel' + index +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>'+
+			'<a href="#" id="accountdel' + index +'" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>'+
 			'</div></li>';
 			i4++;
         		$('#accountlist').append(listItem);
@@ -276,7 +301,7 @@ $(function() {
 	
 	$.validator.addMethod("poppassmatch", function(value) {
 			return value == $("#poppass").val();
-	}, 'Confirmation password must match.');
+	}, '<?php echo $msg["pass_match"]; ?>');
 	
 	$("#editlogin").validate({
 		errorPlacement: function(error, element) {
@@ -319,11 +344,11 @@ $(function() {
 			$('#nbaccount').val(i4);
 			$.get("./saveconfig.php", $('#editconfig').serialize(),
 			function(data){
-				if(data.success=="true") alert("Your configuration has been saved.");
+				if(data.success=="true") alert("<?php echo $msg["save_config"]; ?>");
 				else alert(data.resultat);
 			}, "json")
 			.error(function() {
-				alert("error");
+				alert("<?php echo $msg["error"]; ?>");
 			});
 			$.mobile.loading( "hide" );
 			//return false;
@@ -341,7 +366,7 @@ $(function() {
 		}, "json")
 		.error(function() {
 			$.mobile.loading( "hide" );
-			alert("error");
+			alert("<?php echo $msg["error"]; ?>");
 		});
 		return false;
 	});
@@ -354,7 +379,7 @@ $(function() {
 		}, "html")
 		.error(function() {
 			$.mobile.loading( "hide" );
-			alert("error");
+			alert("<?php echo $msg["error"]; ?>");
 		});
 		return false;
 	});
@@ -362,11 +387,11 @@ $(function() {
 		$.mobile.loading( "show");
 		$.get("./admintools.php", $('#deletethumbform').serialize(),
 		function(data){
-			if(data.success=="true") alert("Thumb was emptied.");
+			if(data.success=="true") alert("<?php echo $msg["empty_thumb"]; ?>");
 			else alert(data.resultat);
 		}, "json")
 		.error(function() {
-			alert("error");
+			alert("<?php echo $msg["error"]; ?>");
 		});
 		$.mobile.loading( "hide" );
 		return false;
@@ -399,17 +424,17 @@ $(function() {
 					$("#accountoptionsgroup").controlgroup("refresh");
 					if($('#deletesaveaccountaction').val()=="initdeletesaveaccount") {
 						$('#deletesaveaccountaction').val("deletesaveaccount");
-						$('#deletesavingaccount').val("Delete a saving").button('refresh');
+						$('#deletesavingaccount').val("<?php echo $msg["delete_saving"]; ?>").button('refresh');
 					} else if(data.resultat=="") {
 						$('#deletesaveaccountaction').val("initdeletesaveaccount");
-						$('#deletesavingaccount').val("Show list of saving").button('refresh');
+						$('#deletesavingaccount').val("<?php echo $msg["show_list"]; ?>").button('refresh');
 					}
-				} else alert("No Account find");
+				} else alert("<?php echo $msg["no_account"]; ?>");
 			} else alert(data.resultat);
 		}, "json")
 		.error(function() {
 			$.mobile.loading( "hide" );
-			alert("error");
+			alert("<?php echo $msg["error"]; ?>");
 		});
 
 	});
@@ -418,59 +443,58 @@ $(function() {
 <div data-role="tabs" id="tabs">
   <div data-role="navbar">
     <ul>
-      <li><a href="#makeconfig" data-ajax="false">Configuration</a></li>
-      <li><a href="#runtest" data-ajax="false">Compatibility test</a></li>
-      <li><a href="#runtestexist" data-ajax="false">Test covers and ebooks</a></li>
-      <li><a href="#tools" data-ajax="false">Tools</a></li>
+      <li><a href="#makeconfig" data-ajax="false"><?php echo $msg["configuration"]; ?></a></li>
+      <li><a href="#runtest" data-ajax="false"><?php echo $msg["compat_test"]; ?></a></li>
+      <li><a href="#runtestexist" data-ajax="false"><?php echo $msg["test_covers"]; ?></a></li>
+      <li><a href="#tools" data-ajax="false"><?php echo $msg["tools"]; ?></a></li>
     </ul>
   </div>
 
 <div id="makeconfig" class="ui-body-d ui-content">
 <form action="#" method="get" enctype="multipart/form-data" name="editconfig" id="editconfig" >
 <fieldset data-role="fieldcontain">
-	<label for="language" class="select">Language</label>
+	<label for="language" class="select"><?php echo $msg["language"]; ?></label>
 	<select name="language" id="language" data-native-menu="false">
-		<option>Language</option>
-		<option value="en" <?php if($language=="en") echo "selected";?> >English</option>
-		<option value="fr" <?php if($language=="fr") echo "selected";?> >French</option>
-		<option value="fr" <?php if($language=="spa") echo "selected";?> >Spanish</option>
+		<option><?php echo $msg["language"]; ?></option>
+		<option value="en" <?php if($language=="en") echo "selected";?> ><?php echo $msg["english"]; ?></option>
+		<option value="fr" <?php if($language=="fr") echo "selected";?> ><?php echo $msg["french"]; ?></option>
+		<option value="es" <?php if($language=="es") echo "selected";?> ><?php echo $msg["spanish"]; ?></option>
 	</select>
-	<label for="fetchmode" class="select">Access mode to libraries </label>
+	<label for="fetchmode" class="select"><?php echo $msg["access_mode"]; ?></label>
 	<select name="fetchmode" id="fetchmode" data-native-menu="false">
-		<option>Access to libraries</option>
-		<option value="direct" <?php if($fetchmode=="direct") echo "selected";?> >Direct (in web directory)</option>
-		<option value="resize" <?php if($fetchmode=="resize") echo "selected";?> >with resize</option>
-		<option value="resize_and_cache" <?php if($fetchmode=="resize_and_cache") echo "selected";?> >with resize and cache</option>
-		<option value="noresize" <?php if($fetchmode=="noresize") echo "selected";?> >without resize</option>
+		<option><?php echo $msg["access_libraries"]; ?></option>
+		<option value="direct" <?php if($fetchmode=="direct") echo "selected";?> ><?php echo $msg["access_direct"]; ?></option>
+		<option value="resize" <?php if($fetchmode=="resize") echo "selected";?> ><?php echo $msg["access_resize"]; ?></option>
+		<option value="resize_and_cache" <?php if($fetchmode=="resize_and_cache") echo "selected";?> ><?php echo $msg["access_resize_cache"]; ?></option>
+		<option value="noresize" <?php if($fetchmode=="noresize") echo "selected";?> ><?php echo $msg["access_no_resize"]; ?></option>
 	</select>
-	<br/><p>If one library is not in your web directory, you can't use direct access.
-	<br />If you don't use direct access, you can choose to use X-Senfile mode or not.</p>
-	<label for="XSendfile">Use X-Sendfile?</label>
+	<br/><p><?php echo $msg["msg1"]; ?></p>
+	<label for="XSendfile"><?php echo $msg["use_xsendfile"]; ?></label>
 		<select name="XSendfile" id="XSendfile" data-role="slider">
 			<option value="false" <?php if(!$XSendfile) echo "selected";?> >
-			No
+			<?php echo $msg["no"]; ?>
 			</option>
 			<option value="true" <?php if($XSendfile) echo "selected";?> >
-			Yes
+			<?php echo $msg["yes"]; ?>
 			</option>
 		</select>
 </fieldset>
 <div data-role="collapsible" data-collapsed="false">
-	<h2>Calibre libraries</h2>
+	<h2><?php echo $msg["calibre_libraries"]; ?></h2>
 	<fieldset data-role="fieldcontain">
-		<label for="protect">Protect access?</label>
+		<label for="protect"><?php echo $msg["protect_access"]; ?></label>
 		<select name="protect" id="protect" data-role="slider">
 			<option value="false" <?php if(!$protect) echo "selected";?> >
-			No
+			<?php echo $msg["no"]; ?>
 			</option>
 			<option value="true" <?php if($protect) echo "selected";?> >
-			Yes
+			<?php echo $msg["yes"]; ?>
 			</option>
 			</select>
-			<br/><p>If yes, you must have account created below.</p>
+			<br/><p><?php echo $msg["msg2"]; ?></p>
 	</fieldset>
 	<ul class="ui-li" data-role="listview" id="calibrelibrary1" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Calibre libraries - Enter the path of your metadata file, the name that will appear in My Readings and, if you want, custom columns</li>
+	<li data-role="list-divider"><?php echo $msg["msg3"]; ?></li>
 <?php
 $nbcalibre1=0;
 if($calibre) {
@@ -480,27 +504,27 @@ foreach ($calibre as $key => $value) {
 	<li>
 		<fieldset class="ui-grid-b">
 			<div class="ui-block-a">
-				<input type="text" value="<?php echo $value;?>"  id="calval<?php echo $nbcalibre1;?>" name="calval<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>
+				<input type="text" value="<?php echo $value;?>"  id="calval<?php echo $nbcalibre1;?>" name="calval<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["path"]; ?>"/>
 			</div>
 			<div class="ui-block-b">
-				<input type="text" value="<?php echo $key;?>"  id="calkey<?php echo $nbcalibre1;?>" name="calkey<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+				<input type="text" value="<?php echo $key;?>"  id="calkey<?php echo $nbcalibre1;?>" name="calkey<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"]; ?>"/>
 			</div>
 			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
-					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="calcustom<?php echo $nbcalibre1;?>" name="calcustom<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
-					<a href="#" id="calremove<?php echo $nbcalibre1;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="calcustom<?php echo $nbcalibre1;?>" name="calcustom<?php echo $nbcalibre1;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["cust_col_labels"]; ?>"/>
+					<a href="#" id="calremove<?php echo $nbcalibre1;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>
 				</div>
 			</div>
 		</fieldset>
 	</li>
 <?php }} ?>
 	</ul>
-	<input type="button" id="addcalibre1" class="btn" value='Add "normal" library' />
+	<input type="button" id="addcalibre1" class="btn" value='<?php echo $msg["add_normal_library"]; ?>' />
 	
 	
 	
 	<ul class="ui-li" data-role="listview" id="calibrelibrary2" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Calibre libraries with access reserved for parental accounts</li>
+	<li data-role="list-divider"><?php echo $msg["protected_libraries"]; ?></li>
 <?php
 $nbcalibre2=0;
 if($limited) {
@@ -510,33 +534,30 @@ foreach ($limited as $key => $value) {
 	<li>
 		<fieldset class="ui-grid-b">
 			<div class="ui-block-a">
-				<input type="text" value="<?php echo $value;?>"  id="limval<?php echo $nbcalibre2;?>" name="limval<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="path"/>
+				<input type="text" value="<?php echo $value;?>"  id="limval<?php echo $nbcalibre2;?>" name="limval<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["path"]; ?>"/>
 			</div>
 			<div class="ui-block-b">
-				<input type="text" value="<?php echo $key;?>"  id="limkey<?php echo $nbcalibre2;?>" name="limkey<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
+				<input type="text" value="<?php echo $key;?>"  id="limkey<?php echo $nbcalibre2;?>" name="limkey<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"]; ?>"/>
 			</div>
 			<div class="ui-block-c">
 				<div data-role="controlgroup" data-type="horizontal">
-					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="limcustom<?php echo $nbcalibre2;?>" name="limcustom<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="custom columns labels"/>
-					<a href="#" id="limremove<?php echo $nbcalibre2;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+					<input type="text" value="<?php echo $customcolumn[$key];?>"  id="limcustom<?php echo $nbcalibre2;?>" name="limcustom<?php echo $nbcalibre2;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["cust_col_labels"]; ?>"/>
+					<a href="#" id="limremove<?php echo $nbcalibre2;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>
 				</div>
 			</div>
 		</fieldset>
 	</li>
 <?php }} ?>
 	</ul>
-	<input type="button" id="addcalibre2" class="btn" value="Add library with parental control" />
+	<input type="button" id="addcalibre2" class="btn" value="<?php echo $msg["add_protected_library"]; ?>" />
 	
-	<p><b>Library path</b> can be a full path (for exemple //volume1/calibre1/), you can't use direct access mode in that case.<br/>
-Or, if your library is in web directory, it can be a relative path (as ../calibre1/) and then you can use any access mode.<br/>
-Note the <b>"/" at the end</b> of the path <b>is necessary</b>.<br/>
-If you want to use <b>custom columns</b>, put the label of the custom columns you want with , as separator. Ex: custom1,custom2</p>
+	<p><?php echo $msg["msg4"]; ?></p>
 </div>
 
 <div data-role="collapsible" data-collapsed="false">
-<h2>Accounts and users</h2>
+<h2><?php echo $msg["accounts_and_users"]; ?></h2>
 <ul class="ui-li" data-role="listview" id="accountlist" data-inset="true"  data-scroll="true">
-<li data-role="list-divider">Accounts</li>
+<li data-role="list-divider"><?php echo $msg["accounts"]; ?></li>
 <?php
 $nbaccount=0;
 if($account) {
@@ -551,17 +572,15 @@ foreach ($account as $key => $value) {
 	<input name="acc_access<?php echo $nbaccount;?>" id="acc_access<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[1];?>"/>
 	<input name="acc_userchoice<?php echo $nbaccount;?>" id="acc_userchoice<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[2];?>"/>
 	<input name="acc_user<?php echo $nbaccount;?>" id="acc_user<?php echo $nbaccount;?>" type="hidden" value="<?php echo $value[3];?>"/>
-	<a href="#" id="accountdel<?php echo $nbaccount;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+	<a href="#" id="accountdel<?php echo $nbaccount;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"]; ?></a>
 </div></li>
 <?php }} ?>
 </ul>
-	<input type="button" id="newaccount" class="btn" value="Add Account" />
-	<p>If you choose to protect access, only these accounts can connect.<br />
-	For each account, you can indicate if it has access to all the libraires or only libraires without parental control. A user can be associated with the account: With "NO user", the account wil have no user, with "Forced", there will be the user you have to indicate, with "Free", the user can be chosen since the part configuration of My Readings.</p>
-	<p>Several accounts can have the same user. If you want to have users (to be able to save bookmarks), you must create them below.</p>
+	<input type="button" id="newaccount" class="btn" value="<?php echo $msg["add_account"];?>" />
+	<?php echo $msg["msg5"]; ?>
 
 	<ul class="ui-li" data-role="listview" id="userlist" data-inset="true"  data-scroll="true">
-	<li data-role="list-divider">Add names of users (for bookmarks) - all names must be different</li>
+	<li data-role="list-divider"><?php echo $msg["users_name"];?></li>
 <?php
 $nbusers=0;
 if($users) {
@@ -569,23 +588,20 @@ foreach ($users as $key => $value) {
 	$nbusers=$nbusers+1;
 ?>
 <li><div data-role="controlgroup" data-type="horizontal">
-	<input type="text" value="<?php echo $value;?>" id="userval<?php echo $nbusers;?>" name="userval<?php echo $nbusers;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="name"/>
-	<a href="#" id="userremove<?php echo $nbusers;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);">Remove</a>
+	<input type="text" value="<?php echo $value;?>" id="userval<?php echo $nbusers;?>" name="userval<?php echo $nbusers;?>" data-wrapper-class="controlgroup-textinput ui-btn" placeholder="<?php echo $msg["name"];?>"/>
+	<a href="#" id="userremove<?php echo $nbusers;?>" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext" onclick="removeline(this);"><?php echo $msg["remove"];?></a>
 </div></li>
 <?php }} ?>
 
 	</ul>
-	<input type="button" id="adduser" class="btn" value="Add user" />
-	<p>For each user, you can save a bookmark of a book or indicate that the book has been read. 
-For that, you must create a custom column in calibre for each user. The datatype must be "integer". 
-For example, you create a custom column with label user1 and name "Toto" and then, here, you add Toto. 
-If you want use that, I recommend you to add, in the first one, a "guest" user who will be used by default (in account with free choice).</p>
+	<input type="button" id="adduser" class="btn" value="<?php echo $msg["add_user"];?>" />
+	<?php echo $msg["msg6"];?>
 
 </div>
 
 
 <div data-role="collapsible" data-collapsed="false">
-	<h2>Viewers</h2>
+	<h2><?php echo $msg["viewers"];?></h2>
 	<fieldset data-role="controlgroup">
         <input type="checkbox" name="epubview" id="epubview" <?php if($epubview=="on") echo "checked";?>>
         <label for="epubview">Epub</label>
@@ -594,23 +610,23 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
         <input type="checkbox" name="cbrview" id="cbrview" <?php if($cbrview=="on") echo "checked";?>>
         <label for="cbrview">Cbr</label>
 	</fieldset>
-	<p>For cbz viewer, you must have PHP ZIP extension and for cbr viewer, PHP RAR extension. You can verify that in compatibility test.</p>
+	<?php echo $msg["msg7"];?>
 	<fieldset data-role="fieldcontain">
-	<label for="resizecbz">Resize?</label>
+	<label for="resizecbz"><?php echo $msg["resize"];?></label>
 	<select name="resizecbz" id="resizecbz" data-role="slider">
 		<option value="false" <?php if(!$resizecbz) echo "selected";?> >
-			No
+			<?php echo $msg["no"];?>
 		</option>
 		<option value="true" <?php if($resizecbz) echo "selected";?> >
-			Yes
+			<?php echo $msg["yes"];?>
 		</option>
 	</select>
 	</fieldset>
 	<fieldset data-role="fieldcontain">
-		<label for="maxsize">Size max.</label>
+		<label for="maxsize"><?php echo $msg["size_max"];?></label>
 		<input type="text" value="<?php echo $maxsize;?>" id="maxsize" name="maxsize" />
 	</fieldset>
-	<p>Some devices as those under iOS seem to have a limit of size for the images which can be shown. By activating this function, the images will be resized to 5242880 pixels (5x1024x1024= 5Mpx) by default. The original book will not be changed. You can change this size.</p>
+	<?php echo $msg["msg8"];?>
 </div>
 
 <input name="nbcal" id="nbcal" type="hidden" value=""/>
@@ -619,26 +635,26 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 <input name="nbaccount" id="nbaccount" type="hidden" value=""/>
 <input name="admin_login" type="hidden" value="<?php echo $admin_login;?>"/>
 <input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
-<input type="submit" name="Submit" value="Save configuration" data-theme="b" />
+<input type="submit" name="Submit" value="<?php echo $msg["save_configuration"];?>" data-theme="b" />
 </form>
 
 <div data-role="popup" id="popupLogin"  class="ui-content">
     <form action="#" method="get" enctype="multipart/form-data" name="editlogin" id="editlogin" >
         <div>
-            <label for="poplogin" class="ui-hidden-accessible">Login:</label>
+            <label for="poplogin" class="ui-hidden-accessible"><?php echo $msg["login"];?>:</label>
             <input type="text" name="poplogin" id="poplogin" value="" placeholder="Login" class="required"/>
-            <label for="poppass">Password:</label>
+            <label for="poppass"><?php echo $msg["password"];?>:</label>
             <input type="password" name="poppass" id="poppass" value="" class="required">
-	    <label for="poppassconf">Confirm Password:</label>
+	    <label for="poppassconf"><?php echo $msg["confirm_password"];?>:</label>
             <input type="password" name="poppassconf" id="poppassconf" value="" class="required poppassmatch">
-	    <legend>Libraries Access:</legend>
+	    <legend><?php echo $msg["libraries_access"];?>:</legend>
 	    <fieldset data-role="controlgroup" data-type="horizontal">
 	    	<input type="radio" name="popaccess" id="popaccessa" value="Normal" checked="checked">
 		<label for="popaccessa">Normal</label>
 		<input type="radio" name="popaccess" id="popaccessb" value="Parental">
 		<label for="popaccessb">Parental</label>
 	    </fieldset>
-	    <legend>User choice::</legend>
+	    <legend><?php echo $msg["user_choice"];?>:</legend>
 	    <fieldset data-role="controlgroup" data-type="horizontal">
 	    	<input type="radio" name="popuserchoice" id="popuserchoicea" value="No user" checked="checked">
 		<label for="popuserchoicea">No user</label>
@@ -647,10 +663,10 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 		<input type="radio" name="popuserchoice" id="popuserchoicec" value="Free">
 		<label for="popuserchoicec">Free</label>
 	    </fieldset>
-	    <label for="popuser">User:</label>
+	    <label for="popuser"><?php echo $msg["user"];?>:</label>
             <input type="text" name="popuser" id="popuser" value="" />
 	    <input type="hidden"  name="popid" id="popid" value="" />
-            <button type="button" id="addaccount" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Update</button>
+            <button type="button" id="addaccount" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check"><?php echo $msg["update"];?></button>
         </div>
     </form>
 </div>
@@ -661,7 +677,8 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 <form action="#" method="get" enctype="multipart/form-data" name="testform" id="testform" >
 	<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
 	<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
-	<input type="submit" name="Submit" value="Run compatibility tests" data-theme="b" />
+	<input name="language" type="hidden" value="<?php echo $language;?>"/>
+	<input type="submit" name="Submit" value="<?php echo $msg["run_compatibility_tests"];?>" data-theme="b" />
 </form>
 <div id="testresult"></div>
 </div><!-- /runtest tab -->
@@ -669,43 +686,44 @@ If you want use that, I recommend you to add, in the first one, a "guest" user w
 <form action="#" method="get" enctype="multipart/form-data" name="testexistform" id="testexistform" >
 	<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
 	<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
-	<input type="submit" name="Submit" value="Run tests" data-theme="b" />
+	<input name="language" type="hidden" value="<?php echo $language;?>"/>
+	<input type="submit" name="Submit" value="<?php echo $msg["run_tests"];?>" data-theme="b" />
 </form>
 <div id="testexistresult"></div>
 </div><!-- /runtestexist tab -->
 <div id="tools">
 	<div data-role="collapsible" data-collapsed="false">
-		<h2>Examples of syntax for the url of My Readings</h2>
-		For iPad/iPad mini: <a href="./index.html" class="ui-btn ui-corner-all  ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
-		For iphone: <a href="./index.html#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
-		For Galaxy Tab: <a href="./index.html#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a>
+		<h2><?php echo $msg["url_syntax"];?></h2>
+		<?php echo $msg["for_ipad"];?>: <a href="./index.html" class="ui-btn ui-corner-all  ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		<?php echo $msg["for_iphone"];?>: <a href="./index.html#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/iphone" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a><br/>
+		<?php echo $msg["for_galaxy"];?>: <a href="./index.html#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Flat</a><a href="./index.html?platform=wood#profil/gtab" class="ui-btn ui-corner-all ui-btn-inline" data-ajax="false">Wood</a>
 	</div>
 	<div data-role="collapsible" data-collapsed="false">
-		<h2>Management of the directory thumb</h2>
-		<p>This directory is use to store thumbnail of book cover in access mode with resize and cache</p>
+		<h2><?php echo $msg["thumb_management"];?></h2>
+		<?php echo $msg["msg9"];?>
 		<form action="#" method="get" enctype="multipart/form-data" name="deletethumbform" id="deletethumbform" >
 		<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
 		<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
 		<input name="action" type="hidden" value="deletethumb"/>
-		<input type="submit" name="Submit" value="Delete files in cache" data-theme="b" />
+		<input type="submit" name="Submit" value="<?php echo $msg["delete_cache"];?>" data-theme="b" />
 		</form>
 	</div>
 	
 	<div data-role="collapsible" data-collapsed="false">
-	<h2>Management of the saving of the configuration of the accounts</h2>
-	<p>The user can save the configuration of his account since My Readings. You can delete this saving.</p>
+	<h2><?php echo $msg["account_saving"];?></h2>
+	<?php echo $msg["msg10"];?>
 	<form action="#" method="get" enctype="multipart/form-data" name="deleteaccount" id="deleteaccount" >
                 <fieldset id="accountoptionsgroup" data-role="controlgroup">
-                	<legend>Choose an account:</legend>
+                	<legend><?php echo $msg["choose_account"];?></legend>
                 </fieldset>
 		<input name="admin_login"type="hidden" value="<?php echo $admin_login;?>"/>
 		<input name="admin_pw" type="hidden" value="<?php echo $admin_pw;?>"/>
 		<input name="action" id="deletesaveaccountaction" type="hidden" value="initdeletesaveaccount"/>
-		<input type="button" id="deletesavingaccount" class="btn" value="Show list of saving" data-theme="b" />
+		<input type="button" id="deletesavingaccount" class="btn" value="<?php echo $msg["show_list"];?>" data-theme="b" />
 	</form>
 	</div>
 	<div data-role="collapsible" data-collapsed="false">
-		<h2>Skins to test the aspect on tablet or smartphone</h2>
+		<h2><?php echo $msg["skin_test"];?></h2>
 		<a  target="_blank" href="./skin/ipad.html"><img src="./skin/ipadview1.jpg" /></a> <a  target="_blank" href="./skin/ipad_wood.html"><img src="./skin/ipadview2.jpg" /></a>
 		 <a  target="_blank" href="./skin/iphone.html"><img src="./skin/iphoneview.jpg" /></a>
 		 <a  target="_blank" href="./skin/galaxytab.html"><img src="./skin/gtabview.jpg" /></a>

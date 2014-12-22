@@ -35,16 +35,23 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) exit("Not login");
 if(!file_exists('./config/config.php')) exit("No configuration file");
 
 require_once('./config/config.php');
+
+	$languagejson="./resources/locale/admin_".$_GET['language'].".json";
+	if(!file_exists($languagejson)) $languagejson="./resources/locale/admin_en.json";
+	$json = file_get_contents($languagejson);
+	$json = json_decode($json, true);
+	$msg= $json['msg'];
+
 if($calibre) {
 
-if (!extension_loaded("sqlite3")) echo "sqlite3 extension could be not loaded.";
+if (!extension_loaded("sqlite3")) echo $msg["sqlite_ext"];
 
 if($limited) $calibre=array_merge ($calibre, $limited);
 foreach ($calibre as $key => $path) {
 	$connect=false;
 	$result="";
 	$nocover="";
-	echo '<div class="titre">Test library '.$key.":</div>";
+	echo '<div class="titre">'.$msg["test_lib"].$key.":</div>";
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, 
 	has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
@@ -57,10 +64,10 @@ foreach ($calibre as $key => $path) {
 		$result = $stmt->fetchAll();
 		$connect=true;
 	} catch(Exception $e) {
-		echo '<p class="red">Connection error - '.$e->getMessage()."</p>";
+		echo '<p class="red">'.$msg["error_connect"].' - '.$e->getMessage()."</p>";
 	}
 	if($connect==true) {
-		echo '<p class="soustitre">Access error:</p><div class="normalmargin">';
+		echo '<p class="soustitre">'.$msg["access_error"].':</p><div class="normalmargin">';
 		$query2 = "select data.format as extension, data.name as filename, data.uncompressed_size as size from data where book = ?";
 		$erreur=false;
 		foreach ($result as $key => $book) {
@@ -85,19 +92,19 @@ foreach ($calibre as $key => $path) {
 				}
 			}
 		}
-		if($erreur==false) echo "No error.</div>";
+		if($erreur==false) echo $msg["noerror"]."</div>";
 		else echo "</div>";
 		
 		
 		
 		if($nocover!="") {
-			echo '<p class="soustitre">Ebooks without cover:</p><div class="normalmargin">'.$nocover."</div>";
+			echo '<p class="soustitre">'.$msg["nocover"].':</p><div class="normalmargin">'.$nocover."</div>";
 		}
 		echo '<p>&nbsp;</p>';
 	}
 }
 } else {
-	echo "No Calibre libraries.<br />";
+	echo $msg["nocover"]."<br />";
 }
 ?>
 </body>

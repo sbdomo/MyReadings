@@ -5,6 +5,7 @@
 tmp/
 config.php
 confadmin.php
+language.php
 conf.db
 resources/sass/.sass-cache
 build/

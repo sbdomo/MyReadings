@@ -122,6 +122,9 @@ $phptxt.="?>";
 
 file_put_contents("./config/config.php", $phptxt);
 
+$phptxt="<?php"."\r\n".'$language0="'.$_GET['language'].'";'."\r\n?>";
+file_put_contents("./config/language.php", $phptxt);
+
 $result="OK";
 $success="true";
 }

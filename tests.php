@@ -10,6 +10,12 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 	$result="login error";
 } else {
 	$result="";
+	$languagejson="./resources/locale/admin_".$_GET['language'].".json";
+	if(!file_exists($languagejson)) $languagejson="./resources/locale/admin_en.json";
+	$json = file_get_contents($languagejson);
+	$json = json_decode($json, true);
+	$msg= $json['msg'];
+	
 	if(file_exists('./config/config.php')) {
 		require_once('./config/config.php');
 		//Test des comptes si protégé
@@ -30,48 +36,45 @@ if($_GET['admin_login']!=$adlogin||$_GET['admin_pw']!=$adpw) {
 		if($accountok==true){
 		if($calibre) {
 			$success="true";
-			if (!extension_loaded("sqlite3")) $result.='<p class="yellow">Sqlite3 extension could be not loaded.</p>';
+			if (!extension_loaded("sqlite3")) $result.='<p class="yellow">'.$msg["sqlite_ext"].'</p>';
 				
-			if(phpversion()<=5.2) $result.='<p>Your php version is '.phpversion().'. If you have a problem, you could test a newer version.</p>';
-			$result.='<p>Connection Test:</p>';
-			$result.="<p>If all is OK, you must see a cover for each library.</p>";
-			$result.="<p>If your library is OK, but you don't see the cover, it's probably a problem with acccess mode configuration.<br />
-			If you use X-Sendfile and if its configuration is correct, a second cover should appear.</p>";
-			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile);
-			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile);
+			if(phpversion()<=5.2) $result.='<p>'.$msg["php_version"].phpversion().'. '.$msg["php_badversion"].'.</p>';
+			$result.=$msg["connect_test"];
+			$result=testconnect($calibre, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile, $msg);
+			if($limited) $result=testconnect($limited, $result, $fetchmode, $login, $pass, $users, $customcolumn, $account, $XSendfile, $msg);
 			if(fw("./thumb")) {
-				$result.='<p>Directory thumb is writable (use by access mode with resize and cache)</p>';
+				$result.='<p>'.$msg["writable_thumb"].'</p>';
 			} else {
-				$result.='<p class="red">Directory thumb is not writable (you can\'t use access mode with resize and cache)</p>';
+				$result.='<p class="red">'.$msg["writable_thumb_error"].'</p>';
 			}
 			if(ini_get('open_basedir')) {
-				$result.='<p class="yellow">You have a open_basedir restriction. If you can\'t access to your library, try to add your library path in open_basedir.</p>';
+				$result.='<p class="yellow">'.$msg["open_basedir"].'</p>';
 			}
 			if (extension_loaded("zip")) {
-				$result.='<p>PHP Zip extension loaded (use by cbz viewer)</p>';
+				$result.='<p>'.$msg["zip_loaded"].'</p>';
 			} else {
 				if($cbzview=="on") $result.='<p class="red">';
 				else $result.='<p class="yellow">';
-				$result.='PHP Zip extension not loaded (you can\'t use viewer)</p>';
+				$result.=$msg["zip_notloaded"].'</p>';
 			}
 			if (extension_loaded("rar")) {
-				$result.='<p>PHP Rar extension loaded (use by cbr viewer)</p>';
+				$result.='<p>'.$msg["rar_loaded"].'</p>';
 			} else {
 				if($cbrview=="on") $result.='<p class="red">';
 				else $result.='<p class="yellow">';
-				$result.='PHP Rar extension not loaded (you can\'t use cbr viewer)</p>';
+				$result.=$msg["rar_notloaded"].'</p>';
 			}
 			if(fw("./cache")) {
-				$result.='<p>Directory cache is writable (use by cbz viewer)</p>';
+				$result.='<p>'.$msg["cache_writable"].'</p>';
 			} else {
-				$result.='<p class="red">Directory cache is not writable (you can\'t use viewer)</p>';
+				$result.='<p class="red">'.$msg["cache_notwritable"].'</p>';
 			}
 		} else {
-			$result='Calibre libraires are not defined';
+			$result=$msg["nocalibre"];
 		}
-		} else $result.='Error in accounts';
+		} else $result.=$msg["account_error"];
 	} else {
-		$result.="Configuration is not defined";
+		$result.=$msg["noconfig"];
 	}
 }
 $json = json_encode($result);
@@ -83,7 +86,7 @@ if (isset($_GET['callback'])) {
 	echo $json;
 }
 
-function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs, $account, $XSendfile) {
+function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $customs, $account, $XSendfile, $msg) {
 	$COLUMNS="books.id as id, books.title as title, books.path as relativePath, has_cover as hasCover";
 	$query="SELECT ".$COLUMNS." FROM books ORDER BY books.author_sort;";
 	foreach ($bases as $key => $path) {
@@ -97,7 +100,7 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 		//$resultat = $stmt->fetchAll();
 		$resultat = $stmt->fetch();
 		$hascover=0;
-		$result.='<p class="grey">'.$key.' is OK</p>';
+		$result.='<p class="grey">'.$key.$msg["isok"].'</p>';
 		while($resultat&&$hascover==0){
 			//echo $resultat;
 			if($resultat['hasCover']) {
@@ -111,7 +114,7 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 				//Test de Xsenfile grace à cover.php
 				if($XSendfile) {
 				$url="./cover.php?testxsendfile=true&path=".urlencode($resultat['relativePath'])."&id=".$resultat['id']."&base=".urlencode($key)."&mylogin=".urlencode($login)."&mypass=".urlencode($pass);
-				$result.='<p>Test X-Sendfile:<br/><img  src="'.$url.'"/></p>';
+				$result.='<p>'.$msg["xsendfile"].':<br/><img  src="'.$url.'"/></p>';
 				}
 			} else $resultat = $stmt->fetch();
 		}
@@ -124,12 +127,12 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 				$queryuser = "SELECT id, datatype from custom_columns WHERE name = '".$value."'";
 				$resultquery = $pdo->query($queryuser)->fetch();
 				if(!$resultquery) {
-					$erroruser.=" ".$value." not found.";
+					$erroruser.=" ".$value.$msg["notfound"];
 				} else if($resultquery['datatype']!='int') {
-					$erroruser.=" ".$value." is not integer.";
+					$erroruser.=" ".$value.$msg["notinteger"];
 				}
 			}
-			if($erroruser!="") $resultuser.='<p class="red">User error:'.$erroruser.'</p>';
+			if($erroruser!="") $resultuser.='<p class="red">'.$msg["user_error"].':'.$erroruser.'</p>';
 			//else $result.='<p>All users OK</p>';
 		}
 		
@@ -140,13 +143,13 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 					$queryuser = "SELECT id, datatype from custom_columns WHERE name = '".$value[3]."'";
 					$resultquery = $pdo->query($queryuser)->fetch();
 					if(!$resultquery) {
-						$erroruser.=" ".$value[3]." not found (in account ".$key.").";
+						$erroruser.=" ".$value[3].$msg["user_notfound"].$key.").";
 					} else if($resultquery['datatype']!='int') {
-						$erroruser.=" ".$value[3]." is not integer (in account ".$key.").";
+						$erroruser.=" ".$value[3].$msg["user_notinteger"].$key.").";
 					}
 				}
 			}
-			if($erroruser!="") $resultuser.='<p class="red">User error:'.$erroruser.'</p>';
+			if($erroruser!="") $resultuser.='<p class="red">'.$msg["user_error"].':'.$erroruser.'</p>';
 			//else $result.='<p>All users OK</p>';
 		}
 		$result.=$resultuser;
@@ -159,17 +162,17 @@ function testconnect($bases, $result, $fetchmode, $login, $pass, $users, $custom
 				$query = "select * from custom_columns where label = '".$value."'";
 				$resultquery = $pdo->query($query)->fetch();
 				if(!$resultquery) {
-					$errorcustom.=" ".$value." not found.";
+					$errorcustom.=" ".$value.$msg["notfound"];
 				} else if($resultquery['datatype']!='series'&&$resultquery['datatype']!='enumeration'&&$resultquery['datatype']!='int'&&$resultquery['datatype']!='bool'&&$resultquery['datatype']!='text'&&$resultquery['datatype']!='float') {
-					$errorcustom.=" The type of ".$value." (".$resultquery['datatype'].") is not supported.";
+					$errorcustom.=$msg["typeof"].$value." (".$resultquery['datatype'].") ".$msg["notsupported"];
 				}
 			}
-			if($errorcustom!="") $result.='<p class="yellow">Custom column error:'.$errorcustom.'</p>';
-			else $result.='<p>All custom columns are OK</p>';
+			if($errorcustom!="") $result.='<p class="yellow">'.$msg["custom_error"].':'.$errorcustom.'</p>';
+			else $result.='<p>'.$msg["custom_okcustom_ok"].'</p>';
 		}
-		} else $result.='<p class="red">'.$path."metadata.db not found.</p>";
+		} else $result.='<p class="red">'.$path.$msg["no_metadata"].".</p>";
 	} catch(Exception $e) {
-		$result.='<p class="red">Connection error with '.$key.' - '.$e->getMessage()."</p>";
+		$result.='<p class="red">'.$msg["error_connect_with"].$key.' - '.$e->getMessage()."</p>";
 	}
 	}
 	return $result;
